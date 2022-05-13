@@ -1,0 +1,407 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+    <p-toolbar styleClass="p-mb-4">
+        <ng-template pTemplate="right">
+            <span class="newbtnpadding"><button dir="ltr" *ngIf="isGranted('SCR_INVENTORY_ISSUE',actionType.allowAdd)"
+                    pButton pRipple label="{{'APP_ADD' | translate}}" icon="pi pi-plus"
+                    class="p-button-rounded p-button-success p-mr-2" (click)="createNewRecord()"></button></span>
+        </ng-template>
+        <ng-template pTemplate="left">
+            <span class="p-input-icon-right">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                    placeholder="{{'APP_SEARCH' | translate}}" />
+            </span>
+            <button pButton pRipple pTooltip="{{'APP_ADV_SEARCH' | translate}}" tooltipPosition="bottom" label=""
+                icon="pi pi-search-plus" class="p-button-secondary p-mr-2" (click)="adFilter.toggle($event)"></button>
+            <button [disabled]="disableExport" #trg1 type="button" pButton pRipple icon="pi pi-download"
+                (click)="onDataClick()" class="p-button-success p-mr-2  p-ml-2"
+                pTooltip="{{'APP_DOWNLOAD' | translate }}" tooltipPosition="bottom"></button>
+            <p-contextMenu triggerEvent="click" appendTo="body" [target]="trg1" [model]="exportMenus"></p-contextMenu>
+            <div class="p-mr-2  p-ml-2 recordstatus" [ngClass]=" allHighlight ? 'highLightSelectedDiv': '' "
+                pTooltip="{{'APP_ALL' | translate}}">
+                <a (click)="onClickStatus('ALL')">{{"APP_ALL" | translate}}</a>
+            </div>
+            <div class="p-mr-2  p-ml-2 recordstatus appSubmitted"
+                [ngClass]=" pendHighlight ? 'highLightSelectedDiv': '' " pTooltip="{{'APP_PENDING' | translate}}">
+                <a (click)="onClickStatus('PURTRNSTSSUBMITTED')">{{"APP_PENDING" | translate}}</a>
+            </div>
+            <div class="p-mr-2  p-ml-2 recordstatus appApproved"
+                [ngClass]=" approvedHighlight ? 'highLightSelectedDiv': '' " pTooltip="{{'APP_APPROVED' | translate}}">
+                <a (click)="onClickStatus('PURTRNSTSAPPROVED')">{{"APP_APPROVED" | translate}}</a>
+            </div>
+            <div class="p-mr-2  p-ml-2 recordstatus appReturned"
+                [ngClass]=" rejectHighlight ? 'highLightSelectedDiv': '' " pTooltip="{{'APP_REJECTED' | translate}}">
+                <a (click)="onClickStatus('PURTRNSTSREJECTED')">{{"APP_REJECTED" | translate}}</a>
+            </div>
+        </ng-template>
+
+    </p-toolbar>
+
+
+    <div style="overflow: auto;">
+        <p-table #dt responsiveLayout="stack" [value]="InventoryTransferList" [scrollable]="true" scrollHeight="flex"
+            [paginator]="true" [rows]="10"
+            [globalFilterFields]="['transNo','transDate','InventoryTransferList.toWareHouseLocation.name','InventoryTransferList.toWareHouseLocationAddress','remarks','status']"
+            dataKey="id" rowExpandMode="single" (onRowExpand)="showDetail($event)" [expandedRowKeys]="expandedRows"
+            styleClass="p-datatable-responsive-demo p-datatable-gridlines">
+            <ng-template pTemplate="header">
+                <tr>
+
+                    <th style="flex-basis:3%"></th>
+                    <th style="flex-basis: 15%" pSortableColumn="transNo">{{"APP_TRANSNO" | translate}}<p-sortIcon
+                            field="transNo"></p-sortIcon>
+                    </th>
+                    <th style="flex-basis: 15%" pSortableColumn="transDate">{{"APP_TRANSDATE" | translate}}<p-sortIcon
+                            field="transDate"></p-sortIcon>
+                    </th>
+
+                    <th style="flex-basis: 15%" pSortableColumn="InventoryTransferList.fromWareHouseLocationAddress">
+                        {{"INVENTORY_FROM_WAREHOUSE_LOCATION" | translate}}<p-sortIcon
+                            field="toWareHouseLocationAddress"></p-sortIcon>
+                    </th>
+                    <th style="flex-basis: 15%" pSortableColumn="InventoryTransferList.fromWareHouse">
+                        {{"INVENTORY_FROM_WAREHOUSE" | translate}}<p-sortIcon field="fromWareHouse"></p-sortIcon>
+                    </th>
+
+                    <th style="flex-basis: 15%" pSortableColumn="InventoryTransferList.toWareHouseLocationAddress">
+                        {{"INVENTORY_TO_WAREHOUSE_LOCATION" | translate}}<p-sortIcon field="toWareHouseLocationAddress">
+                        </p-sortIcon>
+                    </th>
+                    <th style="flex-basis: 15%" pSortableColumn="InventoryTransferList.toWareHouse">
+                        {{"INVENTORY_TO_WAREHOUSE" | translate}}<p-sortIcon field="toWareHouse"></p-sortIcon>
+                    </th>
+
+                    <th style="flex-basis: 15%" pSortableColumn="InventoryTransferList.remarks">{{"INVENTORY_REMARKS" |
+                        translate}}<p-sortIcon field="remarks"></p-sortIcon>
+                    </th>
+                    <th style="flex-basis: 5%;"></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item let-expanded="expanded">
+                <tr [pSelectableRow]="item"
+                    [ngClass]="{'appSubmitted': item.status === 'PURTRNSTSSUBMITTED', 'appApproved': item.status === 'PURTRNSTSAPPROVED', 'appReturned': item.status == 'PURTRNSTSREJECTED' }">
+                    <td style="flex-basis: 3%">
+                        <button type="button" pButton pRipple [pRowToggler]="item"
+                            class="p-button-text p-button-rounded p-button-plain"
+                            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                    </td>
+                    <td style="flex-basis: 15%"><span class="p-column-title">{{"APP_TRANSNO" |
+                            translate}}</span>{{item.transNo}}</td>
+                    <td style="flex-basis: 15%"><span class="p-column-title">{{"APP_TRANSDATE" |
+                            translate}}</span>{{item.transDate | date:'dd-MM-yyyy'}}</td>
+                    <td style="flex-basis: 15%"><span class="p-column-title">{{"INVENTORY_FROM_WAREHOUSE_LOCATION" |
+                            translate}}</span>{{item.fromWareHouseLocationDet.name }} -
+                        {{item.fromWareHouseLocationDet.address }}</td>
+                    <td style="flex-basis: 15%"><span class="p-column-title">{{"INVENTORY_FROM_WAREHOUSE" |
+                            translate}}</span>{{item.fromWareHouseDet.name}} - {{item.fromWareHouseDet.address}}</td>
+                    <td style="flex-basis: 15%"><span class="p-column-title">{{"INVENTORY_TO_WAREHOUSE_LOCATION" |
+                            translate}}</span>{{item.toWareHouseLocationDet.name }} -
+                        {{item.toWareHouseLocationDet.address }} </td>
+                    <td style="flex-basis: 15%"><span class="p-column-title">{{"INVENTORY_TO_WAREHOUSE" |
+                            translate}}</span>{{item.toWareHouseDet.name}} - {{item.toWareHouseDet.address}}</td>
+                    <td style="flex-basis: 15%"><span class="p-column-title">{{"APP_REMARKS" |
+                            translate}}</span>{{item.remarks}}
+                    </td>
+                    <td style="flex-basis: 5%">
+                        <span class="p-column-title">{{"APP_ACTION" | translate}}</span>
+                        <span class="pl-2 pr-2">
+                            <p-contextMenu triggerEvent="click" appendTo="body" [target]="trg4"
+                                [model]="gridContextMenu"></p-contextMenu>
+                            <button pButton pRipple type="button" icon="pi pi-ellipsis-v" #trg4
+                                (click)="getGridContextMenu(item)" class="p-button-rounded p-button-text"></button>
+                        </span>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="rowexpansion" let-item>
+                <tr>
+                    <td colspan="8">
+                        <div class="card w-full">
+                            <div class="card-body">
+                                <p-table #dt1 responsiveLayout="stack" selectionMode="single" [value]="item.details"
+                                    [scrollable]="true" scrollHeight="flex" dataKey="id">
+                                    <ng-template pTemplate="header">
+                <tr>
+
+                    <th style="flex-basis: 15%">{{"SR_PROD_NAME" | translate}}</th>
+                    <th style="flex-basis: 15%">{{"SR_UNIT_NAME" | translate}}</th>
+                    <th style="flex-basis: 15%">
+                        <div style="text-align: right; width: 100%">{{"SR_QUANTITY" | translate}}</div>
+                    </th>
+                    <th style="flex-basis: 15%">{{"SHELVENO" | translate}}</th>
+                    <th style="flex-basis: 15%">{{"APP_REMARKS" | translate}}</th>
+                    <th style="flex-basis: 15%">{{"APP_ACTION" | translate}}
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-det>
+                <tr [pSelectableRow]="det">
+
+                    <td style="flex-basis: 15%">{{det.productName}}</td>
+                    <td style="flex-basis: 15%">{{det.unitName}}</td>
+                    <td style="flex-basis: 15%">
+                        <div style="text-align: right; width: 100%">{{det.quantity | number: '1.0-3' }}</div>
+                    </td>
+                    <td style="flex-basis: 15%">{{det.shelveNo}}</td>
+                    <td style="flex-basis: 15%">{{det.remarks}}</td>
+                    <td style="flex-basis: 15%">
+                        <span class="p-column-title">{{"APP_ACTION" | translate}}</span>
+                        <span class="pl-2 pr-2">
+                            <p-contextMenu triggerEvent="click" appendTo="body" [target]="dt3"
+                                [model]="gridDetailsContextMenu"></p-contextMenu>
+                            <button pButton pRipple type="button" icon="pi pi-ellipsis-v" #dt3
+                                (click)="getGridDetailsContextMenu(det)"
+                                class="p-button-rounded p-button-text"></button>
+                        </span>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+</td>
+</tr>
+</ng-template>
+</p-table>
+</div>
+</div>
+<p-confirmDialog header="{{'APP_DELETE_CONFIRM_HDR' | translate}}" acceptLabel="{{'APP_OK' | translate}}"
+    rejectLabel="{{'APP_CANCEL' | translate}}" icon="pi pi-exclamation-triangle"
+    acceptButtonStyleClass="p-button-rounded p-button-danger" rejectButtonStyleClass="p-button-rounded">
+</p-confirmDialog>
+
+<p-dialog [(header)]="approveRejectHdr" [(visible)]="showApproveReject" [modal]="true" [style]="{width: '50vw'}"
+    [draggable]="false" [resizable]="false">
+    <div class="row">
+        <div class="col-md-12">
+            <label for="appRemarks">{{"SR_APP_REJ_REMARKS" | translate}}</label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <textarea id="appRemarks" style="width: 100%;" [(ngModel)]="approveRejRemarks " type="text" rows="3"
+                pInputTextarea></textarea>
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <p-button *ngIf="showRejectButton" icon="pi pi-thumbs-down"
+            (click)="processApproveOrReject('PURTRNSTSREJECTED')" label="{{'APP_REJECT'|translate}}"
+            styleClass="p-element p-button-rounded p-button p-component"></p-button>
+        <p-button *ngIf="showApproveButton" icon="pi pi-thumbs-up" (click)="processApproveOrReject('PURTRNSTSAPPROVED')"
+            label="{{'APP_APPROVE'|translate}}" styleClass="p-element p-button-rounded p-button p-component"></p-button>
+        <p-button icon="pi pi-ban" (click)="showApproveReject = false" label="{{'APP_CANCEL'|translate}}"
+            styleClass="p-element p-button-rounded p-button-danger p-button p-component"></p-button>
+    </ng-template>
+</p-dialog>
+
+<p-sidebar [(visible)]="showHdrHistory" position="right" (onHide)="sidenavClosed()">
+    <div class="" *ngIf="historyInfo">
+        <div class="col-md-12">
+            <h5> {{"BUDGT_TRANS_HISTORY_TITLE" | translate }}: {{historyInfo.selectedItem.transNo }}</h5>
+            <hr>
+        </div>
+        <div class="row"></div>
+        <div class="col-md-12" style="padding-bottom: 10px;">
+            <div class="flex  overflow-y-auto overscroll-y-contain  ng-star-inserted">
+                <div class="input-group col-md-12" style="padding-bottom: 10px;">
+                    <textarea type="text" class="form-control" placeholder="Comment" [(ngModel)]="userComment.comments"
+                        aria-label="Recipient's username" aria-describedby="basic-addon2"></textarea>
+                    <div class="input-group" style="padding-top: 10px;">
+                        <button class="btn btn-outline-secondary" (click)="attachmentLink(userComment,'GRNCOMM', false)"
+                            type="button"><i class="pi pi-paperclip"></i></button>
+                        <button class="btn btn-outline-secondary" (click)="saveHdrComment()" type="button"
+                            style="margin-left: 10px;margin-right: 10px;"><i class="pi pi-send"></i></button>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="flex  overflow-y-auto overscroll-y-contain  ng-star-inserted">
+                <div class="col-md-12" style="max-height: 300px;overflow: auto;">
+                    <div class="Comment" *ngFor=" let item of historyInfo.comments">
+                        <div class="flex flex-col ng-star-inserted">
+                            <hr>
+                            <div class="text-normal" style="word-break: break-word;">
+                                {{item.Comments}}
+                            </div>
+                            <div class="text-sm font-small text-secondary mr-3 ng-star-inserted">
+                                <span style="cursor: pointer; padding-left: 5px; padding-right: 5px;"
+                                    *ngIf="item.attachbtn==true" (click)="attachmentLink(item, 'GRNCOMM', false)"><i
+                                        class="pi pi-paperclip"></i></span>
+                                <span>By {{item.UserName}} </span>
+                                <span>On {{item.CreatedDate | date: 'dd/MM/yy hh:mm'}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row"></div>
+        <div class="col-md-12">
+            <p-accordion multiple="true">
+                <p-accordionTab #tab header="{{'APP_DOCUMENTS' | translate}}" style="text-decoration: none;">
+                    <p-table #dt1 responsiveLayout="stack" [value]="historyInfo.appDocument" scrollHeight="flex"
+                        styleClass="p-datatable-responsive-demo p-datatable-gridlines" dataKey="id">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>{{"FILE_NAME" | translate}}
+                                </th>
+                                <th>{{"APP_UPLOADED_BY" | translate}}
+                                </th>
+                                <th>{{"APP_UPLOADED_DATE" | translate}}
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-item>
+                            <tr [pSelectableRow]="det">
+                                <th>
+                                    <div class="fileDiv" (click)="downloadFile(item.id)">{{item.fileName}}</div>
+                                </th>
+                                <th>{{item.userName}}</th>
+                                <th>{{item.createdDate | date: 'dd/MM/yy hh:mm'}}</th>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </p-accordionTab>
+                <p-accordionTab #tab3 header="{{'APP_HISTORY' | translate }}" style="text-decoration: none;">
+                    <p-table #dt3 responsiveLayout="stack" selectionMode="single" [value]="historyInfo.history"
+                        scrollHeight="flex" styleClass="p-datatable-responsive-demo p-datatable-gridlines" dataKey="id">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>{{"APP_FIELD_NAME" | translate}}
+                                </th>
+                                <th>{{"APP_PREV_VALUE" | translate}}
+                                </th>
+                                <th>{{"APP_CURRENT_VALUE" | translate}}
+                                </th>
+                                <th>{{"APP_CHANGED_BY" | translate}}
+                                </th>
+                                <th>{{"APP_CHANGED_ON" | translate}}
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-item>
+                            <tr [pSelectableRow]="det">
+                                <th>{{item.fieldName}}</th>
+                                <th>{{item.prevValue }} </th>
+                                <th>{{item.currentValue }}</th>
+                                <th>{{item.userName}}</th>
+                                <th>{{item.createdDate | date: 'dd/MM/yy hh:mm'}}</th>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </p-accordionTab>
+            </p-accordion>
+        </div>
+    </div>
+</p-sidebar>
+<p-sidebar [(visible)]="showDetHistory" position="right" (onHide)="sidenavClosed()">
+    <div class="" *ngIf="historyInfo">
+        <div class="col-md-12">
+            <h5> </h5>
+            <hr>
+        </div>
+        <div class="row"></div>
+        <div class="col-md-12" style="padding-bottom: 10px;">
+            <div class="flex  overflow-y-auto overscroll-y-contain  ng-star-inserted">
+                <div class="input-group col-md-12" style="padding-bottom: 10px;">
+                    <textarea type="text" class="form-control" placeholder="Comment" [(ngModel)]="userComment.comments"
+                        aria-label="Recipient's username" aria-describedby="basic-addon2"></textarea>
+                    <div class="input-group" style="padding-top: 10px;">
+                        <button class="btn btn-outline-secondary" (click)="saveDetailComment()" type="button"
+                            style="margin-left: 10px;margin-right: 10px;"><i class="pi pi-send"></i></button>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="flex  overflow-y-auto overscroll-y-contain  ng-star-inserted">
+                <div class="col-md-12" style="max-height: 300px;overflow: auto;">
+                    <div class="Comment" *ngFor=" let item of historyInfo.comments">
+                        <div class="flex flex-col ng-star-inserted">
+                            <hr>
+                            <div class="text-normal" style="word-break: break-word;">
+                                {{item.Comments}}
+                            </div>
+                            <div class="text-sm font-small text-secondary mr-3 ng-star-inserted">
+                                <span style="cursor: pointer; padding-left: 5px; padding-right: 5px;"
+                                    *ngIf="item.attachbtn==true" (click)="attachmentLink(item, 'GRNDETCOMM', false)"><i
+                                        class="pi pi-paperclip"></i></span>
+                                <span>By {{item.UserName}} </span>
+                                <span>On {{item.CreatedDate | date: 'dd/MM/yy hh:mm'}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row"></div>
+        <div class="col-md-12">
+            <p-accordion multiple="true">
+                <p-accordionTab #tab3 header="{{'APP_HISTORY' | translate }}" style="text-decoration: none;">
+                    <p-table #dt3 responsiveLayout="stack" selectionMode="single" [value]="historyInfo.history"
+                        scrollHeight="flex" styleClass="p-datatable-responsive-demo p-datatable-gridlines" dataKey="id">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>{{"APP_FIELD_NAME" | translate}}
+                                </th>
+                                <th>{{"APP_PREV_VALUE" | translate}}
+                                </th>
+                                <th>{{"APP_CURRENT_VALUE" | translate}}
+                                </th>
+                                <th>{{"APP_CHANGED_BY" | translate}}
+                                </th>
+                                <th>{{"APP_CHANGED_ON" | translate}}
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-item>
+                            <tr [pSelectableRow]="det">
+                                <th>{{item.fieldName}}</th>
+                                <th>{{item.prevValue }} </th>
+                                <th>{{item.currentValue }}</th>
+                                <th>{{item.userName}}</th>
+                                <th>{{item.createdDate | date: 'dd/MM/yy hh:mm'}}</th>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </p-accordionTab>
+
+            </p-accordion>
+        </div>
+    </div>
+</p-sidebar>
+<p-overlayPanel #adFilter [style]="{width: '60%'}">
+    <ng-template pTemplate>
+        <div>
+            <div class="p-fluid p-formgrid p-grid" style="text-align: start;" [dir]="lang === 'ar' ? 'rtl' : 'ltr'">
+                <div class="p-field  p-col-6 p-md-4">
+                    <label for="dpFromTransDate">{{"APP_FROMDATE" | translate}}</label>
+                    <p-calendar id="dpFromTransDate" [(ngModel)]="adSearch.fromTransDate" dateFormat="dd-mm-yy"
+                        [showIcon]="true" placeholder="{{ 'APP_FROMDATE' | translate}}"></p-calendar>
+                </div>
+                <div class="p-field  p-col-6 p-md-4">
+                    <label for="dpToTransDate">{{"APP_TODATE" | translate}}</label>
+                    <p-calendar id="dpToTransDate" [(ngModel)]="adSearch.toTransDate" dateFormat="dd-mm-yy"
+                        [showIcon]="true" placeholder="{{ 'APP_TODATE' | translate}}"></p-calendar>
+                </div>
+                <div class="p-field  p-col-6 p-md-4">
+                    <label for="txtTransNo">{{"APP_TRANSNO" | translate}}</label>
+                    <input pInputText id="txtTransNo" placeholder="{{'APP_TRANSNO' | translate}}"
+                        [(ngModel)]="adSearch.transNo">
+                </div>
+
+                <p-divider type="dashed" class="w-full"></p-divider>
+                <div class="p-field p-col-6 p-md-2">
+                    <button pButton pRipple label="{{'APP_SEARCH' | translate}}" icon="pi pi-search"
+                        class="p-button-rounded p-button-success p-mr-2"
+                        (click)="adFilter.hide();searchRecords();"></button>
+                </div>
+                <div class="p-field p-col-6 p-md-2">
+                    <button pButton pRipple label="{{'APP_CLEAR' | translate}}" icon="pi pi-times-circle"
+                        class="p-button-rounded p-button-warning  p-mr-2" (click)="clearSearch()"></button>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</p-overlayPanel>

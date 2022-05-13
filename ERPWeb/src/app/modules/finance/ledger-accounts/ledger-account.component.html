@@ -1,0 +1,120 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+    <p-toolbar styleClass="p-mb-4">
+        <ng-template pTemplate="left">
+            <span class="p-input-icon-right">
+                <i class="pi pi-search"></i>
+                <input *ngIf="activeTabIndex==0" pInputText type="text"
+                    (input)="dt.filterGlobal($event.target.value, 'contains')"
+                    placeholder="{{'APP_SEARCH' | translate}}" />
+                <input *ngIf="activeTabIndex==1" pInputText type="text"
+                    (input)="ledgerAcc.filterGlobal($event.target.value, 'contains')"
+                    placeholder="{{'APP_SEARCH' | translate}}" />
+            </span>
+        </ng-template>
+        <ng-template pTemplate="right">
+            <span class="newbtnpadding" *ngIf="isGranted('SCR_PETTY_CASH_MGMT',actionType.allowAdd)">
+                <button pButton pRipple label="{{'APP_ADD_LEDGER_GROUP' | translate}}" icon="pi pi-plus"
+                    class="p-button-rounded p-button-success p-mr-2" (click)="addLedgerGroup()">
+                </button>
+            </span>
+            <span class="newbtnpadding" *ngIf="isGranted('SCR_PETTY_CASH_MGMT',actionType.allowAdd)">
+                <button pButton pRipple label="{{'APP_ADD_LEDGER_ACCOUNT' | translate}}" icon="pi pi-plus"
+                    class="p-button-rounded p-button-success p-mr-2" (click)="addLedgerAccount()">
+                </button>
+            </span>
+        </ng-template>
+    </p-toolbar>
+            <div style="overflow: auto;">
+                <p-table #dt responsiveLayout="stack" selectionMode="single" [value]="ledgerGroupData" [paginator]="true" [rows]="10" [scrollable]="true" scrollHeight="flex" [responsive]="true" styleClass="p-datatable-responsive-demo p-datatable-gridlines text" 
+                 rowExpandMode="single" (onRowExpand)="getLedgeraccount($event)"  [globalFilterFields]="['accountCode','accountDesc', 'ledgerCodeTo', 'ledgerCodeFrom']" dataKey="id">
+                    <ng-template pTemplate="header"  >
+                        <tr>
+                            <th pSortableColumn="accountCode">{{"APP_CODE" | translate}}
+                                <p-sortIcon field="accountCode"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="accountDesc">{{"APP_NAME" | translate}}
+                                <p-sortIcon field="accountDesc"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="ledgerCodeFrom">{{"LEDGER_CODE_FROM" | translate}}
+                                <p-sortIcon field="ledgerCodeFrom"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="ledgerCodeTo">{{"LEDGER_CODE_To" | translate}}
+                                <p-sortIcon field="ledgerCodeTo"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="action">{{"APP_ACTION" | translate}}
+                                <p-sortIcon field="action"></p-sortIcon>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item let-expanded="expanded">
+                        <tr [pSelectableRow]="item">
+                            
+                            <td><button type="button" pButton pRipple [pRowToggler]="item"  class="p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"  ></button>{{item.accountCode}}</td>
+                            <td>{{item.accountDesc}}</td>
+                            <td>{{item.ledgerCodeFrom}}</td>
+                            <td>{{item.ledgerCodeTo}}</td>
+                            <td>
+                                <span class="pl-2 pr-2">
+                                    <p-contextMenu triggerEvent="click" appendTo="body" [target]="dt3" [model]="gridDetailsContextMenu"></p-contextMenu>
+                                    <button pButton pRipple type="button" icon="pi pi-ellipsis-v" #dt3 (click)="getGridDetailsContextMenu(item)"
+                                        class="p-button-rounded p-button-text"></button>
+                                </span>            
+                                
+                               
+                            </td>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="rowexpansion"  >
+                        <tr>
+                            <td colspan="7">
+                                <div class="p-3">                                    
+                                    <p-table  header="{{'LEDGER_ACCOUNTS' | translate}}" [columns]="cols" [value]="ledgerAccountData" [style]="{width: '70vw'}" dataKey="id" expandableRows="true" 
+                                    rowExpandMode="single" [responsive]="true"  [scrollable]="true" dataKey ="id" scrollHeight="flex"  scrollHeight="250px"
+                                       styleClass="p-datatable-responsive-demo">
+                                        <ng-template pTemplate="header" >
+                                            <tr>
+                                                <th pSortableColumn="ledgerCode">{{"APP_CODE" | translate}}
+                                                    <p-sortIcon field="ledgerCode"></p-sortIcon>
+                                                </th>
+                                                <th pSortableColumn="ledgerDesc">{{"APP_NAME" | translate}}
+                                                    <p-sortIcon field="ledgerDesc"></p-sortIcon>
+                                                </th>
+                                                <th pSortableColumn="remarks">{{"LEDGER_REMARKS" | translate}}
+                                                    <p-sortIcon field="remarks"></p-sortIcon>
+                                                </th>
+                                                <th pSortableColumn="action">{{"APP_ACTION" | translate}}
+                                                    <p-sortIcon field="action"></p-sortIcon>
+                                                </th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-item>
+                                            <tr [pSelectableRow]="item">
+                                                <td>{{item.ledgerCode}}</td>
+                                                <td>{{item.ledgerDesc}}</td>
+                                                <td>{{item.remarks}}</td>
+                                                <td>
+                                                    <span *ngIf="isGranted('SCR_PETTY_CASH_MGMT',actionType.allowEdit)" class="pl-2">
+                                                        <button pButton pRipple type="button" icon="pi pi-pencil"
+                                                            (click)="editLedgerAccount(item)"
+                                                            class="p-button-rounded p-button-success p-button-outlined"></button>
+                                                    </span>
+                                                    <span *ngIf="isGranted('SCR_PETTY_CASH_MGMT',actionType.allowDelete)" class="pl-2">
+                                                        <button pButton pRipple type="button" icon="pi pi-trash"
+                                                            (click)="deleteLedgerAccount(item)"
+                                                            class="p-button-rounded p-button-success p-button-outlined"></button>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+</div>
+
+
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>

@@ -1,0 +1,224 @@
+<div class="flex flex-col flex-auto w-full  min-w-0">
+    <p-toolbar>
+        <ng-template pTemplate="right">
+            <span class="newbtnpadding">
+                <button dir="ltr" pButton type="button" label="{{'APP_SAVE' | translate}}" icon="pi pi-save"
+                    (click)="createOredit()" class="p-button-rounded"></button>
+            </span>
+            <span class="newbtnpadding pl-2  pr-2">
+                <button dir="ltr" pButton type="button" label="{{'APP_CANCEL' | translate}}" icon="pi pi-ban"
+                    class="p-button-rounded p-button-danger" (click)="cancelAddEdit()"></button>
+            </span>
+        </ng-template>
+    </p-toolbar>
+    <p-card>
+
+
+
+        <div class="p-fluid p-formgrid p-grid" [dir]="lang === 'ar' ? 'rtl' : 'ltr'" style="text-align: start;">
+
+            <div class="p-col-4 p-md-3" style="display:none;">
+                <label for="bookNo">{{"VENDOR_QUOTATION_TRANS_NO" | translate}}</label>
+                <input pInputText type="number" disabled id="bookNo" [(ngModel)]="vendorQuotation.transNo"
+                    placeholder="{{ 'VENDOR_QUOTATION_TRANS_NO' | translate}}">
+
+
+
+
+
+            </div>
+            <div class="p-col-4 p-md-3" style="display:none;">
+                <label for="bookDate">{{"VENDOR_QUOTATION_TRANS_DATE" | translate}}</label>
+                <p-calendar id="bookDate" [(ngModel)]="vendorQuotation.transDate" dateFormat="dd-mm-yy"
+                    [showIcon]="true" placeholder="{{ 'VENDOR_QUOTATION_TRANS_DATE' | translate}}"></p-calendar>
+            </div>
+            <div class="p-col-4 p-md-3">
+                <label for="bookNo">{{"QUOTATION_REQUEST_TRANS_NO" | translate}}</label>
+                <input pInputText type="number" id="bookNo" [(ngModel)]="selectTransNo"
+                    (blur)="filterQuotationRequest($event)" placeholder="{{ 'QUOTATION_REQUEST_TRANS_NO' | translate}}">
+
+            </div>
+            <div class="p-col-4 p-md-3" style="display:none;">
+                <label for="bookDate">{{"QUOTATION_REQUEST_TRANS_DATE" | translate}}</label>
+                <p-calendar id="bookDate" [(ngModel)]="vendorQuotation.transDate" dateFormat="dd-mm-yy"
+                    [showIcon]="true" inputId="bookDateInp"
+                    placeholder="{{ 'QUOTATION_REQUEST_TRANS_DATE' | translate}}"></p-calendar>
+            </div>
+            <div class="p-col-4 p-md-3">
+
+
+                <div class="p-field p-col" style="text-align: start;">
+                    <label for="ledgerCode">{{"VENDOR_QUOTATION_VENDOR_NAME" | translate}}</label>
+
+                    <p-autoComplete [(ngModel)]="vendorName" [showEmptyMessage]="true" [suggestions]="vendaorArray"
+                        (completeMethod)="searchVendaorData($event)" field="name" [minLength]="0"
+                        [forceSelection]="true" emptyMessage="{{'APP_NODATA'|translate}}"
+                        placeholder="{{'VENDOR_QUOTATION_VENDOR_NAME' | translate}}">
+                    </p-autoComplete>
+                </div>
+            </div>
+
+
+            <div class="p-col-4 p-md-3">
+                <label for="bookNo">{{"VENDOR_QUOTATION_NO" | translate}}</label>
+                <input pInputText id="bookNo" [(ngModel)]="vendorQuotation.quotationNo"
+                    placeholder="{{ 'VENDOR_QUOTATION_NO' | translate}}">
+            </div>
+            <div class="p-col-4 p-md-3">
+                <label for="bookDate">{{"VENDOR_QUOTATION_DATE" | translate}}</label>
+                <p-calendar id="bookDate" [(ngModel)]="vendorQuotation.quotationdDate" dateFormat="dd-mm-yy"
+                    [showIcon]="true" placeholder="{{ 'VENDOR_QUOTATION_DATE' | translate}}"></p-calendar>
+            </div>
+            <div class="p-col-4 p-md-3">
+                <label for="remarks">{{"VENDOR_QUOTATION_REMARKS" | translate}}</label>
+                <textarea pInputText id="vendorQuotation.remarks"
+                    placeholder="{{'VENDOR_QUOTATION_REMARKS' | translate}}"
+                    [(ngModel)]="vendorQuotation.remarks"></textarea>
+            </div>
+            <div class="p-col-4 p-md-3">
+                <div class="p-field p-col" style="text-align: start;">
+
+                    <div class="p-field p-col" style="text-align: start;">
+                        <label for="VENDOR_QUOTATION_APPROVAL">{{"MARK_AS_SHORTLIST_QUOTATION" | translate}}</label>
+                        <br>
+                        <div>
+                            <p-checkbox [(ngModel)]="vendorQuotation.isApproved" binary="true"></p-checkbox> &nbsp;
+                            &nbsp;
+                            <label for="VENDOR_QUOTATION_APPROVAL" style="font-weight:bolder;font-size: x-small ;"
+                                [ngStyle]="{'color': vendorQuotation.isApproved  ? 'green' : 'red'}">
+                                {{vendorQuotation.isApproved ? ("SHORT_LIST" | translate )
+                                :("UNSHORT_LIST" | translate)}}</label>
+                        </div>
+
+
+                    </div>
+
+
+
+
+                </div>
+            </div>
+            <div class="p-col-4 p-md-3">
+                <label for="budgetDate">{{"FILE_ATTACHMENT" | translate}}</label>
+                <br>
+                <button pTooltip="{{'FILE_ATTACHMENT' | translate}}" pButton pRipple type="button"
+                    icon="pi pi-paperclip" (click)="attachmentLink()" label="File Attachment"
+                    class="p-button-outlined p-button-rounded "></button>
+            </div>
+        </div>
+        <div class="row"></div>
+        <div class="p-col-12 p-md-12">
+            <p-toolbar styleClass="p-mb-4">
+                <ng-template pTemplate="left">
+                    <span class="p-input-icon-left">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" (input)="embDt.filterGlobal($event.target.value, 'contains')"
+                            placeholder="{{'APP_SEARCH' | translate}}" />
+                    </span>
+                    <div style="padding: 5px;width: 200px; font-weight: bolder;">
+                        <span>{{"TOTAL_QUANTITY" | translate}} : {{ vendorQuoTotelQuantity| currency:'
+                            ':'symbol':'0.0-0'}}</span>
+                    </div>
+                    <div style="padding: 5px;width: 200px; font-weight: bolder;">
+                        <span>{{"TOTAL_AMOUNT" | translate}} : {{ vendorQuoTotelAmount| currency:'
+                            ':'symbol':'0.0-0'}}</span>
+                    </div>
+                </ng-template>
+
+            </p-toolbar>
+            <p-table #embDt [value]="vendorQuotation.quotationReqDet" [scrollable]="true" scrollHeight="flex"
+                scrollHeight="30vh" dataKey="id" styleClass="p-datatable-gridlines">
+                <ng-template pTemplate="header">
+                    <tr>
+
+
+
+                        <th pSortableColumn="selectedEmbassy.embassyName">{{"PRODUCT_NAME" | translate}}<p-sortIcon
+                                field="selectedEmbassy.embassyName">
+                            </p-sortIcon>
+                        </th>
+                        <th pSortableColumn="selectedCurrency.currencyName">{{"PRODUCT_UNIT_NAME" | translate}}
+                            <p-sortIcon field="selectedCurrency.currencyName">
+                            </p-sortIcon>
+                        </th>
+                        <th pSortableColumn="amount">{{"PRODUCT_QUANTITY" | translate}}<p-sortIcon field="amount">
+                            </p-sortIcon>
+                        </th>
+                        <th pSortableColumn="remarks">{{"PRODUCT_PRICE" | translate}}<p-sortIcon field="remarks">
+                            </p-sortIcon>
+                        </th>
+                        <th pSortableColumn="remarks">{{"PRODUCT_AMOUNT" | translate}}<p-sortIcon field="remarks">
+                            </p-sortIcon>
+                        </th>
+                        <th pSortableColumn="remarks">{{"PRODUCT_REMARKS" | translate}}<p-sortIcon field="remarks">
+                            </p-sortIcon>
+                        </th>
+
+
+                        <th>{{"APP_ACTION" | translate}}</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item>
+                    <tr>
+                        <td>{{item.productName}}</td>
+                        <td>{{item.unitName}}</td>
+
+                        <td pEditableColumn>
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <p-inputNumber (onBlur)="calculateAmount($event,item)" mode="decimal"
+                                        [maxFractionDigits]="2" placeholder="{{ 'PRODUCT_QUANTITY' | translate}}"
+                                        [(ngModel)]="item.quantity"></p-inputNumber>
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{item.quantity| currency:' ':'symbol':'0.0-0'}}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+                        <td pEditableColumn>
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <p-inputNumber (onBlur)="calculateAmount($event,item)" mode="decimal"
+                                        [maxFractionDigits]="2" placeholder="{{ 'PRODUCT_PRICE' | translate}}"
+                                        [(ngModel)]="item.price"></p-inputNumber>
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{item.price| currency:' ':'symbol':'0.0-0'}}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+
+
+                        <td>{{item.amount}}</td>
+                        <td pEditableColumn>
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <input pInputText type="text" [(ngModel)]="item.remarks" aria-readonly="true">
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{item.remarks}}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+                        <td>
+                            <span style="padding-left: 5px;padding-right: 5px;">
+                                <button pButton pRipple icon="pi pi-trash"
+                                    class="p-button-outlined p-button-rounded p-button-danger"
+                                    (click)="deleteVendorQuotationDet(item)"
+                                    pTooltip="{{'APP_DELETE' | translate}}"></button>
+                            </span>
+                        </td>
+
+
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+    </p-card>
+
+    <p-confirmDialog header="{{'APP_CONFIRMATION' | translate}}" acceptLabel="{{'APP_OK' | translate}}"
+        rejectLabel="{{'APP_CANCEL' | translate}}" icon="pi pi-exclamation-triangle"
+        acceptButtonStyleClass="p-button-rounded p-button-danger" rejectButtonStyleClass="p-button-rounded">
+    </p-confirmDialog>
+</div>

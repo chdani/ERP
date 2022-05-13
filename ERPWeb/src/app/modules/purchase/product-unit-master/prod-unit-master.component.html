@@ -1,0 +1,95 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+  <p-toolbar styleClass="p-mb-4">
+    <ng-template pTemplate="left">
+      <span class="p-input-icon-right">
+        <i class="pi pi-search"></i>
+        <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+          placeholder="{{'APP_SEARCH' | translate}}" />
+      </span>
+      <button pTooltip="{{'APP_SEARCHFILTER' | translate}}" pButton pRipple label="" icon="pi pi-search-plus"
+        class="p-button-secondary" (click)="adFilter.toggle($event)"></button>
+    </ng-template>
+    <ng-template pTemplate="right">
+      <span class="newbtnpadding"><button *ngIf="isGranted('SCR_UNIT_MASTER',actionType.allowAdd)" pTooltip="{{'APP_ADD' | translate}}" pButton pRipple
+          label="{{'APP_ADD' | translate}}" icon="pi pi-plus" class="p-button-rounded p-button-success p-mr-2"
+          (click)="addUser()"></button></span>
+    </ng-template>
+  </p-toolbar>
+  <div style="overflow: auto;">
+    <p-table #dt responsiveLayout="stack" selectionMode="single" [value]="prodUnitMaster"[paginator]="true" [rows]="10" [scrollable]="true" scrollHeight="flex" [responsive]="true" styleClass="p-datatable-responsive-demo p-datatable-gridlines"
+      [globalFilterFields]="['unitCode','unitName','conversionUnit']" dataKey="id">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="unitCode">{{'UNIT_CODE' | translate}}
+            <p-sortIcon field="unitCode"></p-sortIcon>
+          </th>
+          <th pSortableColumn="unitName">{{'UNIT_NAME' | translate}}
+            <p-sortIcon field="unitName"></p-sortIcon>
+          </th>
+          <th pSortableColumn="conversionUnit">{{'CONVERSION_UNIT' | translate}}
+            <p-sortIcon field="conversionUnit"></p-sortIcon>
+          </th>
+
+          <th pSortableColumn="action">{{'APP_ACTION' | translate}}
+            <p-sortIcon field="action"></p-sortIcon>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr [pSelectableRow]="item">
+          <td>{{item.unitCode}}</td>
+          <td>{{item.unitName}}</td>
+          <td>{{item.conversionUnit}}</td>
+
+          <td>
+            <span class="pl-2 pr-2">
+              <p-contextMenu triggerEvent="click" appendTo="body" [target]="dt3" [model]="gridDetailsContextMenu">
+              </p-contextMenu>
+              <button pButton pRipple type="button" icon="pi pi-ellipsis-v" #dt3
+                (click)="getGridDetailsContextMenu(item)" class="p-button-rounded p-button-text"></button>
+            </span>
+
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+  </div>
+  <p-overlayPanel #adFilter [style]="{width: '50%'}">
+    <ng-template pTemplate>
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col-6 p-md-4">
+          <label for="unitCode">{{"UNIT_CODE" | translate}}</label>
+          <input id="unitCode" type="text" [(ngModel)]="prodUnitForm.unitCode" class="p-invalid" pInputText />
+        </div>
+        <div class="p-field p-col-6 p-md-4">
+          <label for="unitName">{{"UNIT_NAME" | translate}}</label>
+          <input id="unitName" type="text" [(ngModel)]="prodUnitForm.unitName" class="p-invalid" pInputText />
+        </div>
+        <div class="p-field p-col-6 p-md-4">
+          <label for="conversionUnit">{{"CONVERSION_UNIT" | translate}}</label>
+          <input id="conversionUnit" type="text" [(ngModel)]="prodUnitForm.conversionUnit" class="p-invalid"
+            pInputText />
+        </div>
+        <p-divider type="dashed" class="w-full"></p-divider>
+        <div class="p-field p-col-6 p-md-3">
+          <button pButton pRipple label="{{'APP_SEARCH' | translate}}" icon="pi pi-search"
+            class="p-button-rounded p-button-success p-mr-2" (click)="adFilter.hide();getSearch();"></button>
+        </div>
+        <div class="p-field p-col-6 p-md-3">
+          <button pButton pRipple label="{{'APP_CLEAR' | translate}}" icon="pi pi-times-circle"
+            class="p-button-rounded p-button-warning  p-mr-2" (click)="clearSearchCriteria()"></button>
+        </div>
+      </div>
+
+    </ng-template>
+  </p-overlayPanel>
+  <p-confirmDialog key="prodUnitDelete" header="{{'APP_DELETE_CONFIRM_HDR' | translate}}"
+    acceptLabel="{{'APP_OK' | translate}}" rejectLabel="{{'APP_CANCEL' | translate}}" icon="pi pi-exclamation-triangle"
+    acceptButtonStyleClass="p-button-rounded p-button-danger" rejectButtonStyleClass="p-button-rounded">
+  </p-confirmDialog>
+  <p-confirmDialog key="prodUnitActiveorInactive" header="{{'APP_ACTIVEORDEACTIVE_HDR' | translate}}"
+    acceptLabel="{{'APP_OK' | translate}}" rejectLabel="{{'APP_CANCEL' | translate}}" icon="pi pi-exclamation-triangle"
+    acceptButtonStyleClass="p-button-rounded p-button-danger" rejectButtonStyleClass="p-button-rounded">
+  </p-confirmDialog>
+</div>

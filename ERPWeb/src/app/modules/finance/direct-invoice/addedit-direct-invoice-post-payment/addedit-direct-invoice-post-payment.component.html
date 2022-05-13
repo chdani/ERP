@@ -1,0 +1,95 @@
+<div class="flex flex-col flex-auto w-full min-w-0  p-2">
+    <div class="top-margin_app_save">
+        <span class="newbtnpadding">
+            <button dir="ltr" pButton type="button" (click)="saveDirectInvoice()" label="{{'APP_SAVE' | translate}}"
+                icon="pi pi-check" class="p-button-rounded"></button>
+        </span>
+        <span class="newbtnpadding pl-2 pr-2">
+            <button dir="ltr" pButton type="button" label="{{'APP_CANCEL' | translate}}" icon="pi pi-times"
+                class="p-button-rounded p-button-danger" (click)="cancelAddEdit()"></button>
+        </span>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="p-fluid p-formgrid" [dir]="lang === 'ar' ? 'rtl' : 'ltr'" style="text-align: start;">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="VendorMasterId">{{"DIRECT_INVOICE_VENDOR" | translate}}</label>
+                            <p-autoComplete [showEmptyMessage]="true" [suggestions]="filteredVendor" (completeMethod)="filterVendorMaster($event)" field="vendorName" [minLength]="0" [forceSelection]="true" emptyMessage="{{'APP_NODATA'|translate}}" (onSelect)="loadInvoices($event)"
+                                [(ngModel)]="selectedVendor" placeholder="{{'DIRECT_INVOICE_VENDOR' | translate}}">
+                            </p-autoComplete>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="ledgerCode">{{"DIRECT_INVOICE_DUE_AMOUNT" | translate}}</label>
+                        <p-autoComplete [(ngModel)]="selectedDirInv" [showEmptyMessage]="true" [suggestions]="filteredInvoice"
+                         (completeMethod)="filterInvoice($event)" field="dueAmount" [minLength]="0" [forceSelection]="true" 
+                         emptyMessage="{{'APP_NODATA'|translate}}" placeholder="{{'DIRECT_INVOICE_DUE_AMOUNT' | translate}}"
+                          (onSelect)="onInvoiceSelection()">
+                        </p-autoComplete>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="Amount">{{"DIRECT_INVOICE_AMOUNT" | translate}}</label>
+
+                            <p-inputNumber mode="decimal" maxlength="18"  [maxFractionDigits]="2" prefix="QAR " id="Amount" [(ngModel)]="directInvoice.Amount " placeholder="{{ 'CASH_TRASNFER_AMOUNT' | translate}}">
+                            </p-inputNumber>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="InvoiceNo">{{"DIRECT_INVOICE_INVNO" | translate}}</label>
+                            <input  id="InvoiceNo" type="text" [(ngModel)]="directInvoice.InvoiceNo " class="p-invalid" pInputText />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="InvoiceDate">{{"DIRECT_INVOICE_INVDATE" | translate}}</label>
+                            <p-calendar  id="InvoiceDate" dateFormat="dd-mm-yy" [showIcon]="true" inputId="transDateInp" [(ngModel)]="directInvoice.InvoiceDate " placeholder="{{ 'CASHMGMT_TRANSDATE' | translate}}"></p-calendar>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="DocumentDate">{{"DIRECT_INVOICE_DOCDATE" | translate}}</label>
+                            <p-calendar id="DocumentDate" dateFormat="dd-mm-yy" [showIcon]="true" inputId="transDateInp" [(ngModel)]="directInvoice.DocumentDate " placeholder="{{ 'CASHMGMT_TRANSDATE' | translate}}"></p-calendar>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="LedgerCode">{{"DIRECT_INVOICE_LEDGER" | translate}}</label>
+                            <input [disabled]="true" id="LedgerCode" type="text" [(ngModel)]="directInvoice.LedgerCode " class="p-invalid" pInputText />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="CostCenterCode">{{"DIRECT_INVOICE_CC" | translate}}</label>
+                            <p-dropdown id="CostCenterCode" [options]="costCenters" [(ngModel)]="directInvoice.CostCenterCode " placeholder="{{ 'DIRECT_INVOICE_CC_REQ' | translate}}" optionLabel="codeDescription" optionValue="code"></p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="p-field p-col" style="text-align: start;">
+                           
+                            <label for="fileattach">{{"FILE_ATTACHMENT" | translate}}</label> 
+                            <br>
+                        <button  pTooltip="{{'FILE_ATTACHMENT' | translate}}" pButton pRipple type="button" icon="pi pi-paperclip" (click)="attachmentLink(directInvoice,'DIRINVPOSTPAY')"
+                           label="File Attachment" class="p-button-outlined p-button-rounded "></button>
+                        
+                        </div>
+                      </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="Remarks">{{"DIRECT_INVOICE_REMARKS" | translate}}</label>
+                            <textarea id="Remarks" [(ngModel)]="directInvoice.Remarks " type="text" rows="2" pInputTextarea></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

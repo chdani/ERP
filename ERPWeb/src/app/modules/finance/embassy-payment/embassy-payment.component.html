@@ -1,0 +1,968 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+    <p-toolbar styleClass="p-mb-4">
+        <ng-template pTemplate="left">
+            <span class="p-input-icon-right">
+                <i class="pi pi-search"></i>
+                <input *ngIf="activeTabIndex==0" pInputText type="text"
+                    (input)="prePayGrid.filterGlobal($event.target.value, 'contains')"
+                    placeholder="{{'APP_SEARCH' | translate}}" />
+                <input *ngIf="activeTabIndex==1" pInputText type="text"
+                    (input)="postPayGrid.filterGlobal($event.target.value, 'contains')"
+                    placeholder="{{'APP_SEARCH' | translate}}" />
+            </span>
+            <button pButton pRipple label="" icon="pi pi-search-plus" class="p-button-secondary p-mr-2"
+                pTooltip="{{'APP_ADV_FILTER' | translate }}" tooltipPosition="bottom"
+                (click)="adFilter.toggle($event)"></button>
+            <!-- <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-mr-2  p-ml-2 p-button-success" pTooltip="XLS" tooltipPosition="bottom"></button> -->
+            <button [disabled]="!this.pdfdisabled" #trg1 type="button" pButton pRipple icon="pi pi-download"
+                (click)="onDataClick()" class="p-button-success p-mr-2  p-ml-2"
+                pTooltip="{{'APP_DOWNLOAD' | translate }}" tooltipPosition="bottom"></button>
+            <p-contextMenu triggerEvent="click" appendTo="body" [target]="trg1" [model]="item"></p-contextMenu>
+            <div class="p-mr-2  p-ml-2 recordstatus" [ngClass]=" allHighlight ? 'highLightSelectedDiv': '' "
+                pTooltip="All">
+                <a (click)="onClickStatus('ALL')">{{"APP_ALL" | translate}}</a>
+            </div>
+            <div class="p-mr-2  p-ml-2 recordstatus appSubmitted"
+                [ngClass]=" pendHighlight ? 'highLightSelectedDiv': '' " pTooltip="{{'APP_PENDING' | translate}}">
+                <a (click)="onClickStatus('SUBMITTED')">{{"APP_PENDING" | translate}}</a>
+            </div>
+            <div class="p-mr-2  p-ml-2 recordstatus appApproved"
+            [ngClass]=" approvedHighlight ? 'highLightSelectedDiv': '' " pTooltip="{{'APP_APPROVED' | translate}}">
+            <a (click)="onClickStatus('APPROVED')">{{"APP_APPROVED" | translate}}</a>
+        </div>
+            <div class="p-mr-2  p-ml-2 recordstatus appReturned" [ngClass]=" retHighlight ? 'highLightSelectedDiv': '' "
+                pTooltip="Return">
+                <a (click)="onClickStatus('RETURNED')">{{"APP_RETURN" | translate}}</a>
+
+            </div>
+        </ng-template>
+        <ng-template pTemplate="right">
+            <p-button dir="ltr" (click)="importExcelDialog()" *ngIf="isImportExcelButtonVisible"
+                class="p-button-rounded p-button-success p-mr-2" icon="pi pi-external-link"
+                label="{{'IMPORT_TO_EXCEL' | translate}}"></p-button>
+
+            <span class="newbtnpadding" *ngIf="isCompGranted('SCR_EMB_PRE_PAYMENTS',actionType.allowEdit)">
+                <button dir="ltr" pButton pRipple label="{{'APP_ADD' | translate}}" icon="pi pi-plus"
+                    class="p-button-rounded p-button-success p-mr-2" (click)="createNewRecrod()"></button></span>
+        </ng-template>
+
+    </p-toolbar>
+
+    <p-tabView (onChange)="switchTab($event)" [(activeIndex)]="activeTabIndex">
+        <!-- <p-tabPanel [disabled]="!this.isCompGranted('SCR_EMB_PRE_PAYMENTS', 'allowView')" header="{{'EMB_PAYMENT_PRE_PAYMENT' | translate}}"> -->
+        <p-tabPanel [disabled]="!this.isCompGranted('SCR_EMB_PRE_PAYMENTS', 'allowView')"
+            header="{{'EMB_PAYMENT_PRE_PAYMENT' | translate}}">
+            <div style="overflow: auto;">
+                <p-table #prePayGrid responsiveLayout="stack" selectionMode="single" [value]="prePayments"
+                    [paginator]="true" [rows]="10" [scrollable]="true" scrollHeight="350px" [responsive]="true"
+                    styleClass="p-datatable-gridlines" (onRowExpand)="showEmbDetails($event)"
+                    [expandedRowKeys]="expandedRows"
+                    [globalFilterFields]="['bookDate','embassy','currencyDesc','currencyRate','bookNo','transNo', 'currencyDesc']"
+                    dataKey="id">
+
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="flex-basis:3%"></th>
+                            <th style="flex-basis:15%" pSortableColumn="transNo">{{"EMB_PAYMENT_TRANS_NO" | translate}}
+                                <p-sortIcon field="transNo"></p-sortIcon>
+                            </th>
+                            <th style="flex-basis:15%" pSortableColumn="embassy">{{"EMB_PAYMENT_EMB_NAME" |
+                                translate}}
+                                <p-sortIcon field="embassy"></p-sortIcon>
+                            </th>
+                            <th style="flex-basis:15%" pSortableColumn="currencyDesc">{{"EMB_PAYMENT_CURRENCY" |
+                                translate}}
+                                <p-sortIcon field="currencyDesc"></p-sortIcon>
+                            </th>
+                            <th style="flex-basis:15%" pSortableColumn="currencyRate">{{"EMB_PAYMENT_CURCY_RATE" |
+                                translate}}
+                                <p-sortIcon field="currencyRate"></p-sortIcon>
+                            </th>
+                            <th style="flex-basis:15%" pSortableColumn="bookNo">{{"EMB_PAYMENT_BOOK_NO" | translate}}
+                                <p-sortIcon field="bookNo"></p-sortIcon>
+                            </th>
+                            <th style="flex-basis:15%" pSortableColumn="bookDate">{{"EMB_PAYMENT_BOOK_DATE" |
+                                translate}}
+                                <p-sortIcon field="bookDate"></p-sortIcon>
+                            </th>
+                            <th style="flex-basis:5%" pSortableColumn="action">{{"APP_ACTION" | translate}}
+                                <p-sortIcon field="action"></p-sortIcon>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item let-expanded="expanded">
+                        <tr [pSelectableRow]="item"
+                            [ngClass]="{'appSubmitted': item.status === 'SUBMITTED','appReturned': item.status === 'RETURNED', 'appApproved': item.status === 'APPROVED'}">
+                            <td style="flex-basis: 3%">
+                                <button type="button" pButton pRipple [pRowToggler]="item"
+                                    class="p-button-text p-button-rounded p-button-plain"
+                                    [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                            </td>
+                            <td style="flex-basis:15%">{{item.transNo}}</td>
+                            <td style="flex-basis:15%">{{item.embassy}}</td>
+                            <td style="flex-basis:15%">{{item.currencyDesc}}</td>
+                            <td style="flex-basis:15%">{{item.currencyRate}}</td>
+                            <td style="flex-basis:15%">{{item.bookNo}}</td>
+                            <td style="flex-basis:15%">{{item.bookDate | date:'dd-MM-yyyy' }}</td>
+
+
+                            <td style="flex-basis: 5%">
+                                <span class="p-column-title">{{"APP_ACTION" | translate}}</span>
+                                <span class="pl-2 pr-2">
+                                    <p-contextMenu triggerEvent="click" appendTo="body" [target]="trg4"
+                                        [model]="gridContextMenu"></p-contextMenu>
+                                    <button pButton pRipple type="button" icon="pi pi-ellipsis-v" #trg4
+                                        (click)="getGridContextMenu(item)"
+                                        class="p-button-rounded p-button-text"></button>
+                                </span>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="rowexpansion" let-item>
+                        <tr>
+                            <td colspan="5">
+                                <div class="card w-full">
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <p-table #embDt [value]="item.embDetail" expandableRows="true"
+                                                [scrollable]="true" scrollHeight="flex" scrollHeight="30vh" dataKey="id"
+                                                styleClass="p-datatable-gridlines">
+                                                <ng-template pTemplate="header">
+                        <tr>
+                            <th>{{"EMB_PAYMENT_CLEARANCEORDNO" | translate}}
+                            </th>
+                            <th>{{"EMB_PAYMENT_CLEARANCEORDDATE" | translate}}
+                            </th>
+                            <th>{{"EMB_PAYMENT_AMOUNT" | translate}}
+                            </th>
+                            <th>{{"EMB_PAYMENT_REMARKS" | translate}}
+                            </th>
+                            <th>{{"APP_ACTION" | translate}}</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-emb>
+                        <tr>
+                            <td>{{emb.clearanceOrdNo}}</td>
+                            <td>{{emb.clearanceOrdDate | date:'dd-MM-yyyy' }}</td>
+                            <td>{{emb.amount| currency:' ':'symbol':'0.0-0'}}</td>
+                            <td>{{emb.remarks}}</td>
+                            <td>
+                                <span class="pl-2 pr-2">
+                                    <p-contextMenu triggerEvent="click" appendTo="body" [target]="trg4"
+                                        [model]="gridDaetailsContextMenu"></p-contextMenu>
+                                    <button pButton pRipple type="button" icon="pi pi-ellipsis-v" #trg4
+                                        (click)="getGridDetailsContextMenu(emb)"
+                                        class="p-button-rounded p-button-text"></button>
+                                </span>
+                            </td>
+
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+</div>
+</div>
+</td>
+</tr>
+</ng-template>
+</p-table>
+</div>
+</p-tabPanel>
+<p-tabPanel [disabled]="!this.isCompGranted('SCR_EMB_POST_PAYMENTS', 'allowView')"
+    header="{{'EMB_PAYMENT_POST_PAYMENT' | translate}}">
+    <div style="overflow: auto;">
+        <p-table #postPayGrid responsiveLayout="stack" selectionMode="single" [value]="postPayments"
+            styleClass="p-datatable-gridlines" [paginator]="true" [rows]="10" [scrollable]="true" scrollHeight="350px"
+            [responsive]="true"
+            [globalFilterFields]="['transNo','embassyName','paymentDate', 'bookNo','ledger','amount','currencyAmount','currencyDesc']"
+            dataKey="id">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="flex-basis:10%" pSortableColumn="transNo">{{"EMB_PAYMENT_TRANS_NO" | translate}}
+                        <p-sortIcon field="transNo"></p-sortIcon>
+                    </th>
+                    <th style="flex-basis:25%" pSortableColumn="embassyName">{{"EMB_PAYMENT_EMB_NAME" | translate}}
+                        <p-sortIcon field="embassyName"></p-sortIcon>
+                    </th>
+                    <th style="flex-basis:13%" pSortableColumn="paymentDate">{{"EMB_PAYMENT_PAYDATE" | translate}}
+                        <p-sortIcon field="paymentDate"></p-sortIcon>
+                    </th>
+                    <th style="flex-basis:12%" pSortableColumn="bookNo">{{"EMB_PAYMENT_BOOK_NO" | translate}}
+                        <p-sortIcon field="bookNo"></p-sortIcon>
+                    </th>
+                    <th style="flex-basis:12%" pSortableColumn="ledger">{{"CASHMGMT_LEDGER" | translate}}
+                        <p-sortIcon field="ledger"></p-sortIcon>
+                    </th>
+                    <th style="flex-basis:10%" pSortableColumn="amount">
+                        <div style="text-align: right; width: 100%">{{"EMB_PAYMENT_AMOUNT" | translate}}
+                            <p-sortIcon field="amount"></p-sortIcon>
+                        </div>
+                    </th>
+                    <th style="flex-basis:15%" pSortableColumn="currencyRate">
+                        <div style="text-align: right; width: 100%">{{"EMB_PAYMENT_CURCY_RATE" | translate}}
+                            <p-sortIcon field="currencyRate"></p-sortIcon>
+                        </div>
+                    </th>
+                    <th style="flex-basis:15%" pSortableColumn="currencyAmount">
+                        <div style="text-align: right; width: 100%">{{"EMB_PAYMENT_CURCY_AMOUNT" | translate}}
+                            <p-sortIcon field="currencyAmount"></p-sortIcon>
+                        </div>
+                    </th>
+                    <th style="flex-basis:15%" pSortableColumn="currencyDesc">{{"EMB_PAYMENT_CURRENCY" | translate}}
+                        <p-sortIcon field="currencyDesc"></p-sortIcon>
+                    </th>
+                    <th style="flex-basis:10%" pSortableColumn="action">{{"APP_ACTION" | translate}}
+                        <p-sortIcon field="action"></p-sortIcon>
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+                <tr [pSelectableRow]="item"
+                    [ngClass]="{'appSubmitted': item.status === 'SUBMITTED','appReturned': item.status === 'RETURNED', 'appApproved': item.status === 'APPROVED'}">
+                    <td style="flex-basis:10%">{{item.transNo}}</td>
+                    <td style="flex-basis:25%">{{item.embassyName}}</td>
+                    <td style="flex-basis:13%">{{item.paymentDate | date:'dd-MM-yyyy' }}</td>
+                    <td style="flex-basis:12%">{{item.bookNo}}</td>
+                    <td style="flex-basis:12%">{{item.ledger}}</td>
+                    <td style="flex-basis:10%">
+                        <div style="text-align: right; width: 100%">
+                            {{item.amount | currency:' ':'symbol':'0.0-0'}}
+                        </div>
+                    </td>
+                    <td style="flex-basis:15%">
+                        <div style="text-align: right; width: 100%">
+                            {{item.currencyRate | currency:' ':'symbol':'0.00'}}
+                        </div>
+                    </td>
+                    <td style="flex-basis:15%">
+                        <div style="text-align: right; width: 100%">
+                            {{item.currencyAmount | currency:' ':'symbol':'0.0-0'}}
+                        </div>
+                    </td>
+                    <td style="flex-basis:15%"> {{item.currencyDesc}}</td>
+                    <td style="flex-basis:10%">
+                        <span class="pl-2 pr-2">
+                            <p-contextMenu triggerEvent="click" appendTo="body" [target]="trg4"
+                                [model]="postgridDaetailsContextMenu"></p-contextMenu>
+                            <button pButton pRipple type="button" icon="pi pi-ellipsis-v" #trg4
+                                (click)="postGridDetailsContextMenu(item)"
+                                class="p-button-rounded p-button-text"></button>
+                        </span>
+
+                    </td>
+                    <!-- <td style="flex-basis:15%">
+                                <span class="pl-2">
+                                    <button pButton pRipple type="button" icon="pi pi-print"
+                                        (click)="printPostPayment(item)"
+                                        class="p-button-rounded p-button-success p-button-outlined"></button>
+                                </span>
+                                <span *ngIf="isGranted('SCR_EMB_POST_PAYMENTS',actionType.allowEdit)" class="pl-2">
+                                    <button pButton pRipple type="button" icon="pi pi-pencil"
+                                        (click)="editPostPayment(item)"
+                                        class="p-button-rounded p-button-success p-button-outlined"></button>
+                                </span>
+                                <span *ngIf="isGranted('SCR_EMB_POST_PAYMENTS',actionType.allowDelete)" class="pl-2">
+                                    <button pButton pRipple type="button" icon="pi pi-trash"
+                                        (click)="deletePostPayment(item)"
+                                        class="p-button-rounded p-button-success p-button-outlined"></button>
+                                </span>
+                            </td> -->
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</p-tabPanel>
+</p-tabView>
+
+</div>
+<p-sidebar [(visible)]="visibleSidebar1" position="right" (onHide)="sidenavClosed()">
+    <div class="" *ngIf="prePayHdrHis">
+        <div class="col-md-12">
+            <h5> {{"BUDGT_TRANS_HISTORY_TITLE" | translate }}: {{prePayHdrHis.selectedItem.transNo }}</h5>
+            <hr>
+        </div>
+        <div class="row"></div>
+        <div class="col-md-12" style="padding-bottom: 10px;">
+            <div class="flex  overflow-y-auto overscroll-y-contain  ng-star-inserted">
+                <div class="input-group col-md-12" style="padding-bottom: 10px;">
+                    <textarea type="text" class="form-control" placeholder="Comment" [(ngModel)]="userComment.comments"
+                        aria-label="Recipient's username" aria-describedby="basic-addon2"></textarea>
+                    <div class="input-group" style="padding-top: 10px;">
+                        <button class="btn btn-outline-secondary" (click)="attachmentLink(userComment,'EMBHDRCOMMENTS')"
+                            type="button"><i class="pi pi-paperclip"></i></button>
+                        <button class="btn btn-outline-secondary" (click)="saveEmbPreComment()" type="button"
+                            style="margin-left: 10px;margin-right: 10px;"><i class="pi pi-send"></i></button>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="flex  overflow-y-auto overscroll-y-contain  ng-star-inserted">
+                <div class="col-md-12" style="max-height: 300px;overflow: auto;">
+                    <div class="Comment" *ngFor=" let item of prePayHdrHis.comments">
+                        <div class="flex flex-col ng-star-inserted">
+                            <hr>
+                            <div class="text-normal" style="word-break: break-word;">
+                                {{item.Comments}}
+                            </div>
+                            <div class="text-sm font-small text-secondary mr-3 ng-star-inserted">
+                                <span style="cursor: pointer; padding-left: 5px; padding-right: 5px;"
+                                    *ngIf="item.attachbtn==true" (click)="attachmentLink(item, 'EMBHDRCOMMENTS')"><i
+                                        class="pi pi-paperclip"></i></span>
+                                <span>By {{item.UserName}} </span>
+                                <span>On {{item.CreatedDate | date: 'dd/MM/yy hh:mm'}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row"></div>
+        <div class="col-md-12">
+            <p-accordion multiple="true" (onOpen)="onHistoryExpandClick($event)">
+                <p-accordionTab #tab header="{{'APP_DOCUMENTS' | translate}}" style="text-decoration: none;">
+                    <p-table #dt responsiveLayout="stack" [value]="prePayHdrHis.appDocument" scrollHeight="flex"
+                        styleClass="p-datatable-responsive-demo p-datatable-gridlines" dataKey="id">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>{{"FILE_NAME" | translate}}
+                                </th>
+                                <th>{{"APP_UPLOADED_BY" | translate}}
+                                </th>
+                                <th>{{"APP_UPLOADED_DATE" | translate}}
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-item>
+                            <tr [pSelectableRow]="det">
+                                <th>
+                                    <div class="fileDiv" (click)="downloadFile(item.id)">{{item.fileName}}</div>
+                                </th>
+                                <th>{{item.userName}}</th>
+                                <th>{{item.createdDate | date: 'dd/MM/yy hh:mm'}}</th>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </p-accordionTab>
+                <p-accordionTab header="{{'APP_STATUS_HISTORY' | translate }}">
+                    <div class="flex flex-col-reverse  overflow-y-auto overscroll-y-contain  ng-star-inserted">
+                        <p-table #dt responsiveLayout="stack" selectionMode="single"
+                            [value]="prePayHdrHis.historyStatus" scrollHeight="flex"
+                            styleClass="p-datatable-responsive-demo p-datatable-gridlines" dataKey="id">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>{{"APP_STATUS" | translate}}
+                                    </th>
+                                    <th>{{"BUDGET_REMARKS" | translate}}
+                                    </th>
+                                    <th>{{"APP_CHANGED_BY" | translate}}
+                                    </th>
+                                    <th>{{"APP_CHANGED_ON" | translate}}
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-item>
+                                <tr [pSelectableRow]="det">
+                                    <th>{{item.Status}}</th>
+                                    <th>{{item.Comments}}</th>
+                                    <th>{{item.UserName}}</th>
+                                    <th>{{item.CreatedDate | date: 'dd/MM/yy hh:mm'}}</th>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </p-accordionTab>
+                <p-accordionTab #tab header="{{'APP_HISTORY' | translate }}" style="text-decoration: none;">
+                    <p-table #dt responsiveLayout="stack" selectionMode="single" [value]="prePayHdrHis.history"
+                        scrollHeight="flex" styleClass="p-datatable-responsive-demo p-datatable-gridlines" dataKey="id">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>{{"APP_FIELD_NAME" | translate}}
+                                </th>
+                                <th>{{"APP_PREV_VALUE" | translate}}
+                                </th>
+                                <th>{{"APP_CURRENT_VALUE" | translate}}
+                                </th>
+                                <th>{{"APP_CHANGED_BY" | translate}}
+                                </th>
+                                <th>{{"APP_CHANGED_ON" | translate}}
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-item>
+                            <tr [pSelectableRow]="det">
+                                <th>{{item.fieldName}}</th>
+                                <th>{{item.prevValue }} </th>
+                                <th>{{item.currentValue }}</th>
+                                <th>{{item.userName}}</th>
+                                <th>{{item.createdDate | date: 'dd/MM/yy hh:mm'}}</th>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </p-accordionTab>
+            </p-accordion>
+        </div>
+    </div>
+</p-sidebar>
+<p-sidebar [(visible)]="visibleSidebar2" position="right" (onHide)="sidenavClosed()">
+    <div class="" *ngIf="prePayEmbDetHis">
+        <div class="col-md-12">
+            <h5> {{"BUDGT_TRANS_HISTORY" | translate }}</h5>
+            <hr>
+        </div>
+        <div class="row"></div>
+        <div class="col-md-12" style="padding-bottom: 10px;">
+            <div class="flex  overflow-y-auto overscroll-y-contain  ng-star-inserted">
+                <div class="input-group col-md-12" style="padding-bottom: 10px;">
+                    <textarea type="text" class="form-control" placeholder="Comment" [(ngModel)]="userComment2.comments"
+                        aria-label="Recipient's username" aria-describedby="basic-addon2"></textarea>
+                    <div class="input-group" style="padding-top: 10px;">
+                        <button class="btn btn-outline-secondary"
+                            (click)="attachmentLink(userComment2,'EMBDETCOMMENTS')" type="button"><i
+                                class="pi pi-paperclip"></i></button>
+                        <button class="btn btn-outline-secondary" (click)="savePrePayEmbDetailsComment()" type="button"
+                            style="margin-left: 10px;margin-right: 10px;"><i class="pi pi-send"></i></button>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="flex  overflow-y-auto overscroll-y-contain  ng-star-inserted">
+                <div class="col-md-12" style="max-height: 300px;overflow: auto;">
+                    <div class="Comment" *ngFor=" let item of prePayEmbDetHis.comments">
+                        <div class="flex flex-col ng-star-inserted">
+                            <hr>
+                            <div class="text-normal" style="word-break: break-word;">
+                                {{item.Comments}}
+                            </div>
+                            <div class="text-sm font-small text-secondary mr-3 ng-star-inserted">
+                                <span style="cursor: pointer; padding-left: 5px; padding-right: 5px;"
+                                    *ngIf="item.attachbtn==true" (click)="attachmentLink(item, 'EMBHDRCOMMENTS')"><i
+                                        class="pi pi-paperclip"></i></span>
+                                <span>By {{item.UserName}} </span>
+                                <span>On {{item.CreatedDate | date: 'dd/MM/yy hh:mm'}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row"></div>
+        <div class="col-md-12">
+            <p-accordion multiple="true" (onOpen)="onHistoryExpandClick2($event)">
+                <p-accordionTab #tab header="{{'APP_DOCUMENTS' | translate}}" style="text-decoration: none;">
+                    <p-table #dt responsiveLayout="stack" [value]="prePayEmbDetHis.appDocument" scrollHeight="flex"
+                        styleClass="p-datatable-responsive-demo p-datatable-gridlines" dataKey="id">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>{{"FILE_NAME" | translate}}
+                                </th>
+                                <th>{{"APP_UPLOADED_BY" | translate}}
+                                </th>
+                                <th>{{"APP_UPLOADED_DATE" | translate}}
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-item>
+                            <tr [pSelectableRow]="det">
+                                <th>
+                                    <div class="fileDiv" (click)="downloadFile(item.id)">{{item.fileName}}</div>
+                                </th>
+                                <th>{{item.userName}}</th>
+                                <th>{{item.createdDate | date: 'dd/MM/yy hh:mm'}}</th>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </p-accordionTab>
+                <p-accordionTab #tab header="{{'APP_HISTORY' | translate }}" style="text-decoration: none;">
+                    <p-table #dt responsiveLayout="stack" selectionMode="single" [value]="prePayEmbDetHis.history"
+                        scrollHeight="flex" styleClass="p-datatable-responsive-demo p-datatable-gridlines" dataKey="id">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>{{"APP_FIELD_NAME" | translate}}
+                                </th>
+                                <th>{{"APP_PREV_VALUE" | translate}}
+                                </th>
+                                <th>{{"APP_CURRENT_VALUE" | translate}}
+                                </th>
+                                <th>{{"APP_CHANGED_BY" | translate}}
+                                </th>
+                                <th>{{"APP_CHANGED_ON" | translate}}
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-item>
+                            <tr [pSelectableRow]="det">
+                                <th>{{item.fieldName}}</th>
+                                <th>{{item.prevValue }} </th>
+                                <th>{{item.currentValue }}</th>
+                                <th>{{item.userName}}</th>
+                                <th>{{item.createdDate | date: 'dd/MM/yy hh:mm'}}</th>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </p-accordionTab>
+            </p-accordion>
+        </div>
+    </div>
+</p-sidebar>
+<p-sidebar [(visible)]="visibleSidebar3" position="right" (onHide)="sidenavClosed()">
+    <div class="" *ngIf="prePayInvDetHis">
+        <div class="col-md-12">
+            <h5> {{"BUDGT_TRANS_HISTORY" | translate }}</h5>
+            <hr>
+        </div>
+        <div class="row"></div>
+        <div class="col-md-12" style="padding-bottom: 10px;">
+            <div class="flex  overflow-y-auto overscroll-y-contain  ng-star-inserted">
+                <div class="input-group col-md-12" style="padding-bottom: 10px;">
+                    <textarea type="text" class="form-control" placeholder="Comment" [(ngModel)]="userComment3.comments"
+                        aria-label="Recipient's username" aria-describedby="basic-addon2"></textarea>
+                    <div class="input-group" style="padding-top: 10px;">
+                        <button class="btn btn-outline-secondary"
+                            (click)="attachmentLink(userComment3,'EMBINVDETCOMMENTS')" type="button"><i
+                                class="pi pi-paperclip"></i></button>
+                        <button class="btn btn-outline-secondary" (click)="saveEmbPreInvDetailsComment()" type="button"
+                            style="margin-left: 10px;margin-right: 10px;"><i class="pi pi-send"></i></button>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="flex  overflow-y-auto overscroll-y-contain  ng-star-inserted">
+                <div class="col-md-12" style="max-height: 300px;overflow: auto;">
+                    <div class="Comment" *ngFor=" let item of prePayInvDetHis.comments">
+                        <div class="flex flex-col ng-star-inserted">
+                            <hr>
+                            <div class="text-normal" style="word-break: break-word;">
+                                {{item.Comments}}
+                            </div>
+                            <div class="text-sm font-small text-secondary mr-3 ng-star-inserted">
+                                <span style="cursor: pointer; padding-left: 5px; padding-right: 5px;"
+                                    *ngIf="item.attachbtn==true" (click)="attachmentLink(item, 'EMBHDRCOMMENTS')"><i
+                                        class="pi pi-paperclip"></i></span>
+                                <span>By {{item.UserName}} </span>
+                                <span>On {{item.CreatedDate | date: 'dd/MM/yy hh:mm'}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row"></div>
+        <div class="col-md-12">
+            <p-accordion multiple="true" (onOpen)="onHistoryExpandClick3($event)">
+                <p-accordionTab header="{{'APP_DOCUMENTS' | translate}}" style="text-decoration: none;">
+                    <p-table #dt responsiveLayout="stack" [value]="prePayInvDetHis.appDocument" scrollHeight="flex"
+                        styleClass="p-datatable-responsive-demo p-datatable-gridlines" dataKey="id">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>{{"FILE_NAME" | translate}}
+                                </th>
+                                <th>{{"APP_UPLOADED_BY" | translate}}
+                                </th>
+                                <th>{{"APP_UPLOADED_DATE" | translate}}
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-item>
+                            <tr [pSelectableRow]="det">
+                                <th>
+                                    <div class="fileDiv" (click)="downloadFile(item.id)">{{item.fileName}}</div>
+                                </th>
+                                <th>{{item.userName}}</th>
+                                <th>{{item.createdDate | date: 'dd/MM/yy hh:mm'}}</th>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </p-accordionTab>
+                <p-accordionTab header="{{'APP_HISTORY' | translate }}" style="text-decoration: none;">
+                    <p-table #dt responsiveLayout="stack" selectionMode="single" [value]="prePayInvDetHis.history"
+                        scrollHeight="flex" styleClass="p-datatable-responsive-demo p-datatable-gridlines" dataKey="id">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>{{"APP_FIELD_NAME" | translate}}
+                                </th>
+                                <th>{{"APP_PREV_VALUE" | translate}}
+                                </th>
+                                <th>{{"APP_CURRENT_VALUE" | translate}}
+                                </th>
+                                <th>{{"APP_CHANGED_BY" | translate}}
+                                </th>
+                                <th>{{"APP_CHANGED_ON" | translate}}
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-item>
+                            <tr [pSelectableRow]="det">
+                                <th>{{item.fieldName}}</th>
+                                <th>{{item.prevValue }} </th>
+                                <th>{{item.currentValue }}</th>
+                                <th>{{item.userName}}</th>
+                                <th>{{item.createdDate | date: 'dd/MM/yy hh:mm'}}</th>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </p-accordionTab>
+            </p-accordion>
+        </div>
+    </div>
+</p-sidebar>
+<p-confirmDialog header="{{'APP_CONFIRMATION' | translate}}" icon="pi pi-exclamation-triangle"
+    acceptLabel="{{'APP_OK' | translate}}" rejectLabel="{{'APP_CANCEL' | translate}}" icon="pi pi-exclamation-triangle"
+    acceptButtonStyleClass="p-button-rounded p-button-danger" rejectButtonStyleClass="p-button-rounded">
+</p-confirmDialog>
+<p-dialog [(header)]="approveReturnHdr" [(visible)]="showApproveReturn" [modal]="true" [style]="{width: '50vw'}"
+    [draggable]="false" [resizable]="false">
+    <div class="p-fluid p-formgrid" style="text-align: start;">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="Remarks">{{"DIRECT_INVOICE_REMARKS" | translate}}</label>
+                    <textarea id="Remarks" [(ngModel)]="approveRetRemarks " type="text" rows="3"
+                        pInputTextarea></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <p-button *ngIf="showReturnButton" icon="pi pi-thumbs-down" (click)="processApproveOrReject('RETURNED')"
+            label="{{'APP_RETURN'|translate}}" styleClass="p-element p-button-rounded p-button p-component"></p-button>
+        <p-button *ngIf="showApproveButton" icon="pi pi-thumbs-up" (click)="processApproveOrReject('APPROVED')"
+            label="{{'APP_APPROVE'|translate}}" styleClass="p-element p-button-rounded p-button p-component"></p-button>
+        <p-button icon="pi pi-ban" (click)="showApproveReturn = false" label="{{'APP_CANCEL'|translate}}"
+            styleClass="p-element p-button-rounded p-button-danger p-button p-component"></p-button>
+    </ng-template>
+</p-dialog>
+<p-overlayPanel #adFilter [style]="{width: '60%'}">
+    <ng-template pTemplate>
+        <div *ngIf="activeTabIndex == 0">
+            <div class="p-fluid p-formgrid p-grid" style="text-align: start;" [dir]="lang === 'ar' ? 'rtl' : 'ltr'">
+                <div class="p-field  p-col-6 p-md-4">
+                    <label for="fromBookDate">{{"APP_FROMDATE" | translate}}</label>
+                    <p-calendar id="fromBookDate" [(ngModel)]="prePaySearch.fromBookDate" dateFormat="dd-mm-yy"
+                        [showIcon]="true" inputId="transFromDateInp" placeholder="{{ 'APP_FROMDATE' | translate}}">
+                    </p-calendar>
+                </div>
+                <div class="p-field  p-col-6 p-md-4">
+                    <label for="toBookDate">{{"APP_TODATE" | translate}}</label>
+                    <p-calendar id="toBookDate" [(ngModel)]="prePaySearch.toBookDate" dateFormat="dd-mm-yy"
+                        [showIcon]="true" inputId="transToDateInp" placeholder="{{ 'APP_TODATE' | translate}}">
+                    </p-calendar>
+                </div>
+                <div class="p-field  p-col-6 p-md-4">
+                    <label for="bookNo">{{"EMB_PAYMENT_BOOK_NO" | translate}}</label>
+                    <input pInputText id="bookNo" [(ngModel)]="prePaySearch.bookNo"
+                        placeholder="{{ 'EMB_PAYMENT_BOOK_NO' | translate}}">
+                </div>
+                <div class="p-field p-col-6 p-md-3">
+                    <label for="embassyName">{{"EMB_PAYMENT_EMB_NAME" | translate}}</label>
+                    <p-multiSelect dir="ltr" id="embassyName" [filter]="true" filterBy="embassyName"
+                        [options]="embassies" [(ngModel)]="prePaySearch.embassyId " optionLabel="embassyName"
+                        placeholder="{{ 'EMB_PAYMENT_EMB_NAME' | translate}}" optionValue="id"></p-multiSelect>
+                </div>
+                <div class="p-field  p-col-6 p-md-3">
+                    <label for="amount">{{"EMB_PAYMENT_AMOUNT" | translate}}</label>
+                    <p-inputNumber mode="decimal" [maxFractionDigits]="2" id="amount"
+                        placeholder="{{ 'EMB_PAYMENT_AMOUNT' | translate}}" [(ngModel)]="prePaySearch.amount">
+                    </p-inputNumber>
+                </div>
+                <div class="p-field  p-col-6 p-md-3">
+                    <label for="dueAmount">{{"EMB_PAYMENT_DUE_AMOUNT" | translate}}</label>
+                    <p-inputNumber mode="decimal" [maxFractionDigits]="2" id="dueAmount"
+                        placeholder="{{ 'EMB_PAYMENT_DUE_AMOUNT' | translate}}" [(ngModel)]="prePaySearch.dueAmount">
+                    </p-inputNumber>
+                </div>
+                <div class="p-field  p-col-6 p-md-3">
+                    <label for="budgetAmount">{{"APP_STATUS" | translate}}</label>
+                    <p-multiSelect [options]="statuses" [(ngModel)]="prePaySearch.status"
+                        placeholder="{{ 'APP_STATUS' | translate}}" optionValue="code" optionLabel="description">
+                    </p-multiSelect>
+                </div>
+                <div class="p-field p-col-6 p-md-9">
+                </div>
+                <p-divider type="dashed" class="w-full"></p-divider>
+                <div class="p-field p-col-6 p-md-2">
+                    <button pButton pRipple label="{{'APP_SEARCH' | translate}}" icon="pi pi-search"
+                        class="p-button-rounded p-button-success p-mr-2"
+                        (click)="adFilter.hide();getPrePayments();"></button>
+                </div>
+                <div class="p-field p-col-6 p-md-2">
+                    <button pButton pRipple label="{{'APP_CLEAR' | translate}}" icon="pi pi-times-circle"
+                        class="p-button-rounded p-button-warning  p-mr-2" (click)="clearPrePaymentSearch()"></button>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="activeTabIndex == 1">
+            <div class="p-fluid p-formgrid p-grid">
+                <div class="p-field  p-col-6 p-md-3">
+                    <label for="fromDate">{{"APP_FROMDATE" | translate}}</label>
+                    <p-calendar id="fromDate" [(ngModel)]="postPaySearch.fromDate" dateFormat="dd-mm-yy"
+                        [showIcon]="true" inputId="transFromDateInp" placeholder="{{ 'APP_FROMDATE' | translate}}">
+                    </p-calendar>
+                </div>
+                <div class="p-field  p-col-6 p-md-3">
+                    <label for="toDate">{{"APP_TODATE" | translate}}</label>
+                    <p-calendar id="toDate" [(ngModel)]="postPaySearch.toDate" dateFormat="dd-mm-yy" [showIcon]="true"
+                        inputId="transToDateInp" placeholder="{{ 'APP_TODATE' | translate}}">
+                    </p-calendar>
+                </div>
+                <div class="p-field p-col-6 p-md-3">
+                    <label for="ledgerCode">{{"CASHMGMT_LEDGER" | translate}}</label>
+                    <p-multiSelect [options]="ledgers" [(ngModel)]="postPaySearch.LedgerCode"
+                        placeholder="{{'DIRECT_INVOICE_LEDGER' | translate}}" optionLabel="ledgerDescCode"
+                        optionValue="ledgerCode"></p-multiSelect>
+                </div>
+                <div class="p-field  p-col-6 p-md-3">
+                    <label for="bookNo">{{"EMB_PAYMENT_BOOK_NO" | translate}}</label>
+                    <input pInputText id="bookNo" [(ngModel)]="postPaySearch.bookNo"
+                        placeholder="{{ 'EMB_PAYMENT_BOOK_NO' | translate}}">
+                </div>
+                <div class="p-field p-col-6 p-md-3">
+                    <label for="embassyName">{{"EMB_PAYMENT_EMB_NAME" | translate}}</label>
+                    <p-multiSelect id="embassyName" [filter]="true" filterBy="embassyName" [options]="embassies"
+                        placeholder="{{'EMB_PAYMENT_EMB_NAME' | translate}}" [(ngModel)]="postPaySearch.embassyId "
+                        optionLabel="embassyName" optionValue="id"></p-multiSelect>
+                </div>
+                <div class="p-field  p-col-6 p-md-3">
+                    <label for="amount">{{"EMB_PAYMENT_AMOUNT" | translate}}</label>
+                    <p-inputNumber mode="decimal" [maxFractionDigits]="2" id="amount"
+                        placeholder="{{ 'EMB_PAYMENT_AMOUNT' | translate}}" [(ngModel)]="postPaySearch.amount">
+                    </p-inputNumber>
+                </div>
+                <div class="p-field  p-col-6 p-md-3">
+                    <label for="currencyAmount">{{"EMB_PAYMENT_CURCY_AMOUNT" | translate}}</label>
+                    <p-inputNumber mode="decimal" [maxFractionDigits]="2" id="currencyAmount"
+                        placeholder="{{ 'EMB_PAYMENT_CURCY_AMOUNT' | translate}}"
+                        [(ngModel)]="postPaySearch.currencyAmount"></p-inputNumber>
+                </div>
+                <div class="p-field  p-col-6 p-md-3">
+                    <label for="budgetAmount">{{"APP_STATUS" | translate}}</label>
+                    <p-multiSelect [options]="statuses" placeholder="{{'APP_STATUS' | translate}}"
+                        [(ngModel)]="postPaySearch.status" optionLabel="description" optionValue="code">
+                    </p-multiSelect>
+                </div>
+                <div class="p-field p-col-6 p-md-9">
+                </div>
+                <p-divider type="dashed" class="w-full"></p-divider>
+                <div class="p-field p-col-6 p-md-2">
+                    <button pButton pRipple label="{{'APP_SEARCH' | translate}}" icon="pi pi-search"
+                        class="p-button-rounded p-button-success p-mr-2"
+                        (click)="adFilter.hide();getPostPayments();"></button>
+                </div>
+                <div class="p-field p-col-6 p-md-2">
+                    <button pButton pRipple label="{{'APP_CLEAR' | translate}}" icon="pi pi-times-circle"
+                        class="p-button-rounded p-button-warning  p-mr-2" (click)="clearPostPaymentSearch()"></button>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</p-overlayPanel>
+
+<p-dialog [(visible)]="isImportExcelDialogVisible" [breakpoints]="{'960px': '75vw', '640px': '100vw'}"
+    [style]="{width: '50vw'}">
+    <ng-template pTemplate="header">
+        <h6>
+            {{"BULK_UPLOAD_EXCEL" | translate}}
+        </h6>
+    </ng-template>
+    <div class="row">
+        <div class="col-md-12" style="text-align: start;">
+            <label for="{{'IMPORT_TO_EXCEL' | translate}}">{{"IMPORT_TO_EXCEL" | translate}}</label>
+            <div class="p-inputgroup">
+                <input type="file" pInputText placeholder="Upload File" (change)="showImportPrePayOption($event)"
+                    accept=".xlsx">
+                <span class="p-inputgroup-addon"
+                    [style]="lang === 'ar' ? 'border-top-right-radius: 0;border-bottom-right-radius: 0;border-top-left-radius: 5px;border-bottom-left-radius: 5px;border-right: none' : ''">
+                    <i class="pi pi-file-excel"></i>
+                </span>
+            </div>
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <a style="cursor: pointer;padding: 10px;"
+            (click)="downloadPrePayExcelTemplate()">{{"DOWNLOAD_SAMPLE_EXCEL_FORMAT" | translate}}</a>
+        <button dir="ltr" type="button" pButton icon="pi pi-external-link" label="{{'APP_IMPORT' | translate}}"
+            (click)="importPrePayment()"></button>
+    </ng-template>
+</p-dialog>
+
+<p-dialog [header]="invDetTitle" [(visible)]="showInvoices" [style]="{width: '80vw', height: '90vh'}" appendTo="body">
+    <div class="p-col-12 p-md-12">
+        <p-table #invDt [value]="invpreDetail" [scrollable]="true" scrollHeight="flex" scrollHeight="50vh" dataKey="id"
+            styleClass="p-datatable-responsive-demo p-datatable-gridlines">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>{{"EMB_PAYMENT_LEDGER" | translate}}</th>
+                    <th>{{"EMB_PAYMENT_INVNO" | translate}}
+                    </th>
+                    <th>{{"EMB_PAYMENT_TELEX_REFNO" | translate}}
+                    </th>
+                    <th>{{"EMB_PAYMENT_AMOUNT" | translate}}
+                    </th>
+                    <th>{{"EMB_PAYMENT_CURCY_AMOUNT" | translate}}
+                    </th>
+                    <th>{{"EMB_PAYMENT_REMARKS" | translate}}
+                    </th>
+                    <th>{{"APP_ACTION" | translate}}</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-inv>
+                <tr>
+                    <td>{{inv.ledgerDecs}}</td>
+                    <td>{{inv.invNo}}</td>
+                    <td>{{inv.telexRef}}</td>
+                    <td>{{inv.amount}}</td>
+                    <td>{{inv.currencyAmount| currency:' ':'symbol':'0.0-0'}}</td>
+                    <td>{{inv.remarks}}</td>
+                    <td>
+                        <span style="padding-left: 5px;padding-right: 5px;">
+                            <button pButton pRipple icon="pi pi-paperclip"
+                                class="p-button-outlined p-button-rounded p-button-success"
+                                (click)="attachmentLink(inv,'EMBREPAYINVDET')"
+                                pTooltip="{{'FILE_ATTACHMENT' | translate}}" tooltipPosition="bottom"></button>
+                        </span>
+                        <span style="padding-left: 5px;padding-right: 5px;">
+                            <button pButton pRipple icon="pi pi-history"
+                                class="p-button-outlined p-button-rounded p-button-success"
+                                (click)="embPreInvDetailshistory(inv)" pTooltip="{{'APP_HISTORY' | translate}}"
+                                tooltipPosition="bottom"></button>
+                        </span>
+
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</p-dialog>
+
+<p-sidebar [(visible)]="visibleSidebar4" position="right" (onHide)="sidenavClosed()">
+    <div class="" *ngIf="postPayHistory">
+        <div class="col-md-12">
+            <h5> {{"BUDGT_TRANS_HISTORY_TITLE" | translate }}: {{postPayHistory.selectedItem.transNo }}</h5>
+            <hr>
+        </div>
+        <div class="row"></div>
+        <div class="col-md-12" style="padding-bottom: 10px;">
+            <div class="flex  overflow-y-auto overscroll-y-contain  ng-star-inserted">
+                <div class="input-group col-md-12" style="padding-bottom: 10px;">
+                    <textarea type="text" class="form-control" placeholder="Comment" [(ngModel)]="userComment4.comments"
+                        aria-label="Recipient's username" aria-describedby="basic-addon2"></textarea>
+                    <div class="input-group" style="padding-top: 10px;">
+                        <button class="btn btn-outline-secondary"
+                            (click)="attachmentLink(userComment4,'EMBPOSTCOMMENTS')" type="button"><i
+                                class="pi pi-paperclip"></i></button>
+                        <button class="btn btn-outline-secondary" (click)="saveEmbPostComment()" type="button"
+                            style="margin-left: 10px;margin-right: 10px;"><i class="pi pi-send"></i></button>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="flex  overflow-y-auto overscroll-y-contain  ng-star-inserted">
+                <div class="col-md-12" style="max-height: 300px;overflow: auto;">
+                    <div class="Comment" *ngFor=" let item of postPayHistory.comments">
+                        <div class="flex flex-col ng-star-inserted">
+                            <hr>
+                            <div class="text-normal" style="word-break: break-word;">
+                                {{item.Comments}}
+                            </div>
+                            <div class="text-sm font-small text-secondary mr-3 ng-star-inserted">
+                                <span style="cursor: pointer; padding-left: 5px; padding-right: 5px;"
+                                    *ngIf="item.attachbtn==true" (click)="attachmentLink(item, 'EMBPOSTCOMMENTS')"><i
+                                        class="pi pi-paperclip"></i></span>
+                                <span>By {{item.UserName}} </span>
+                                <span>On {{item.CreatedDate | date: 'dd/MM/yy hh:mm'}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row"></div>
+        <div class="col-md-12">
+            <p-accordion multiple="true">
+                <p-accordionTab #tab header="{{'APP_DOCUMENTS' | translate}}" style="text-decoration: none;">
+                    <p-table #dt responsiveLayout="stack" [value]="postPayHistory.appDocument" scrollHeight="flex"
+                        styleClass="p-datatable-responsive-demo p-datatable-gridlines" dataKey="id">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>{{"FILE_NAME" | translate}}
+                                </th>
+                                <th>{{"APP_UPLOADED_BY" | translate}}
+                                </th>
+                                <th>{{"APP_UPLOADED_DATE" | translate}}
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-item>
+                            <tr [pSelectableRow]="det">
+                                <th>
+                                    <div class="fileDiv" (click)="downloadFile(item.id)">{{item.fileName}}</div>
+                                </th>
+                                <th>{{item.userName}}</th>
+                                <th>{{item.createdDate | date: 'dd/MM/yy hh:mm'}}</th>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </p-accordionTab>
+                <p-accordionTab header="{{'APP_STATUS_HISTORY' | translate }}">
+                    <div class="flex flex-col-reverse  overflow-y-auto overscroll-y-contain  ng-star-inserted">
+                        <p-table #dt responsiveLayout="stack" selectionMode="single"
+                            [value]="postPayHistory.historyStatus" scrollHeight="flex"
+                            styleClass="p-datatable-responsive-demo p-datatable-gridlines" dataKey="id">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>{{"APP_STATUS" | translate}}
+                                    </th>
+                                    <th>{{"BUDGET_REMARKS" | translate}}
+                                    </th>
+                                    <th>{{"APP_CHANGED_BY" | translate}}
+                                    </th>
+                                    <th>{{"APP_CHANGED_ON" | translate}}
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-item>
+                                <tr [pSelectableRow]="det">
+                                    <th>{{item.Status}}</th>
+                                    <th>{{item.Comments}}</th>
+                                    <th>{{item.UserName}}</th>
+                                    <th>{{item.CreatedDate | date: 'dd/MM/yy hh:mm'}}</th>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </p-accordionTab>
+                <p-accordionTab #tab header="{{'APP_HISTORY' | translate }}" style="text-decoration: none;">
+                    <p-table #dt responsiveLayout="stack" selectionMode="single" [value]="postPayHistory.history"
+                        scrollHeight="flex" styleClass="p-datatable-responsive-demo p-datatable-gridlines" dataKey="id">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>{{"APP_FIELD_NAME" | translate}}
+                                </th>
+                                <th>{{"APP_PREV_VALUE" | translate}}
+                                </th>
+                                <th>{{"APP_CURRENT_VALUE" | translate}}
+                                </th>
+                                <th>{{"APP_CHANGED_BY" | translate}}
+                                </th>
+                                <th>{{"APP_CHANGED_ON" | translate}}
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-item>
+                            <tr [pSelectableRow]="det">
+                                <th>{{item.fieldName}}</th>
+                                <th>{{item.prevValue }} </th>
+                                <th>{{item.currentValue }}</th>
+                                <th>{{item.userName}}</th>
+                                <th>{{item.createdDate | date: 'dd/MM/yy hh:mm'}}</th>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </p-accordionTab>
+            </p-accordion>
+        </div>
+    </div>
+</p-sidebar>

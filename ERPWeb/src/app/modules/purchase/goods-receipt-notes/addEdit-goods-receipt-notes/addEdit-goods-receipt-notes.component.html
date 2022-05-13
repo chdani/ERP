@@ -1,0 +1,232 @@
+<div class="flex flex-col flex-auto w-full  min-w-0">
+    <p-toolbar>
+        <ng-template pTemplate="right">
+            <span class="newbtnpadding">
+                <button dir="ltr" pButton type="button" label="{{'APP_SAVE' | translate}}" icon="pi pi-save"
+                    (click)="createOredit()" class="p-button-rounded"></button>
+            </span>
+            <span class="newbtnpadding pl-2  pr-2">
+                <button dir="ltr" pButton type="button" label="{{'APP_CANCEL' | translate}}" icon="pi pi-ban"
+                    class="p-button-rounded p-button-danger" (click)="cancelAddEdit()"></button>
+            </span>
+        </ng-template>
+    </p-toolbar>
+    <p-card>
+        <div class="p-fluid " [dir]="lang === 'ar' ? 'rtl' : 'ltr'" style="text-align: start;">
+            <div class="row">
+                <div class="col-md-2">
+                    <label for="txtPoNo">{{"PUR_ORDER_NO" | translate}}</label>
+                    <input pInputText id="txtPoNo" placeholder="{{'PUR_ORDER_NO' | translate}}"
+                        (blur)="loadVendor($event)" [(ngModel)]="grnInfo.poNo">
+                </div>
+                <div class="col-md-2">
+                    <label for="txtVendorInvoice">{{"GRN_INVOICE_INVNO" | translate}}</label>
+                    <input pInputText id="txtVendorInvoice" placeholder="{{'GRN_INVOICE_INVNO' | translate}}"
+                        [(ngModel)]="grnInfo.invoiceNo">
+                </div>
+                <div class="col-md-2">
+                    <label for="dpInvDate">{{"GRN_INVOICE_INVDATE" | translate}}</label>
+                    <p-calendar id="dpInvDate" [(ngModel)]="grnInfo.invoiceDate" dateFormat="dd-mm-yy" [showIcon]="true"
+                        placeholder="{{ 'GRN_INVOICE_INVDATE' | translate}}"></p-calendar>
+                </div>
+                <div class="col-md-3">
+                    <label for="txtRemarks">{{"GRN_WH_LOCATION" | translate}}</label>
+                    <p-dropdown [options]="whLocations" [filter]="true" filterBy="name" id="ddlwhLoc"
+                        [(ngModel)]="selectedWhLocation" optionLabel="name">
+                    </p-dropdown>
+                </div>
+                <div class="col-md-3">
+                    <label for="txtRemarks">{{"APP_REMARKS" | translate}}</label>
+                    <input pInputText id="txtRemarks" placeholder="{{'APP_REMARKS' | translate}}"
+                        [(ngModel)]="grnInfo.remarks">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12  pt-4">
+                    <p-toolbar>
+                        <ng-template pTemplate="left">
+                            <span class="p-input-icon-left" style="padding: 5px;width: 200px;">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text"
+                                    (input)="embDt.filterGlobal($event.target.value, 'contains')"
+                                    placeholder="{{'APP_SEARCH' | translate}}" />
+                            </span>
+                            <div style="padding: 10px;width: 200px; font-weight: bolder;">
+                                <span>{{"GRN_VENDOR_NAME" | translate}} : {{selectedVendor.name}}</span>
+                            </div>
+                            <div style="padding: 5px;width: 200px; font-weight: bolder;"> 
+                                <span>{{"TOTAL_QUANTITY" | translate}} : {{ goodsReceiptTotelQuantity| currency:' ':'symbol':'0.0-0'}}</span>
+                            </div>
+                            <div style="padding: 5px;width: 200px; font-weight: bolder;"> 
+                                <span>{{"TOTAL_AMOUNT" | translate}} : {{goodsReceiptTotelAmount| currency:' ':'symbol':'0.0-0'}}</span>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="right">
+                            <span class="newbtnpadding">
+                                <button pButton pRipple label="{{'APP_ADD' | translate}}" icon="pi pi-plus"
+                                    pTooltip="{{'SR_ADD_PRODUCTS' | translate}}" tooltipPosition="bottom"
+                                    class="p-button-success p-mr-2" (click)="addNewRecord()" [disabled]="this.disabledAddButtonGoodsReceiptNoteDet"></button>
+                            </span>
+                        </ng-template>
+                    </p-toolbar>
+                    <p-table #grnDt [value]="grnInfo.goodsReceiptNoteDet" [globalFilterFields]="['selectedProduct.name','selectedUnit.unitName','selectedWhLocation.name',
+                        'quantity','price','amount','expiryDate','remarks']" dataKey="id"
+                        styleClass="p-datatable-gridlines">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th pSortableColumn="selectedProduct.name">{{"SR_PROD_NAME" | translate}}
+                                    <p-sortIcon field="selectedProduct.name">
+                                    </p-sortIcon>
+                                </th>
+                                <th pSortableColumn="selectedUnit.unitName">{{"SR_UNIT_NAME" | translate}}
+                                    <p-sortIcon field="selectedUnit.unitName">
+                                    </p-sortIcon>
+                                </th>
+                                <th pSortableColumn="selectedWhLocation.name">{{"SHELVENO" | translate}}
+                                    <p-sortIcon field="shelveNo">
+                                    </p-sortIcon>
+                                </th>
+                                <th pSortableColumn="selectedWhLocation.name">{{"BARCODE" | translate}}
+                                    <p-sortIcon field="barcode">
+                                    </p-sortIcon>
+                                </th>
+                                <th pSortableColumn="expiryDate">{{"GRN_EXPIRYE_DATE" | translate}}<p-sortIcon
+                                        field="expiryDate">
+                                    </p-sortIcon>
+                                </th>
+                                <th pSortableColumn="quantity">{{"GRN_QUANTITY" | translate}}<p-sortIcon
+                                        field="quantity">
+                                    </p-sortIcon>
+                                </th>
+                                <th pSortableColumn="price">{{"GRN_PRICE" | translate}}<p-sortIcon field="price">
+                                    </p-sortIcon>
+                                </th>
+                                <th pSortableColumn="amount">{{"GRN_AMOUNT" | translate}}<p-sortIcon field="amount">
+                                    </p-sortIcon>
+                                </th>
+                                <th pSortableColumn="remarks">{{"APP_REMARKS" | translate}}<p-sortIcon field="remarks">
+                                    </p-sortIcon>
+                                </th>
+                                <th>{{"APP_ACTION" | translate}}</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-det>
+                            <tr>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <p-dropdown [options]="products" [filter]="true" filterBy="name"
+                                                id="ddlProduct" [(ngModel)]="det.selectedProduct" optionLabel="name"
+                                                (onChange)="onChangeProduct(det)">
+                                            </p-dropdown>
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{det.selectedProduct.name}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <p-dropdown [options]="units" [filter]="true" filterBy="unitName"
+                                                id="ddlUnits" [(ngModel)]="det.selectedUnit" optionLabel="unitName">
+                                            </p-dropdown>
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{det.selectedUnit.unitName}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <input pInputText type="text" [(ngModel)]="det.shelveNo"
+                                                aria-readonly="true">
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{det.shelveNo}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <input pInputText type="text" [(ngModel)]="det.barcode"
+                                                aria-readonly="true">
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{det.barcode}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <p-calendar [appendTo]="grnDt" id="dpExpiryDate"
+                                                [(ngModel)]="det.expiryDate" dateFormat="dd-mm-yy" [showIcon]="true">
+                                            </p-calendar>
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{det.expiryDate | date:'dd-MM-yyyy' }}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <p-inputNumber mode="decimal" [maxFractionDigits]="3"
+                                                (onBlur)="calculateAmount($event, det)"
+                                                placeholder="{{ 'GRN_QUANTITY' | translate}}"
+                                                [(ngModel)]="det.quantity">
+                                            </p-inputNumber>
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{det.quantity }}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <p-inputNumber mode="decimal" [maxFractionDigits]="3"
+                                                placeholder="{{ 'GRN_PRICE' | translate}}" [(ngModel)]="det.price"
+                                                (onBlur)="calculateAmount($event, det)">
+                                            </p-inputNumber>
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{det.price }}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td>{{det.amount }}</td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <input pInputText type="text" [(ngModel)]="det.remarks"
+                                                aria-readonly="true">
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{det.remarks}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td>
+                                    <span style="padding-left: 5px;padding-right: 5px;">
+                                        <button pButton pRipple icon="pi pi-trash"
+                                            class="p-button-outlined p-button-rounded p-button-danger"
+                                            (click)="deleteReqDet(det)"
+                                            pTooltip="{{'APP_DELETE' | translate}}"></button>
+                                    </span>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+    </p-card>
+</div>
+<p-confirmDialog header="{{'APP_CONFIRMATION' | translate}}" acceptLabel="{{'APP_OK' | translate}}"
+    rejectLabel="{{'APP_CANCEL' | translate}}" icon="pi pi-exclamation-triangle"
+    acceptButtonStyleClass="p-button-rounded p-button-danger" rejectButtonStyleClass="p-button-rounded">
+</p-confirmDialog>

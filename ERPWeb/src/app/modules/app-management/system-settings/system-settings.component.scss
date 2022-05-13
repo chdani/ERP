@@ -1,0 +1,48 @@
+.toolbarSpans {
+    padding-left: 750px !important;
+    padding-right: 100px !important;
+
+    label {
+        padding-top: 10px !important;
+    }
+}
+.mat-tab-group {
+    padding-top: 20px !important; 
+}
+.mat-tab-group .mat-tab-header {
+    border-bottom: 2px solid #e2e8f0 !important;
+}
+.mat-tab-group .mat-tab-header .mat-tab-label-container .mat-tab-list .mat-ink-bar {
+    display: flex !important;
+    
+}
+body.light .mat-tab-group.mat-primary .mat-ink-bar, body.light .mat-tab-nav-bar.mat-primary .mat-ink-bar, body .light .mat-tab-group.mat-primary .mat-ink-bar, body .light .mat-tab-nav-bar.mat-primary .mat-ink-bar {
+    background-color: #4677e5 !important;
+}
+body.light .mat-toolbar, body .light .mat-toolbar {
+    background: white !important;
+    color: #1e293b !important;
+    padding-bottom: 40px !important;
+}
+.p-input-icon-right > .p-inputtext {
+    padding-right: 2rem !important;
+    padding-bottom: -54px !important;
+    height: 40px !important;
+    padding: 16px !important;
+}
+.p-button-label {
+    transition: all .2s !important;
+    height: 27px !important;
+}
+.mat-tab-group .mat-tab-header .mat-tab-label-container .mat-tab-list .mat-tab-labels .mat-tab-label.mat-tab-label-active {
+    --tw-bg-opacity: 1 !important;
+    background-color: lightblue!important;
+}
+.mat-tab-group .mat-tab-header .mat-tab-label-container .mat-tab-list .mat-tab-labels .mat-tab-label {
+    min-width: 0 !important;
+    height: 40px !important;
+    padding: 0 20px !important;
+    border-radius: 0px !important;
+    --tw-text-opacity: 1 !important;
+    color: rgba(var(--fuse-text-secondary-rgb), var(--tw-text-opacity)) !important;
+}

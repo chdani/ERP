@@ -1,0 +1,202 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+  <div class="top-margin_app_save">
+    <span class="newbtnpadding">
+      <button pButton type="submit" label="{{'APP_SAVE' | translate}}" icon="pi pi-check" class="p-button-rounded"
+        (click)="ProductCategorysave()"></button>
+    </span>
+    <span class="newbtnpadding pl-2 pr-2">
+      <button pButton type="button" label="{{'APP_CANCEL' | translate}}" icon="pi pi-times"
+        class="p-button-rounded p-button-danger" (click)="ProductCategoryCancel()"></button>
+    </span>
+  </div>
+  <p-tabView>
+    <p-tabPanel header="{{'PRODUCT_CATEGORY'| translate}}">
+      <div class="card">
+        <div class="card-body">
+          <div class="p-fluid p-formgrid">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="p-field p-col" style="text-align: start;">
+                  <label for="code">{{"PRODUCT_CATEGORY_CODE" | translate}}</label>
+                  <input id="code" type="text" [(ngModel)]="productCategory.code" class="p-invalid" pInputText />
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="p-field p-col" style="text-align: start;">
+                  <label for="name">{{"PRODUCT_CATEGORY_NAME" | translate}}</label>
+                  <input id="name" type="text" [(ngModel)]="productCategory.name" class="p-invalid" pInputText />
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+    <p-tabPanel header="{{'PRODUCT_SUB_CATEGORY'| translate}}">
+      <div class="p-col-12 p-md-12">
+        <p-toolbar styleClass="p-mb-4">
+          <ng-template pTemplate="left">
+            <span class="p-input-icon-right">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" (input)="productSubCategoryDt.filterGlobal($event.target.value, 'contains')"
+                placeholder="{{'APP_SEARCH' | translate}}" />
+            </span>
+            
+          </ng-template>
+          <ng-template pTemplate="right">
+            <span class="newbtnpadding">
+              <button dir="ltr" pButton pRipple label="{{'APP_ADD' | translate}}" icon="pi pi-plus"
+                pTooltip="{{'VENDOR_CONTACT_ADD' | translate}}" tooltipPosition="bottom" class="p-button-success p-mr-2"
+                (click)="addNewProdSubCategoryDetReq()"></button>
+            </span>
+          </ng-template>
+        </p-toolbar>
+        <p-table #productSubCategoryDt [value]="productCategory.prodsubCategory" dataKey="id" styleClass="p-datatable-gridlines"
+        [globalFilterFields]="['code','name']">
+
+          <ng-template pTemplate="header">
+            <tr>
+              <th>{{"PRODUCT_SUB_CATEGORY_CODE"| translate}}
+
+              </th>
+              <th>{{"PRODUCT_SUB_CATEGORY_NAME"| translate}}
+              </th>            
+              <th>{{"APP_ACTION" | translate}}</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-item>
+            <tr  *ngIf="item.active == 'Y'">
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input pInputText type="text" [(ngModel)]="item.code" aria-readonly="true">
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{item.code}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input pInputText type="text" [(ngModel)]="item.name" aria-readonly="true">
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{item.name}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+                         <td>
+                <span style="padding-left: 5px;padding-right: 5px;">
+                  <button pButton pRipple icon="pi pi-trash" class="p-button-outlined p-button-rounded p-button-danger"
+                    (click)="deleteProdSubCategoryDetReq(item)" pTooltip="{{'APP_DELETE' | translate}}"></button>
+                </span>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>  
+      </div>
+    </p-tabPanel>
+    <p-tabPanel header="{{'PRODUCT_CATEGORY_WORKFLOW'| translate}}">
+      <div class="p-col-12 p-md-12">
+        <p-toolbar styleClass="p-mb-4">
+          <ng-template pTemplate="left">
+            <span class="p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                placeholder="{{'APP_SEARCH' | translate}}" />
+            </span>
+          </ng-template>
+          <ng-template pTemplate="right">
+            <span class="newbtnpadding">
+              <button pButton pRipple label="{{'APP_ADD' | translate}}" icon="pi pi-plus"
+                class="p-button-success p-mr-2" (click)="addNewWorkFlow()"></button>
+            </span>
+          </ng-template>
+        </p-toolbar>
+        <p-table #dt responsiveLayout="stack" [value]="Approvals" [globalFilterFields]="['approvalTypes','ApprovalType','User']" dataKey="id"
+          styleClass="p-datatable-responsive-demo p-datatable-gridlines text" selectionMode="single">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>{{"PRODUCT_CATEGORY_APPROVALTYPE" | translate}}</th>
+              <th>{{"PRODUCT_CATEGORY_APPROVALID" | translate}}</th>
+              <th>{{"APP_ACTION" | translate}}</th>
+          </ng-template>
+          <ng-template pTemplate="body" let-item let-editing="editing" let-i="rowIndex">
+            <tr>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-dropdown [options]="ApprovalType" [(ngModel)]="item.approvalTypes"
+                      placeholder="{{'PRODUCT_CATEGORY_APPROVALTYPE'| translate}}" (click)="clickapprovalType(item)"
+                      optionLabel="description">
+                    </p-dropdown>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{item.approvalTypes.description}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <div *ngIf="item.approvalTypes.code == 'USER'">
+                      <p-dropdown [options]="UserType" [(ngModel)]="item.User" [filter]="true" filterBy="description"
+                        placeholder="{{'PRODUCT_CATEGORY_APPROVALID'| translate}}" optionLabel="description"
+                        [style]="{'width':'100%','min-width':'100%'}">
+                      </p-dropdown>
+                    </div>
+                    <div *ngIf="item.approvalTypes.code == 'DEPARTMENT'">
+                      <p-dropdown [options]="department" [(ngModel)]="item.Department" [filter]="true"
+                        filterBy="description" placeholder="{{'PRODUCT_CATEGORY_APPROVALID'| translate}}"
+                        optionLabel="description" [style]="{'width':'100%','min-width':'100%'}">
+                      </p-dropdown>
+                    </div>
+                    <div *ngIf="item.approvalTypes.code == 'DEPARTMENTHEAD'">
+                      <p-dropdown [options]="department" [(ngModel)]="item.Department" [filter]="true"
+                        filterBy="description" placeholder="{{'PRODUCT_CATEGORY_APPROVALID'| translate}}"
+                        optionLabel="description" [style]="{'width':'100%','min-width':'100%'}">
+                      </p-dropdown>
+                    </div>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    <div *ngIf="item.approvalTypes.code == 'USER'">
+
+                      {{item.User.description}}
+
+                    </div>
+                    <div *ngIf="item.approvalTypes.code == 'DEPARTMENT'">
+
+                      {{item.Department.description}}
+                    </div>
+                    <div *ngIf="item.approvalTypes.code == 'DEPARTMENTHEAD'">
+
+                      {{item.Department.description}}
+                    </div>
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td>
+                <span style="padding-left: 5px;padding-right: 5px;" *ngIf="item.moveUp==true">
+                  <button pButton pRipple icon="pi pi-angle-double-up" pTooltip="{{'MOVE_UP' | translate}}"
+                    (click)="moveUp(item, i);" class="p-button-outlined p-button-rounded p-button-primary"></button>
+                </span>
+                <span style="padding-left: 5px;padding-right: 5px;" *ngIf="item.moveDown==true">
+                  <button pButton pRipple icon="pi pi-angle-double-down" pTooltip="{{'MOVE_DOWN' | translate}}"
+                    (click)="moveDown(item, i);" class="p-button-outlined p-button-rounded p-button-primary"></button>
+                </span>
+
+                <span style="padding-left: 5px;padding-right: 5px;">
+                  <button pButton pRipple icon="pi pi-trash" pTooltip="{{'APP_DELETE' | translate}}"
+                    (click)="removeWorkFlow(item)" class="p-button-outlined p-button-rounded p-button-danger"></button>
+                </span>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </p-tabPanel>
+
+  </p-tabView>
+</div>

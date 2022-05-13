@@ -1,0 +1,52 @@
+.p-calendar-w-btn .p-datepicker-trigger{
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.p-dropdown-filter-container{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-left: 0px;
+}
+.p-sidebar-right {
+    top: 0;
+    right: 0;
+    width: 50rem !important;
+    height: 100%;
+}
+.mt-4, .my-4 {
+    margin-top: 1.5rem!important;
+    margin-right: 0.5rem !important;
+}
+.text-sm {
+    font-size: 0.8rem !important;
+    font-weight: bold;
+}
+.text-normal {
+    font-size: 1rem !important;
+    font-weight: bold;
+    color: #3e7ac1
+}
+
+a#p-accordiontab-0 {
+    text-decoration: none;
+}
+a#p-accordiontab-1 {
+    text-decoration: none;
+}
+a#p-accordiontab-2 {
+    text-decoration: none;
+}
+a#p-accordiontab-3 {
+    text-decoration: none;
+}
+
+.fileDiv{
+    text-decoration: underline; 
+    color:#00659d;
+    cursor: pointer;
+}
+

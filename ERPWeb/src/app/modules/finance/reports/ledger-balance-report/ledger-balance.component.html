@@ -1,0 +1,83 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+    <p-toolbar styleClass="p-mb-4">
+        <ng-template pTemplate="left">
+            <span class="p-input-icon-right">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" (input)="ledger.filterGlobal($event.target.value, 'contains')"
+                    placeholder="{{'APP_SEARCH' | translate}}" />
+            </span>
+            <button pButton pRipple label="" icon="pi pi-search-plus" class="p-button-secondary p-mr-2"
+                pTooltip="{{'APP_ADV_FILTER' | translate }}" tooltipPosition="bottom"
+                (click)="adFilter.toggle($event)"></button>
+
+            <button [disabled]="!this.pdfdisabled" #trg1 type="button" pButton pRipple icon="pi pi-download"
+                (click)="onDataClick()" class="p-button-success p-mr-2  p-ml-2"
+                pTooltip="{{'APP_DOWNLOAD' | translate }}" tooltipPosition="bottom"></button>
+            <p-contextMenu triggerEvent="click" appendTo="body" [target]="trg1" [model]="item"></p-contextMenu>
+        </ng-template>
+    </p-toolbar>
+    <div style="overflow: auto;">
+        <p-table #ledger responsiveLayout="stack" selectionMode="single" [value]="ledgerBals" [scrollable]="true"
+            scrollHeight="flex" [responsive]="true" [paginator]="true" [rows]="15" styleClass="p-datatable-gridlines"
+            [globalFilterFields]="['ledger','balance']" dataKey="id">
+
+            <ng-template pTemplate="header">
+                <tr>
+
+                    <th style="flex-basis:25%" pSortableColumn="ledger">{{"CASHMGMT_LEDGER" | translate}}
+                        <p-sortIcon field="ledger"></p-sortIcon>
+                    </th>
+                    <th style="flex-basis:15%" pSortableColumn="balance">
+                        {{"LEDGER_AMOUNT" | translate}}
+                        <p-sortIcon field="balance"></p-sortIcon>
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+                <tr>
+                    <td style="flex-basis:25%">{{item.ledgerCode}}</td>
+                    <td style="flex-basis:15%">{{item.balance}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+
+<p-overlayPanel #adFilter [style]="{width: '60%'}">
+    <ng-template pTemplate>
+        <div class="p-fluid p-formgrid p-grid" style="text-align: start;" [dir]="lang === 'ar' ? 'rtl' : 'ltr'">
+
+            <div class="p-field  p-col-6 p-md-3">
+                <label for="fromDate">{{"APP_FROMDATE" | translate}}</label>
+                <p-calendar id="fromDate" [(ngModel)]="ledgerSearch.fromDate" dateFormat="dd-mm-yy" [showIcon]="true"
+                    inputId="fromDateInp" placeholder="{{ 'APP_FROMDATE' | translate}}">
+                </p-calendar>
+            </div>
+            <div class="p-field  p-col-6 p-md-3">
+                <label for="toDate">{{"APP_TODATE" | translate}}</label>
+                <p-calendar id="toDate" [(ngModel)]="ledgerSearch.toDate" dateFormat="dd-mm-yy" [showIcon]="true"
+                    inputId="toDateeInp" placeholder="{{ 'APP_TODATE' | translate}}">
+                </p-calendar>
+            </div>
+            <div class="p-field p-col-8 p-md-4">
+                <label for="ledgerCode">{{"CASHMGMT_LEDGER" | translate}}</label>
+                <p-multiSelect id="ledgerCode" [filter]="true" filterBy="ledgerDescCode" [options]="ledgerCodes"
+                    placeholder="{{'CASHMGMT_LEDGER' | translate}}" [(ngModel)]="selectLedger "
+                    optionLabel="ledgerDescCode" optionValue="ledgerCode"></p-multiSelect>
+            </div>
+
+            <div class="p-field p-col-6 p-md-9">
+            </div>
+            <p-divider type="dashed" class="w-full"></p-divider>
+            <div class="p-field p-col-6 p-md-2">
+                <button pButton pRipple label="{{'APP_SEARCH' | translate}}" icon="pi pi-search"
+                    class="p-button-rounded p-button-success p-mr-2"
+                    (click)="adFilter.hide();getLedgerBalances();"></button>
+            </div>
+            <div class="p-field p-col-6 p-md-2">
+                <button pButton pRipple label="{{'APP_CLEAR' | translate}}" icon="pi pi-times-circle"
+                    class="p-button-rounded p-button-warning  p-mr-2" (click)="clearFilterSerach()"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-overlayPanel>

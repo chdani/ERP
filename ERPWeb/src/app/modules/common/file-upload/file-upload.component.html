@@ -1,0 +1,82 @@
+<form [formGroup]="Attachementform" (ngSubmit)="onSubmitLink()" novalidate id="ngForm">
+
+  <div class="card">
+    <div class="card-body">
+      <div class="p-fluid p-formgrid">
+        <div class="row">
+          <div class="col-md-4" *ngIf="uploadConfig.DocTypeRequired">
+            <label for="documentType">{{"DOCUMENT_TYPE" | translate}}</label>
+            <p-dropdown [options]="documentTypes" formControlName="documentType" placeholder=" Document Type"
+              optionLabel="description">
+            </p-dropdown>
+          </div>
+          <div class="col-md-5" style="padding-top: 25px">
+            <div class="form-group">
+              <label for="fileContent" style="padding-left: 5px; padding-right: 5px;">{{"APP_SCANNER_BROWSE_FILES" |
+                translate}}</label>
+              <input type="file" title="" hidden class="ng-hide" [accept]="uploadConfig.AllowedExtns"
+                formControlName="fileContent" id="file" (change)="choosethefile($event)">
+              <label for="file" class="p-upload p-upload-round p-upload-pad"><i class="pi pi-upload "
+                  style="font-size: 2rem"></i></label>
+            </div>
+          </div>
+          <div class="col-md-3" style="padding-top: 25px">
+            <div class="form-group">
+              <button type="button" (click)="scanDocument()"
+                class="btn btn-primary mb-2 float-right">{{"APP_SCANNER_SCAN_FILE" | translate}}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+<div style="height: 20vh;">
+  <p-table #dt responsiveLayout="stack" selectionMode="single" [value]="fileToUpload" [scrollable]="true"
+    scrollHeight="300px" styleClass="p-datatable-responsive-demo p-datatable-gridlines" dataKey="id">
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="file" style="flex-basis: 10%">{{"FILE_NAME" | translate}}</th>
+        <th *ngIf="uploadConfig.DocTypeRequired" pSortableColumn="doct" style="flex-basis: 10%">{{"DOCUMENT_TYPE" |
+          translate}}</th>
+        <th pSortableColumn="action" style="flex-basis: 5%">{{"APP_ACTION" | translate}}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item>
+      <tr [pSelectableRow]="item">
+        <td style="flex-basis: 10%" *ngIf="item.active !='N'">{{item.fileName}}</td>
+        <td *ngIf="uploadConfig.DocTypeRequired && item.active !='N'" style="flex-basis: 10%">{{item.documentTypeDesc}}
+        </td>
+        <td style="flex-basis: 5%" *ngIf="item.active !='N'">
+          <span class="pl-2">
+            <button pTooltip="{{'APP_DELETE' | translate}}" pButton pRipple type="button" icon="pi pi-trash"
+              (click)="fileinactive(item)" class="p-button-rounded p-button-success p-button-outlined"></button>
+          </span>
+          <span class="pl-2">
+            <button [disabled]="!item.id" pTooltip="{{'APP_DOWNLOAD' | translate}}" pButton pRipple type="button"
+              icon="pi pi-download" (click)="dowenload(item)"
+              class="p-button-rounded p-button-success p-button-outlined"></button>
+          </span>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <p-toolbar styleClass="p-mb-4">
+    <ng-template pTemplate="right">
+      <span class="newbtnpadding">
+        <button [hidden]="!uploadConfig.ShowSaveButton" pTooltip="{{'APP_SAVE' | translate}}" pButton type="submit"
+          label="{{'APP_SAVE' | translate}}" icon="pi pi-check" class="p-button-rounded" form="ngForm"></button>
+      </span>
+
+      <span class="newbtnpadding pl-2 pr-2">
+        <button [hidden]="uploadConfig.ShowSaveButton" pTooltip="{{'APP_OK' | translate}}" pButton type="button"
+          label="{{'APP_OK' | translate}}" icon="pi pi-check" class="p-button-rounded "
+          (click)="FileAttackOK()"></button>
+      </span>
+      <span class="newbtnpadding pl-2 pr-2">
+        <button pTooltip="{{'APP_CANCEL' | translate}}" pButton type="button" label="{{'APP_CANCEL' | translate}}"
+          icon="pi pi-times" class="p-button-rounded p-button-danger" (click)="cancel()"></button>
+      </span>
+    </ng-template>
+  </p-toolbar>
+</div>

@@ -1,0 +1,118 @@
+/* ----------------------------------------------------------------------------------------------------- */
+/*  @ Import/write your custom styles here.
+/*  @ Styles from this file will override 'vendors.scss' and Fuse's base styles.
+/* ----------------------------------------------------------------------------------------------------- */
+
+.balance-badge.closing {
+    background: #FEEDAF;
+    color: #8a5340;
+}
+.balance-badge.debit {
+    background: #FFCDD2;
+    color: #c63737;
+}
+.balance-badge.credit {
+    background: #C8E6C9;
+    color: #256029;
+}
+
+.balance-badge.opening {
+    background: #c6cef1;
+    color: #211594;
+}
+.balance-badge {
+    border-radius: 2px;
+    padding: 0.25em 0.5rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+     padding: 0.2rem 0.5rem 0.2rem 0.5rem!important;
+}
+
+.top-margin_app_save {
+    margin: 15px;
+}
+
+
+.form-group {
+    margin-bottom: 0.5rem!important;
+}
+
+body
+{
+    font-size: 0.8rem!important;
+}
+
+
+.pi, .p-component, .p-button, .p-inputtext {
+    font-size: 0.8rem !important;
+}
+
+
+.appReturned > td
+{
+    font-weight: 700;
+    background-color: #f9b6b6;
+}
+
+.appSubmitted > td
+{
+    font-weight: 700;
+    background-color: #ffecd0;
+}
+
+.appApproved > td
+{
+
+    font-weight: 700;
+    background-color: #b8ecc5;
+}
+.appshortList > td
+{
+
+    font-weight: 700;
+    background-color: #7fa2f3;
+}
+
+.appApproved{
+    background-color: #b8ecc5 !important;
+}
+
+.appReturned
+{    
+    background-color: #f9b6b6 !important; 
+}
+
+.appSubmitted
+{    
+    background-color: #ffecd0!important;
+}
+.appshortList
+{    
+    background-color: #7fa2f3!important;
+}
+
+.highLightSelectedDiv{
+    text-decoration: underline;
+    font-weight: 800;
+}
+
+.recordstatus
+{
+    background-color: #add9f5;
+    border-radius: 5px;
+    padding: 5px;
+    a {
+        color: darkgreen;
+        cursor: pointer;
+        text-decoration: none;
+    }
+}
+
+textarea {
+    border-width: thin !important;
+}

@@ -1,0 +1,127 @@
+<div class="flex flex-col flex-auto w-full  min-w-0">
+    <p-toolbar >
+        <ng-template pTemplate="right">
+            <span class="newbtnpadding">
+                <button dir="ltr" pButton type="button" label="{{'APP_SAVE' | translate}}" icon="pi pi-save"
+                    (click)="createOredit()" class="p-button-rounded"></button>
+            </span>
+            <span class="newbtnpadding pl-2  pr-2">
+                <button dir="ltr" pButton  type="button" label="{{'APP_CANCEL' | translate}}" icon="pi pi-ban"
+                    class="p-button-rounded p-button-danger" (click)="cancelAddEdit()"></button>
+            </span>
+        </ng-template>
+    </p-toolbar>
+    <p-card>
+        <div class="p-fluid p-formgrid p-grid" [dir]="lang === 'ar' ? 'rtl' : 'ltr'" style="text-align: start;">
+            <div class="p-col-6 p-md-3">
+                <label for="ledgerCode">{{"EMB_PAYMENT_EMB_NAME" | translate}}</label>
+                <p-autoComplete [(ngModel)]="selectedEmbassy" [showEmptyMessage]="true" [suggestions]="filteredEmbassies"
+                    (completeMethod)="filterEmbasy($event)" field="embassyName" [minLength]="0" [forceSelection]="true"
+                    emptyMessage="{{'APP_NODATA'|translate}}" (onSelect)="loadInvoices($event)" placeholder="{{'EMB_PAYMENT_EMB_NAME' | translate}}">
+                </p-autoComplete>
+                
+            </div>
+            <div class="p-col-1 p-md-1" style="margin-top: 40px;">
+                <button dir="ltr" pTooltip="{{'EMB_POST_PAY_PEND_INVOICE' | translate}}" tooltipPosition="bottom" pButton 
+                type="button" label="..."  class="p-button-rounded p-button-info"
+                    (click)="showInvoices = true" [disabled]="!enableInvButton" style="font-weight: 900;"></button>
+            </div>
+            <div class="p-field p-col-6 p-md-3">
+                <label for="ledgerCode">{{"CASHMGMT_LEDGER" | translate}}</label>
+                <p-autoComplete [(ngModel)]="selectedLedger" [showEmptyMessage]="true" [suggestions]="filteredLedgers"
+                    (completeMethod)="filterLedger($event)" field="ledgerDescCode" [minLength]="0" [forceSelection]="true"
+                    emptyMessage="{{'APP_NODATA'|translate}}" placeholder="{{'CASHMGMT_LEDGER' | translate}}">
+                </p-autoComplete>
+            </div>
+            <div class="p-col-6 p-md-3">
+                <label for="currencyName">{{"EMB_PAYMENT_CURRENCY" | translate}}</label>
+                <p-autoComplete [(ngModel)]="selectedCurrency" [showEmptyMessage]="true" [suggestions]="filteredCurrencies"
+                    (completeMethod)="filterCurrency($event)" field="currencyName" [minLength]="0" [forceSelection]="true"
+                    emptyMessage="{{'APP_NODATA'|translate}}" placeholder="{{'EMB_PAYMENT_CURRENCY' | translate}}">
+                </p-autoComplete>
+            </div>
+            <div class="p-col-6 p-md-3">
+                <label for="bookNo">{{"EMB_PAYMENT_BOOK_NO" | translate}}</label>
+                <input pInputText id="bookNo" [(ngModel)]="postPayment.bookNo" placeholder="{{ 'EMB_PAYMENT_BOOK_NO' | translate}}">
+            </div>
+            <div class="p-col-6 p-md-3">
+                <label for="paymentDate">{{"EMB_PAYMENT_PAY_DATE" | translate}}</label>
+                <p-calendar id="paymentDate" [(ngModel)]="postPayment.paymentDate" dateFormat="dd-mm-yy" [showIcon]="true"
+                    inputId="paymentDateInp" placeholder="{{ 'EMB_PAYMENT_PAY_DATE' | translate}}"></p-calendar>
+            </div>
+            <div class="p-col-6 p-md-3">
+                <label for="amount">{{"EMB_PAYMENT_AMOUNT" | translate}}</label>
+                <p-inputNumber mode="decimal" [maxFractionDigits]="2" id="amount" [disabled]="disableAmount"  (onBlur)="calculateCurrAmount($event)"
+                    placeholder="{{ 'EMB_PAYMENT_AMOUNT' | translate}}" [(ngModel)]="postPayment.amount"></p-inputNumber>
+            </div>
+            <div class="p-col-6 p-md-3">
+                <label for="currencyRate">{{"EMB_PAYMENT_CURCY_RATE" | translate}}</label>
+                <p-inputNumber mode="decimal" [maxFractionDigits]="2" id="currencyRate" (onBlur)="calculateCurrAmount($event)"
+                    placeholder="{{ 'EMB_PAYMENT_CURCY_RATE' | translate}}" [(ngModel)]="postPayment.currencyRate">
+                </p-inputNumber>
+            </div>
+            <div class="p-col-6 p-md-3">
+                <label for="currencyAmount">{{"EMB_PAYMENT_CURCY_AMOUNT" | translate}}</label>
+                <p-inputNumber mode="decimal" [maxFractionDigits]="2" id="currencyAmount" placeholder="{{ 'EMB_PAYMENT_CURCY_AMOUNT' | translate}}"
+                    [(ngModel)]="postPayment.currencyAmount"></p-inputNumber>
+            </div>
+            <div class="p-col-4 p-md-3">
+                <label for="budgetDate">{{"FILE_ATTACHMENT" | translate}}</label> 
+                <br>
+            <button  pTooltip="{{'FILE_ATTACHMENT' | translate}}" pButton pRipple type="button" icon="pi pi-paperclip" (click)="attachmentLink(postPayment ,'EMBPOSTPAYHDR')"
+               label="File Attachment" class="p-button-outlined p-button-rounded "></button>
+            </div>
+        </div>
+    </p-card>
+</div>
+<p-confirmDialog header="{{'APP_CONFIRMATION' | translate}}" acceptLabel="{{'APP_OK' | translate}}"
+    rejectLabel="{{'APP_CANCEL' | translate}}" icon="pi pi-exclamation-triangle"
+     acceptButtonStyleClass="p-button-rounded p-button-danger"
+     rejectButtonStyleClass="p-button-rounded"></p-confirmDialog>
+
+<p-sidebar [(visible)]="showInvoices" position="right">
+    <div class="" *ngIf="pendingInvoices">
+        <div class="row">
+         <div class="col-md-9">
+            <h5> {{"EMB_POST_PAY_PEND_INVOICE" | translate }}</h5>
+        </div>
+        <div class="col-md-3" *ngIf="postPayment.amount != ''"  style="font-weight: 700; color: blue;">
+             {{"EMB_PAYMENT_TOTAL_AMOUNT" | translate}} : {{ postPayment.amount }}
+        </div>
+    </div>
+        <div class="row">
+        <div class="col-md-12">
+            <p-table #dt responsiveLayout="stack"  styleClass="p-datatable-responsive-demo"
+                  [value]="pendingInvoices" [(selection)]="selectedInvoices" dataKey="detailId"
+                 >
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 2rem">
+                            <p-checkbox [binary]="true" [(ngModel)]="checkAllInvoices" (onChange) = "onInvoiceSelecDeselect($event, 'ALL')"></p-checkbox>
+                        </th>
+                        <th>{{"EMB_PAYMENT_INVDATE" | translate}}
+                        </th>
+                        <th>{{"EMB_PAYMENT_INVNO" | translate}}
+                        </th>
+                        <th>{{"EMB_PAYMENT_TELEX_REFNO" | translate}}
+                        </th>
+                        <th style="text-align: end;">{{"EMB_PAYMENT_AMOUNT" | translate}}
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item>
+                    <tr>
+                        <td style="padding-left: 1rem !important;">
+                            <p-checkbox  [(ngModel)]="item.selected" binary="true" (onChange) = "onInvoiceSelecDeselect($event, 'SINGLE')"></p-checkbox>
+                        </td>
+                        <th>{{item.invDate | date:'dd-MM-yyyy' }} </th>
+                        <th>{{item.invNo }}</th>
+                        <th>{{item.telexRef}}</th>
+                        <th><div style="text-align: end;">{{item.dueAmount  | currency:' ':'symbol':'0.0-0'}}</div></th>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+        </div>
+    </div>
+</p-sidebar>

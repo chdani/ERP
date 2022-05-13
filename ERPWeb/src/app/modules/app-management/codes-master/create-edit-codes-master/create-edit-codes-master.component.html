@@ -1,0 +1,127 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+  <div class="top-margin_app_save">
+    <span class="newbtnpadding">
+      <button pButton type="submit" label="{{'APP_SAVE' | translate}}" icon="pi pi-check" class="p-button-rounded"
+        (click)="codesMastersave()"></button>
+    </span>
+    <span class="newbtnpadding pl-2 pr-2">
+      <button pButton type="button" label="{{'APP_CANCEL' | translate}}" icon="pi pi-times"
+        class="p-button-rounded p-button-danger" (click)="codesMasterCancel()"></button>
+    </span>
+  </div>
+  <p-tabView>
+    <p-tabPanel header="{{'CODE_MASTER'| translate}}">
+      <div class="card">
+        <div class="card-body">
+          <div class="p-fluid p-formgrid">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="p-field p-col" style="text-align: start;">
+                  <label for="code">{{"CODES_MASTER_CODE" | translate}}</label>
+                  <input id="code" type="text" [(ngModel)]="codesMaster.code" class="p-invalid" pInputText
+                    disabled="true" />
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="p-field p-col" style="text-align: start;">
+                  <label for="description">{{"CODES_MASTER_NAME" | translate}}</label>
+                  <input id="description" type="text" [(ngModel)]="codesMaster.description" class="p-invalid"
+                    pInputText />
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+    <p-tabPanel header="{{'CODE_DETAILS'| translate}}">
+      <div class="p-col-12 p-md-12">
+        <p-toolbar styleClass="p-mb-4">
+          <ng-template pTemplate="left">
+            <span class="p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                placeholder="{{'APP_SEARCH' | translate}}" />
+            </span>
+          </ng-template>
+          <ng-template pTemplate="right">
+            <span class="newbtnpadding">
+              <button pButton pRipple label="{{'APP_ADD' | translate}}" icon="pi pi-plus"
+                class="p-button-success p-mr-2" (click)="addNewCodeMaster()"></button>
+            </span>
+          </ng-template>
+        </p-toolbar>
+        <p-table #dt responsiveLayout="stack" [value]="codeDetails" [scrollable]="true" scrollHeight="flex"
+          scrollHeight="700px" [globalFilterFields]="['code','description']" dataKey="id"
+          styleClass="p-datatable-responsive-demo p-datatable-gridlines text" selectionMode="single">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>{{"CODES_MASTER_CODE" | translate}}</th>
+              <th>{{"CODES_MASTER_NAME" | translate}}</th>
+              <th>{{"APP_ACTION" | translate}}</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-item let-editing="editing" let-i="rowIndex">
+            <tr>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input pInputText type="text" class="changeiputwidth" [(ngModel)]="item.code" aria-readonly="true"
+                      [disabled]="item.id!==''">
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{item.code}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input pInputText type="text" class="changeiputwidth" [(ngModel)]="item.description"
+                      aria-readonly="true">
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{item.description}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+
+              <td>
+                <span style="padding-left: 5px;padding-right: 5px;" *ngIf="item.moveUp==true">
+                  <button pButton pRipple icon="pi pi-angle-double-up" pTooltip="{{'MOVE_UP' | translate}}"
+                    (click)="moveUp(item, i);" class="p-button-outlined p-button-rounded p-button-primary"></button>
+                </span>
+                <span style="padding-left: 5px;padding-right: 5px;" *ngIf="item.moveDown==true">
+                  <button pButton pRipple icon="pi pi-angle-double-down" pTooltip="{{'MOVE_DOWN' | translate}}"
+                    (click)="moveDown(item, i);" class="p-button-outlined p-button-rounded p-button-primary"></button>
+                </span>
+                <span style="padding-left: 5px;padding-right: 5px;" *ngIf="item.id==''">
+                  <button pButton pRipple icon="pi pi-trash" pTooltip="{{'APP_DELETE' | translate}}"
+                    (click)="removeCodeMaster(item)"
+                    class="p-button-outlined p-button-rounded p-button-danger"></button>
+                </span>
+
+                <span style="padding-left: 5px;padding-right: 5px;" *ngIf="item.active=='Y'">
+                  <button pButton icon="pi pi-times" pTooltip="{{'APP_DEACTIVE_CODESMASTER' | translate}}"
+                    (click)="codemasterActiveorInactivefunction(item)"
+                    class="p-button-outlined p-button-rounded p-button-danger"></button>
+                </span>
+                <span style="padding-left: 5px;padding-right: 5px;" *ngIf="item.active=='N'">
+                  <button pButton icon="pi pi-check" pTooltip="{{'APP_ACTIVE_CODESMASTER' | translate}}"
+                    (click)="codemasterActiveorInactivefunction(item)"
+                    class="p-button-outlined p-button-rounded p-button-success"></button>
+                </span>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </p-tabPanel>
+
+  </p-tabView>
+</div>
+<p-confirmDialog key="codemasterActiveorInactive" header="{{'APP_ACTIVEORDEACTIVE_CODESMASTER' | translate}}"
+  acceptLabel="{{'APP_OK' | translate}}" rejectLabel="{{'APP_CANCEL' | translate}}" icon="pi pi-exclamation-triangle"
+  acceptButtonStyleClass="p-button-rounded p-button-danger" rejectButtonStyleClass="p-button-rounded">
+</p-confirmDialog>

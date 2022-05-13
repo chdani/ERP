@@ -1,0 +1,28 @@
+<p-card>
+  <div class="p-fluid p-formgrid p-grid" [dir]="lang === 'ar' ? 'rtl' : 'ltr'" style="text-align: start;">
+    <div class="p-field p-col-6 p-md-6">
+        <label for="tellerCode">{{"APP_CODE" | translate}}</label>
+        <input id="tellerCode" placeholder="{{ 'PETTY_TELLER_CODE' | translate}}" type="text" [(ngModel)]="tellForm.tellerCode " pInputText />
+    </div>
+    <div class="p-field p-col-6 p-md-6">
+          <label for="tellerName">{{"APP_NAME" | translate}}</label>
+          <input id="tellerName" placeholder="{{ 'PETTY_TELLER_NAME' | translate}}" type="text" [(ngModel)]="tellForm.tellerName" pInputText />
+    </div>
+    <div class="p-field p-col-6 p-md-6">
+          <label for="userID">{{"APP_USER_NAME" | translate}}</label>
+          <p-autoComplete id="userID" [(ngModel)]="selectedUser" [showEmptyMessage]="true" [suggestions]="filteredUserList"
+            (completeMethod)="filterUser($event)" field="fullName" [minLength]="0" [forceSelection]="true"
+            emptyMessage="{{'APP_NODATA'|translate}}" placeholder="{{'PETTY_SELECT_CASHIER_NAME' | translate}}"
+            [ngModelOptions]="{standalone: true}">
+          </p-autoComplete>
+    </div>
+    <div class="p-field p-col-6 p-md-6" style="padding-top: 40px;">
+          <p-checkbox  label="{{ 'PETTY_HEAD_TELLER' | translate}}" binary="true" [(ngModel)]="tellForm.isHeadTeller"></p-checkbox>
+    </div>
+    <div class="p-field p-col-12 p-md-12">
+        <button pButton type="submit" label="{{'APP_SAVE' | translate}}" (click)="onSubmit()" style="width: 25%;"></button>
+    </div>
+  </div>
+</p-card>
+
+

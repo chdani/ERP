@@ -1,0 +1,68 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+  <p-toolbar styleClass="p-mb-4">
+    <ng-template pTemplate="left">
+      <span class="p-input-icon-right">
+        <i class="pi pi-search"></i>
+        <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+          placeholder="{{'APP_SEARCH' | translate}}" />
+      </span>
+    </ng-template>
+    <ng-template pTemplate="right">
+      <span class="newbtnpadding"><button  *ngIf="isGranted('SCR_HR_JOBPOSITION',actionType.allowAdd)"  pTooltip="{{'APP_ADD' | translate}}" pButton pRipple
+          label="{{'APP_ADD' | translate}}" icon="pi pi-plus" class="p-button-rounded p-button-success p-mr-2"
+          (click)="addUser()"></button></span>
+    </ng-template>
+  </p-toolbar>
+  <div style="overflow: auto;">
+    <p-table #dt responsiveLayout="stack" selectionMode="single" [value]="JobPosition" [scrollable]="true" scrollHeight="350px" [paginator]="true" [rows]="10"styleClass="p-datatable-responsive-demo p-datatable-gridlines"
+      [globalFilterFields]="['code','name']" dataKey="id">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="code">{{'Job_Code' | translate}}
+            <p-sortIcon field="code"></p-sortIcon>
+          </th>
+          <th pSortableColumn="name">{{'Job_Name' | translate}}
+            <p-sortIcon field="name"></p-sortIcon>
+          </th>
+          <th pSortableColumn="active">{{'APP_ACTIVE' | translate}}
+            <p-sortIcon field="active"></p-sortIcon>
+          </th>
+          <th pSortableColumn="action">{{'APP_ACTION' | translate}}
+            <p-sortIcon field="action"></p-sortIcon>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr [pSelectableRow]="item">
+          <td>{{item.code}}</td>
+          <td>{{item.name}}</td>
+          <td><div>
+            <td *ngIf="item.actives==true">{{'Yes' | translate}}</td>
+            <td *ngIf="item.actives==false">{{'No' | translate}}</td>
+          </div></td>
+          <td>
+            <span class="pl-2 pr-2">
+              <p-contextMenu triggerEvent="click" appendTo="body" [target]="dt3" [model]="gridDetailsContextMenu"></p-contextMenu>
+              <button pButton pRipple type="button" icon="pi pi-ellipsis-v" #dt3 (click)="getGridDetailsContextMenu(item)"
+                  class="p-button-rounded p-button-text"></button>
+          </span>            
+           
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+    
+  </div>
+  <p-confirmDialog key="jobpositionDelete" header="{{'APP_DELETE_CONFIRM_HDR' | translate}}" acceptLabel="{{'APP_OK' | translate}}"
+  rejectLabel="{{'APP_CANCEL' | translate}}" icon="pi pi-exclamation-triangle"
+  acceptButtonStyleClass="p-button-rounded p-button-danger" rejectButtonStyleClass="p-button-rounded">
+</p-confirmDialog>
+<p-confirmDialog key="jobpositionActiveorInactive" header="{{'APP_ACTIVEORDEACTIVE_HDR' | translate}}" acceptLabel="{{'APP_OK' | translate}}"
+rejectLabel="{{'APP_CANCEL' | translate}}" icon="pi pi-exclamation-triangle"
+acceptButtonStyleClass="p-button-rounded p-button-danger" rejectButtonStyleClass="p-button-rounded">
+</p-confirmDialog>
+</div>
+
+
+
+

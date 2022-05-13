@@ -1,0 +1,92 @@
+<div class="flex flex-col flex-auto w-full  min-w-0">
+    <p-toolbar >
+        <ng-template pTemplate="right">
+            <span class="newbtnpadding">
+                <button dir="ltr" pButton type="button" label="{{'APP_SAVE' | translate}}" icon="pi pi-save"
+                    (click)="createOredit()" class="p-button-rounded"></button>
+            </span>
+            <span class="newbtnpadding pl-2  pr-2">
+                <button dir="ltr" pButton  type="button" label="{{'APP_CANCEL' | translate}}" icon="pi pi-ban"
+                    class="p-button-rounded p-button-danger" (click)="cancelAddEdit()"></button>
+            </span>
+        </ng-template>
+    </p-toolbar>
+    <p-card>
+        <div [dir]="lang === 'ar' ? 'rtl' : 'ltr'" class="p-fluid p-formgrid p-grid" style="text-align: start;">
+            <div class="p-col-6 p-md-3">
+                <label for="cashAccount">{{"CASHMGMT_CASH_ACC" | translate}}</label>
+                <p-dropdown id="cashAccount" [options]="cashAccounts" [(ngModel)]="cashForm.accountId " (onChange)="accountChange()"
+                    optionLabel="accountName" optionValue="accountId"></p-dropdown>
+            </div>
+            <div class="p-col-6 p-md-9 d-flex " style="align-items: end;">
+                <div class="p-col-3 p-md-3">
+                    <span class="balance-badge opening">{{"GL_BAL_OPEN" | translate }}  </span>
+                    <p-badge  [value]="selectedAccount.opening"></p-badge>
+                </div>
+
+                <div class="p-col-3 p-md-3">
+                    <span class="balance-badge credit">{{"APP_CREDIT" | translate }}</span>
+                    <p-badge [value]="selectedAccount.credit" severity="success"></p-badge>
+                </div>
+                <div class="p-col-3 p-md-3">
+                    <span class="balance-badge debit">{{"APP_DEBIT" | translate }}</span>
+                    <p-badge [value]="selectedAccount.debit" severity="danger"></p-badge>
+                </div>
+                <div class="p-col-3 p-md-3">
+                    <span class="balance-badge closing">{{"GL_BAL_CLOSE" | translate }}</span>
+                    <p-badge [value]="selectedAccount.closing" severity="warning"></p-badge>
+                </div>
+            </div>
+            <!-- <div class="p-col-6 p-md-3">
+                <label for="transType" >{{"BUDGT_TYPE" | translate}}</label>
+                <p-dropdown id="transType" [options]="transTypes" [(ngModel)]="cashForm.transType " optionLabel="description"
+                optionValue="code"></p-dropdown>
+            </div> -->
+            <div class="p-col-6 p-md-3">
+                <label for="transDate">{{"CASHMGMT_TRANSDATE" | translate}}</label>
+                <p-calendar id="transDate" [(ngModel)]="cashForm.transDate" dateFormat="dd-mm-yy" [showIcon]="true"
+                    inputId="transDateInp" placeholder="{{ 'CASHMGMT_TRANSDATE' | translate}}"></p-calendar>
+            </div>
+            <div class="p-col-6 p-md-3">
+                <label for="processType">{{"CASHMGMT_PROCESS" | translate}}</label>
+                <p-dropdown id="processType" [options]="processTypes" [(ngModel)]="cashForm.processType " optionLabel="description"
+                    optionValue="code"></p-dropdown>
+            </div>
+
+            <div class="p-col-6 p-md-3">
+                <label for="ledgerCode">{{"CASHMGMT_LEDGER" | translate}}</label>
+                <p-autoComplete [(ngModel)]="selectedLedger" [showEmptyMessage]="true" [suggestions]="filteredLedgers"
+                    (completeMethod)="filterLedgerAccounts($event)" field="ledgerDescCode" [minLength]="0" [forceSelection]="true"
+                    emptyMessage="{{'APP_NODATA'|translate}}" placeholder="{{'CASHMGMT_LEDGER' | translate}}">
+                </p-autoComplete>
+            </div>
+            <div class="p-col-6 p-md-3">
+                <label for="costCenter">{{"CASHMGMT_COSTCENTER" | translate}}</label>
+                <p-dropdown id="costCenter" [options]="costCenters" [(ngModel)]="cashForm.costCenter " optionLabel="codeDescription"
+                    optionValue="code"></p-dropdown>
+            </div>
+            <div class="p-col-6 p-md-3">
+                <label for="amount">{{"CASHMGMT_AMOUNT" | translate}}</label>
+                <p-inputNumber mode="decimal" [maxFractionDigits]="2" prefix="QAR " id="amount"
+                    placeholder="{{ 'CASHMGMT_AMOUNT' | translate}}" [(ngModel)]="cashForm.amount"></p-inputNumber>
+            </div>
+            <div class="p-col-6 p-md-3">
+                <label for="recipient">{{"CASHMGMT_RECIPIENT" | translate}}</label>
+                <input pInputText id="recipient" [(ngModel)]="cashForm.recipient" placeholder="{{ 'CASHMGMT_RECIPIENT' | translate}}">
+            </div>
+            <div class="p-col-6 p-md-3">
+                <label for="referenceNo">{{"CASHMGMT_REFERENCE" | translate}}</label>
+                <input pInputText id="referenceNo" [(ngModel)]="cashForm.referenceNo" placeholder="{{ 'CASHMGMT_REFERENCE' | translate}}">
+            </div>
+            <div class="p-col-12">
+                <label for="remarks">{{"CASHMGMT_REMARKS" | translate}}</label>
+                <textarea id="remarks" [(ngModel)]="cashForm.remarks" type="text" rows="4" pInputTextarea></textarea>
+            </div>
+        </div>
+    </p-card>
+</div>
+<p-confirmDialog header="{{'APP_PRINT_CONFIRM_HDR' | translate}}" acceptLabel="{{'APP_OK' | translate}}"
+    rejectLabel="{{'APP_CANCEL' | translate}}" icon="pi pi-exclamation-triangle"
+     acceptButtonStyleClass="p-button-rounded p-button-danger"
+     rejectButtonStyleClass="p-button-rounded"></p-confirmDialog>
+

@@ -1,0 +1,157 @@
+<div class="container-fluid">
+    <!-- <div class="sub-header mb-4">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="">
+                    <h4 class="mb-0">Activity Log</h4>
+                </div>
+            </div>
+        </div>
+    </div> -->
+    <form class="mt-4">
+        <div class="row mb-4">
+            <div class="pl-3 pt-2">
+                <p>Filter : </p>
+            </div>
+            <div class="col-md-3">
+                <mat-form-field appearance="fill" style="width: 100%;">
+                    <select matNativeControl required (change)="typeChange($event)">
+                        <option *ngFor="let aLog of selectOptions" [value]="aLog.value">
+                            {{aLog.viewValue}}
+                        </option>
+                    </select>
+                </mat-form-field>
+            </div>
+            <div class="col-md-4">
+                <mat-form-field appearance="fill" style="width: 100%;">
+                    <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
+                        <input matStartDate formControlName="start" placeholder="Start date">
+                        <input matEndDate formControlName="end" placeholder="End date">
+                    </mat-date-range-input>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-date-range-picker #picker></mat-date-range-picker>
+                    <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')">Invalid start date
+                    </mat-error>
+                    <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col-md-3">
+                <button type="button" mat-raised-button color="primary" (click)="applyFilter()">Filter</button>
+            </div>
+            <!-- <p>Selected range: {{range.value | json}}</p> -->
+        </div>
+    </form>
+    <div class="row" *ngIf="isActivityLog">
+        <div class="col-md-12">
+            <p-table [value]="ActivityLog_DataSource" [lazy]="true" (onLazyLoad)="loadActivityLog($event)" [paginator]="true" [rows]="defaultPageTo" [totalRecords]="totalRecords" [loading]="loading">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>IP Address</th>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th>Method Accessed</th>
+                        <th>Parameter</th>
+                        <th>Requested On</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-activityLogListData>
+                    <tr>
+                        <td>{{activityLogListData.host}}</td>
+                        <td>{{activityLogListData.firstName}} {{activityLogListData.lastName}}</td>
+                        <td>{{getMethodType(activityLogListData.requestMethod)}}</td>
+                        <td title="{{activityLogListData.absoluteURI}}">
+                            {{activityLogListData.methodName}}
+                        </td>
+                        <td  title="{{activityLogListData.requestBody}}">
+                            {{activityLogListData.requestBody}}
+                        </td>
+                        <td>{{activityLogListData.requestedOn | date:'short'}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+    <div class="row" *ngIf="!isActivityLog">
+        <div class="col-md-12">
+            <p-table [value]="ExceptionLog_DataSource" [lazy]="true" (onLazyLoad)="loadExceptionLog($event)" [paginator]="true" [rows]="defaultPageTo" [totalRecords]="totalRecords" [loading]="loading">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <!-- <th>Id</th> -->
+                        <th>Exception Message</th>
+                        <th>Inner Exception</th>
+                        <th>Stack Trace</th>
+                        <th>Exception Occurred At</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-exceptionLogListData>
+                    <tr>
+                        <!-- <td class="table_row_breake" title="{{exceptionLogListData.id}}">
+                            {{exceptionLogListData.id}}
+                        </td> -->
+                        <td class="table_row_breake" title="{{exceptionLogListData.exceptionMessage}}">
+                            {{exceptionLogListData.exceptionMessage}}
+                        </td>
+                        <td>{{exceptionLogListData.innerException}}</td>
+                        <td class="table_row_breake" title="{{exceptionLogListData.stackTrace}}">
+                            {{exceptionLogListData.stackTrace}}
+                        </td>
+                        <td title="{{exceptionLogListData.exceptionOccurredAt}}">
+                            {{exceptionLogListData.exceptionOccurredAt | date:'short'}}
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <mat-card> -->
+<!-- <div class="table-responsive">
+                <table class="table table-striped table-borderless">
+                    <thead>
+                        <tr>
+                            <th>Sample Data</th>
+                            <th>Sample Data</th>
+                            <th>Sample Data</th>
+                            <th>Sample Data</th>
+                            <th>Sample Data</th>
+                            <th>Sample Data</th>
+                            <th>Sample Data</th>
+                            <th>Sample Data</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Sample Data</td>
+                            <td>Sample Data</td>
+                            <td>Sample Data</td>
+                            <td>Sample Data</td>
+                            <td>Sample Data</td>
+                            <td>Sample Data</td>
+                            <td>Sample Data</td>
+                            <td>Sample Data</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div> -->
+<!-- </mat-card> -->

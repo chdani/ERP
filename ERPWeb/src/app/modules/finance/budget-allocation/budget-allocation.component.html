@@ -1,0 +1,421 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+    <p-toolbar styleClass="p-mb-4">
+        <ng-template pTemplate="right">
+            <span class="newbtnpadding"><button dir="ltr" *ngIf="isGranted('SCR_BUDGT_ALLOCATION',actionType.allowAdd)"
+                    pButton pRipple label="{{'APP_ADD' | translate}}" icon="pi pi-plus"
+                    class="p-button-rounded p-button-success p-mr-2" (click)="createBudget()"></button></span>
+        </ng-template>
+        <ng-template pTemplate="left">
+            <span class="p-input-icon-right">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                    placeholder="{{'APP_SEARCH' | translate}}" />
+            </span>
+            <button pButton pRipple pTooltip="{{'APP_ADV_SEARCH' | translate}}" tooltipPosition="bottom" label=""
+                icon="pi pi-search-plus" class="p-button-secondary p-mr-2" (click)="adFilter.toggle($event)"></button>
+            <button [disabled]="!this.pdfdisabled" #trg1 type="button" pButton pRipple icon="pi pi-download"
+                (click)="onDataClick()" class="p-button-success p-mr-2  p-ml-2"
+                pTooltip="{{'APP_DOWNLOAD' | translate }}" tooltipPosition="bottom"></button>
+            <p-contextMenu triggerEvent="click" appendTo="body" [target]="trg1" [model]="item"></p-contextMenu>
+            <div class="p-mr-2  p-ml-2 recordstatus" [ngClass]=" allHighlight ? 'highLightSelectedDiv': '' "
+                pTooltip="All">
+                <a (click)="onClickStatus('ALL')">{{"APP_ALL" | translate}}</a>
+            </div>
+            <div class="p-mr-2  p-ml-2 recordstatus appSubmitted"
+                [ngClass]=" pendHighlight ? 'highLightSelectedDiv': '' " pTooltip="Pending">
+                <a (click)="onClickStatus('SUBMITTED')">{{"APP_PENDING" | translate}}</a>
+            </div>
+            <div class="p-mr-2  p-ml-2 recordstatus appReturned" [ngClass]=" retHighlight ? 'highLightSelectedDiv': '' "
+                pTooltip="Return">
+                <a (click)="onClickStatus('RETURNED')">{{"APP_RETURN" | translate}}</a>
+            </div>
+        </ng-template>
+
+    </p-toolbar>
+    <div style="overflow: auto;">
+        <p-table #dt responsiveLayout="stack" [value]="budgetAllocations" [paginator]="true" [rows]="10"
+            [scrollable]="true" scrollHeight="flex" [responsive]="true"
+            [globalFilterFields]="['typeDesc','accountCode','accountName','finYear']" dataKey="id"
+            rowExpandMode="single" (onRowExpand)="showDetail($event)" [expandedRowKeys]="expandedRows"
+            styleClass="p-datatable-responsive-demo p-datatable-gridlines">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="flex-basis:3%"></th>
+                    <th style="flex-basis: 15%" pSortableColumn="transNo">{{"BUDGT_TRANSNO" | translate}}<p-sortIcon
+                            field="transNo"></p-sortIcon>
+                    </th>
+                    <th style="flex-basis: 30%" pSortableColumn="typeDesc">{{"BUDGT_TYPE" | translate}}<p-sortIcon
+                            field="typeDesc"></p-sortIcon>
+                    </th>
+                    <th style="flex-basis: 15%" pSortableColumn="budgetDate">{{"FIN_BOOK_DATE" | translate}}
+                        <p-sortIcon field="budgetDate"></p-sortIcon>
+                    </th>
+                    <th style="flex-basis: 15%" pSortableColumn="budgetAmount">
+                        <div style="text-align: right; width: 100%">{{"BUDGT_BUDGT_AMT" | translate}}
+                            <p-sortIcon field="budgetAmount"></p-sortIcon>
+                        </div>
+                    </th>
+                    <th style="flex-basis: 5%;"></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item let-expanded="expanded">
+                <tr [pSelectableRow]="item"
+                    [ngClass]="{'appSubmitted': item.status === 'SUBMITTED','appReturned': item.status === 'RETURNED', 'appApproved': item.status === 'APPROVED'}">
+                    <td style="flex-basis: 3%">
+                        <button type="button" pButton pRipple [pRowToggler]="item"
+                            class="p-button-text p-button-rounded p-button-plain"
+                            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                    </td>
+                    <td style="flex-basis: 15%"><span class="p-column-title">{{"BUDGT_TRANSNO" |
+                            translate}}</span>{{item.transNo}}</td>
+                    <td style="flex-basis: 30%"><span class="p-column-title">{{"BUDGT_TYPE" |
+                            translate}}</span>{{item.typeDesc}}</td>
+                    <td style="flex-basis: 15%"><span class="p-column-title">{{"FIN_BOOK_DATE" |
+                            translate}}</span>{{item.budgetDate | date:'dd-MM-yyyy' }}</td>
+                    <td style="flex-basis: 15%">
+                        <span class="p-column-title">{{"BUDGT_BUDGT_AMT" | translate}}</span>
+                        <span class="p-column-title">{{item.budgetAmount | currency:' ':'symbol':'0.0-0'}}</span>
+                        <div style="text-align: right; width: 100%">
+                            {{item.budgetAmount | currency:' ':'symbol':'0.0-0'}}
+                        </div>
+                    </td>
+                    <td style="flex-basis: 5%">
+                        <span class="p-column-title">{{"APP_ACTION" | translate}}</span>
+                        <span class="pl-2 pr-2">
+                            <p-contextMenu triggerEvent="click" appendTo="body" [target]="trg4"
+                                [model]="gridContextMenu"></p-contextMenu>
+                            <button pButton pRipple type="button" icon="pi pi-ellipsis-v" #trg4
+                                (click)="getGridContextMenu(item)" class="p-button-rounded p-button-text"></button>
+                        </span>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="rowexpansion" let-item>
+                <tr>
+                    <td colspan="6">
+                        <div class="card w-full">
+                            <div class="card-body">
+                                <p-table #dt1 responsiveLayout="stack" selectionMode="single"
+                                    [value]="item.budgetDetails" [scrollable]="true" scrollHeight="flex" dataKey="id">
+                                    <ng-template pTemplate="header">
+                <tr>
+                    <th style="flex-basis: 15%">{{"BUDGT_LEDGER_CODE" | translate}}</th>
+                    <th *ngIf='item.budgetType == "BUDG_TRANS"' style="flex-basis: 15%">{{"BUDGT_LEDGER_CODE_TO" |
+                        translate}}</th>
+                    <th style="flex-basis: 15%">
+                        <div style="text-align: right; width: 100%">{{"BUDGT_BUDGT_AMT" | translate}}</div>
+                    </th>
+                    <th style="flex-basis: 15%">{{"BUDGT_REMARKS" | translate}}</th>
+                    <th style="flex-basis: 15%">{{"APP_ACTION" | translate}}
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-det>
+                <tr [pSelectableRow]="det">
+                    <td style="flex-basis: 15%">{{det.ledgerDesc}}</td>
+                    <td *ngIf='item.budgetType == "BUDG_TRANS"' style="flex-basis: 15%">{{det.toLedgerDesc}}</td>
+                    <td style="flex-basis: 15%">
+                        <div style="text-align: right; width: 100%">{{det.budgetAmount| currency:' ':'symbol':'0.0-0'}}
+                        </div>
+                    </td>
+                    <td style="flex-basis: 15%">{{det.remarks}}</td>
+                    <td style="flex-basis: 15%">
+                        <span class="p-column-title">{{"APP_ACTION" | translate}}</span>
+                        <span class="pl-2 pr-2">
+                            <p-contextMenu triggerEvent="click" appendTo="body" [target]="dt3"
+                                [model]="gridDetailsContextMenu"></p-contextMenu>
+                            <button pButton pRipple type="button" icon="pi pi-ellipsis-v" #dt3
+                                (click)="getGridDetailsContextMenu(det)"
+                                class="p-button-rounded p-button-text"></button>
+                        </span>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+</td>
+</tr>
+</ng-template>
+</p-table>
+</div>
+</div>
+<p-confirmDialog header="{{'APP_DELETE_CONFIRM_HDR' | translate}}" acceptLabel="{{'APP_OK' | translate}}"
+    rejectLabel="{{'APP_CANCEL' | translate}}" icon="pi pi-exclamation-triangle"
+    acceptButtonStyleClass="p-button-rounded p-button-danger" rejectButtonStyleClass="p-button-rounded">
+</p-confirmDialog>
+
+<p-dialog [(header)]="approveReturnHdr" [(visible)]="showApproveReturn" [modal]="true" [style]="{width: '50vw'}"
+    [draggable]="false" [resizable]="false">
+    <div class="p-fluid p-formgrid" style="text-align: start;">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="Remarks">{{"DIRECT_INVOICE_REMARKS" | translate}}</label>
+                    <textarea id="Remarks" [(ngModel)]="approveRetRemarks " type="text" rows="3"
+                        pInputTextarea></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <p-button *ngIf="showReturnButton" icon="pi pi-thumbs-down" (click)="processApproveOrReject('RETURNED')"
+            label="{{'APP_RETURN'|translate}}" styleClass="p-element p-button-rounded p-button p-component"></p-button>
+        <p-button *ngIf="showApproveButton" icon="pi pi-thumbs-up" (click)="processApproveOrReject('APPROVED')"
+            label="{{'APP_APPROVE'|translate}}" styleClass="p-element p-button-rounded p-button p-component"></p-button>
+        <p-button icon="pi pi-ban" (click)="showApproveReturn = false" label="{{'APP_CANCEL'|translate}}"
+            styleClass="p-element p-button-rounded p-button-danger p-button p-component"></p-button>
+    </ng-template>
+</p-dialog>
+<p-sidebar [(visible)]="visibleSidebar" position="right" (onHide)="sidenavClosed()">
+    <div class="" *ngIf="historyInfo">
+        <div class="col-md-12">
+            <h5> {{"BUDGT_TRANS_HISTORY_TITLE" | translate }}: {{historyInfo.selectedItem.transNo }}</h5>
+            <hr>
+        </div>
+        <div class="row"></div>
+        <div class="col-md-12" style="padding-bottom: 10px;">
+            <div class="flex  overflow-y-auto overscroll-y-contain  ng-star-inserted">
+                <div class="input-group col-md-12" style="padding-bottom: 10px;">
+                    <textarea type="text" class="form-control" placeholder="Comment" [(ngModel)]="userComment.comments"
+                        aria-label="Recipient's username" aria-describedby="basic-addon2"></textarea>
+                    <div class="input-group" style="padding-top: 10px;">
+                        <button class="btn btn-outline-secondary"
+                            (click)="attachmentLink(userComment,'BUDGTALLOCHDRCMTS')" type="button"><i
+                                class="pi pi-paperclip"></i></button>
+                        <button class="btn btn-outline-secondary" (click)="saveHdrComment()" type="button"
+                            style="margin-left: 10px;margin-right: 10px;"><i class="pi pi-send"></i></button>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="flex  overflow-y-auto overscroll-y-contain  ng-star-inserted">
+                <div class="col-md-12" style="max-height: 300px;overflow: auto;">
+                    <div class="Comment" *ngFor=" let item of historyInfo.comments">
+                        <div class="flex flex-col ng-star-inserted">
+                            <hr>
+                            <div class="text-normal" style="word-break: break-word;">
+                                {{item.Comments}}
+                            </div>
+                            <div class="text-sm font-small text-secondary mr-3 ng-star-inserted">
+                                <span style="cursor: pointer; padding-left: 5px; padding-right: 5px;"
+                                    *ngIf="item.attachbtn==true" (click)="attachmentLink(item, 'BUDGTALLOCHDRCMTS')"><i
+                                        class="pi pi-paperclip"></i></span>
+                                <span>By {{item.UserName}} </span>
+                                <span>On {{item.CreatedDate | date: 'dd/MM/yy hh:mm'}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row"></div>
+        <div class="col-md-12">
+            <p-accordion multiple="true">
+                <p-accordionTab #tab header="{{'APP_DOCUMENTS' | translate}}" style="text-decoration: none;">
+                    <p-table #dt1 responsiveLayout="stack" [value]="historyInfo.appDocument" scrollHeight="flex"
+                        styleClass="p-datatable-responsive-demo p-datatable-gridlines" dataKey="id">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>{{"FILE_NAME" | translate}}
+                                </th>
+                                <th>{{"APP_UPLOADED_BY" | translate}}
+                                </th>
+                                <th>{{"APP_UPLOADED_DATE" | translate}}
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-item>
+                            <tr [pSelectableRow]="det">
+                                <th>
+                                    <div class="fileDiv" (click)="downloadFile(item.id)">{{item.fileName}}</div>
+                                </th>
+                                <th>{{item.userName}}</th>
+                                <th>{{item.createdDate | date: 'dd/MM/yy hh:mm'}}</th>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </p-accordionTab>
+                <p-accordionTab #tab2 header="{{'APP_STATUS_HISTORY' | translate }}">
+                    <div class="flex flex-col-reverse  overflow-y-auto overscroll-y-contain  ng-star-inserted">
+                        <p-table #dt2 responsiveLayout="stack" selectionMode="single"
+                            [value]="historyInfo.historyStatus" scrollHeight="flex"
+                            styleClass="p-datatable-responsive-demo p-datatable-gridlines" dataKey="id">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>{{"APP_STATUS" | translate}}
+                                    </th>
+                                    <th>{{"BUDGET_REMARKS" | translate}}
+                                    </th>
+                                    <th>{{"APP_CHANGED_BY" | translate}}
+                                    </th>
+                                    <th>{{"APP_CHANGED_ON" | translate}}
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-item>
+                                <tr [pSelectableRow]="det">
+                                    <th>{{item.Status}}</th>
+                                    <th>{{item.Comments}}</th>
+                                    <th>{{item.UserName}}</th>
+                                    <th>{{item.CreatedDate | date: 'dd/MM/yy hh:mm'}}</th>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </p-accordionTab>
+                <p-accordionTab #tab3 header="{{'APP_HISTORY' | translate }}" style="text-decoration: none;">
+                    <p-table #dt3 responsiveLayout="stack" selectionMode="single" [value]="historyInfo.history"
+                        scrollHeight="flex" styleClass="p-datatable-responsive-demo p-datatable-gridlines" dataKey="id">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>{{"APP_FIELD_NAME" | translate}}
+                                </th>
+                                <th>{{"APP_PREV_VALUE" | translate}}
+                                </th>
+                                <th>{{"APP_CURRENT_VALUE" | translate}}
+                                </th>
+                                <th>{{"APP_CHANGED_BY" | translate}}
+                                </th>
+                                <th>{{"APP_CHANGED_ON" | translate}}
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-item>
+                            <tr [pSelectableRow]="det">
+                                <th>{{item.fieldName}}</th>
+                                <th>{{item.prevValue }} </th>
+                                <th>{{item.currentValue }}</th>
+                                <th>{{item.userName}}</th>
+                                <th>{{item.createdDate | date: 'dd/MM/yy hh:mm'}}</th>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </p-accordionTab>
+            </p-accordion>
+        </div>
+    </div>
+</p-sidebar>
+<p-sidebar [(visible)]="visibleDetailsSidebar" position="right" (onHide)="sidenavClosed()">
+    <div class="" *ngIf="historyInfo">
+        <div class="col-md-12">
+            <h5> </h5>
+            <hr>
+        </div>
+        <div class="row"></div>
+        <div class="col-md-12" style="padding-bottom: 10px;">
+            <div class="flex  overflow-y-auto overscroll-y-contain  ng-star-inserted">
+                <div class="input-group col-md-12" style="padding-bottom: 10px;">
+                    <textarea type="text" class="form-control" placeholder="Comment" [(ngModel)]="userComment.comments"
+                        aria-label="Recipient's username" aria-describedby="basic-addon2"></textarea>
+                    <div class="input-group" style="padding-top: 10px;">
+                        <button class="btn btn-outline-secondary"
+                            (click)="attachmentLink(userComment,'BUDGETALLODETCMTS')" type="button"><i
+                                class="pi pi-paperclip"></i></button>
+                        <button class="btn btn-outline-secondary" (click)="saveDetDetailsComment()" type="button"
+                            style="margin-left: 10px;margin-right: 10px;"><i class="pi pi-send"></i></button>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="flex  overflow-y-auto overscroll-y-contain  ng-star-inserted">
+                <div class="col-md-12" style="max-height: 300px;overflow: auto;">
+                    <div class="Comment" *ngFor=" let item of historyInfo.comments">
+                        <div class="flex flex-col ng-star-inserted">
+                            <hr>
+                            <div class="text-normal" style="word-break: break-word;">
+                                {{item.Comments}}
+                            </div>
+                            <div class="text-sm font-small text-secondary mr-3 ng-star-inserted">
+                                <span style="cursor: pointer; padding-left: 5px; padding-right: 5px;"
+                                    *ngIf="item.attachbtn==true" (click)="attachmentLink(item, 'BUDGETALLODETCMTS')"><i
+                                        class="pi pi-paperclip"></i></span>
+                                <span>By {{item.UserName}} </span>
+                                <span>On {{item.CreatedDate | date: 'dd/MM/yy hh:mm'}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row"></div>
+        <div class="col-md-12">
+            <p-accordion multiple="true">
+                <p-accordionTab #tab4 header="{{'APP_DOCUMENTS' | translate}}" style="text-decoration: none;">
+                    <p-table #dt4 responsiveLayout="stack" [value]="historyInfo.appDocument" scrollHeight="flex"
+                        styleClass="p-datatable-responsive-demo p-datatable-gridlines" dataKey="id">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>{{"FILE_NAME" | translate}}
+                                </th>
+                                <th>{{"APP_UPLOADED_BY" | translate}}
+                                </th>
+                                <th>{{"APP_UPLOADED_DATE" | translate}}
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-item>
+                            <tr [pSelectableRow]="det">
+                                <th>
+                                    <div class="fileDiv" (click)="downloadFile(item.id)">{{item.fileName}}</div>
+                                </th>
+                                <th>{{item.userName}}</th>
+                                <th>{{item.createdDate | date: 'dd/MM/yy hh:mm'}}</th>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </p-accordionTab>
+            </p-accordion>
+        </div>
+    </div>
+</p-sidebar>
+<p-overlayPanel #adFilter [style]="{width: '60%'}">
+    <ng-template pTemplate>
+        <div>
+            <div class="p-fluid p-formgrid p-grid" style="text-align: start;" [dir]="lang === 'ar' ? 'rtl' : 'ltr'">
+                <div class="p-field  p-col-6 p-md-4">
+                    <label for="typeDesc">{{"BUDGT_TYPE" | translate}}</label>
+                    <p-multiSelect [options]="budgetTypes" [(ngModel)]="budgetform.SelectBudgetType"
+                        optionLabel="description" placeholder="{{ 'BUDGT_TYPE' | translate}}" optionValue="code">
+                    </p-multiSelect>
+                </div>
+                <div class="p-field  p-col-6 p-md-4">
+                    <label for="fromDobDate">{{"BUDGT_FROMDATE" | translate}}</label>
+                    <p-calendar id="fromDate" [(ngModel)]="budgetform.fromDate" dateFormat="dd-mm-yy" [showIcon]="true"
+                        inputId="fromDate" placeholder="{{ 'BUDGT_FROMDATE' | translate}}"></p-calendar>
+                </div>
+                <div class="p-field  p-col-6 p-md-4">
+                    <label for="toDate">{{"BUDGT_TODATE" | translate}}</label>
+                    <p-calendar id="toDate" [(ngModel)]="budgetform.toDate" dateFormat="dd-mm-yy" [showIcon]="true"
+                        placeholder="{{ 'BUDGT_TODATE' | translate}}"></p-calendar>
+                </div>
+                <div class="p-field  p-col-6 p-md-4">
+                    <label for="budgetAmount">{{"BUDGT_BUDGT_AMT" | translate}}</label>
+                    <p-inputNumber mode="decimal" [maxFractionDigits]="2" prefix="QAR " id="budgetAmount"
+                        placeholder="{{ 'BUDGT_BUDGT_AMT' | translate}}" [(ngModel)]="budgetform.budgetAmount">
+                    </p-inputNumber>
+                </div>
+                <div class="p-field  p-col-6 p-md-4">
+                    <label for="budgetAmount">{{"BUDGT_STATUS" | translate}}</label>
+                    <p-multiSelect [options]="statuses" [(ngModel)]="budgetform.SelectedStatus"
+                        optionLabel="description" optionValue="code" placeholder="{{ 'BUDGT_STATUS' | translate}}">
+                    </p-multiSelect>
+                </div>
+                <div class="p-field p-col-6 p-md-9">
+                </div>
+                <p-divider type="dashed" class="w-full"></p-divider>
+                <div class="p-field p-col-6 p-md-2">
+                    <button pButton pRipple label="{{'APP_SEARCH' | translate}}" icon="pi pi-search"
+                        class="p-button-rounded p-button-success p-mr-2"
+                        (click)="adFilter.hide();searchService();"></button>
+                </div>
+                <div class="p-field p-col-6 p-md-2">
+                    <button pButton pRipple label="{{'APP_CLEAR' | translate}}" icon="pi pi-times-circle"
+                        class="p-button-rounded p-button-warning  p-mr-2" (click)="clearSearch()"></button>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</p-overlayPanel>

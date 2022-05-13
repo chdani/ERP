@@ -1,0 +1,48 @@
+<!-- Item wrapper -->
+<div
+    class="fuse-vertical-navigation-item-wrapper"
+    [class.fuse-vertical-navigation-item-has-subtitle]="!!item.subtitle"
+    [ngClass]="item.classes?.wrapper">
+
+    <!-- Item with an internal link -->
+    <ng-container *ngIf="item.link && !item.externalLink && !item.function && !item.disabled">
+        <a
+            class="fuse-vertical-navigation-item"
+            [ngClass]="{'fuse-vertical-navigation-item-active-forced': item.active}"
+            [routerLink]="[item.link]"
+            [routerLinkActive]="'fuse-vertical-navigation-item-active'"
+            [routerLinkActiveOptions]="isActiveMatchOptions"
+            [matTooltip]="item.tooltip || ''">
+            <ng-container *ngTemplateOutlet="itemTemplate"></ng-container>
+        </a>
+    </ng-container>
+</div>
+
+<!-- Item template -->
+<ng-template #itemTemplate>
+
+    <!-- Icon -->
+    <ng-container *ngIf="item.icon">
+        <mat-icon
+            class="fuse-vertical-navigation-item-icon"
+            [ngClass]="item.classes?.icon"
+            [svgIcon]="item.icon"></mat-icon>
+    </ng-container>
+
+    <!-- Title & Subtitle -->
+    <div class="fuse-vertical-navigation-item-title-wrapper">
+        <div class="fuse-vertical-navigation-item-title">
+            <span [ngClass]="item.classes?.title">
+                {{ item.title}}
+            </span>
+        </div>
+        <ng-container *ngIf="item.subtitle">
+            <div class="fuse-vertical-navigation-item-subtitle">
+                <span [ngClass]="item.classes?.subtitle">
+                    {{item.subtitle}}
+                </span>
+            </div>
+        </ng-container>
+    </div>
+
+</ng-template>

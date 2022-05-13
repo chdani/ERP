@@ -1,0 +1,96 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+    <p-toolbar styleClass="p-mb-4">
+      <ng-template pTemplate="left">
+        <span class="p-input-icon-right">
+          <i class="pi pi-search"></i>
+          <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+            placeholder="{{'APP_SEARCH' | translate}}" />
+        </span>
+        <button pButton pRipple label="" icon="pi pi-search-plus" class="p-button-secondary p-mr-2"
+          (click)="adFilter.toggle($event)"></button>
+      </ng-template>
+    </p-toolbar>
+    <div style="overflow: auto;">
+        <p-table #dt responsiveLayout="stack" selectionMode="single" [value]="cashtransactionitem" [paginator]="true" [rows]="12" 
+           [globalFilterFields]="['accountname','tellername']"
+          dataKey="id">
+          <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="accountName">{{"ACCOUNT_NAME" | translate}}
+                  <p-sortIcon field="accountName"></p-sortIcon>
+                </th>
+                <th pSortableColumn="tellerName">{{"TELLER_NAME" | translate}}
+                  <p-sortIcon field="tellerName"></p-sortIcon>
+                </th>
+                <th pSortableColumn="balancedate">{{"BALANCE_DATE" | translate}}
+                  <p-sortIcon field="balancedate"></p-sortIcon>
+                </th>
+                <th pSortableColumn="openbalance">{{"OPEN_BALANCE" | translate}}
+                    <p-sortIcon field="openbalance"></p-sortIcon>
+                </th>
+                <th pSortableColumn="creditbalance">{{"CREDIT_BALANCE" | translate}}
+                    <p-sortIcon field="creditbalance"></p-sortIcon>
+                </th>
+                <th pSortableColumn="debitbalance">{{"DEBIT_BALANCE" | translate}}
+                    <p-sortIcon field="debitbalance"></p-sortIcon>
+                </th>
+                <th pSortableColumn="closebalance">{{"CLOSE_BALANCE" | translate}}
+                    <p-sortIcon field="closebalance"></p-sortIcon>
+                </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-item>
+            <tr [pSelectableRow]="item">
+                <td><a onclick="accountdetails(item)">{{item.accountName}}</a></td>
+                <td>{{item.tellerName}}</td>
+                <td>{{item.balanceDate | date: 'dd/MM/yyyy'}}</td>
+                <td>{{item.open}}</td>
+                <td>{{item.credit}}</td>
+                <td>{{item.debit}}</td>
+                <td><div>
+                  <td>{{item.close}}</td>
+                </div></td>
+            </tr>
+        </ng-template>
+        </p-table>
+    </div>
+
+    <p-overlayPanel #adFilter [style]="{width: '60%'}" >
+        <ng-template pTemplate>
+                <div class="p-fluid p-formgrid p-grid" style="text-align: start;" [dir]="lang === 'ar' ? 'rtl' : 'ltr'">
+                    <div class="p-field  p-col-6 p-md-3">
+                        <label for="accountName">{{"ACCOUNT_NAME" | translate}}</label>
+                        <p-multiSelect [options]="account" [(ngModel)]="cashjournalform.accountId" placeholder="{{ 'SELECT_ACCOUNT' | translate}}"
+                        optionLabel="name" optionValue="id">
+                      </p-multiSelect>
+                    </div>
+                    <div class="p-field  p-col-6 p-md-3">
+                        <label for="tellerId">{{"TELLER_NAME" | translate}}</label>
+                        <p-multiSelect [options]="Teller" [(ngModel)]="cashjournalform.tellerId" placeholder="{{ 'SELECT_TELLER' | translate}}"
+                        optionLabel="name"  optionValue="id">
+                      </p-multiSelect>
+                    </div>
+                  <div class="p-field  p-col-6 p-md-3">
+                    <label for="FromTransDate">{{"APP_FROMDATE" | translate}}</label>
+                    <p-calendar id="FromTransDate" [(ngModel)]="cashjournalform.fromDate" dateFormat="dd-mm-yy" [showIcon]="true"
+                     inputId="FromTransDate" placeholder="{{ 'APP_FROMDATE' | translate}}"></p-calendar>
+                    </div>
+                <div class="p-field  p-col-6 p-md-3">
+                    <label for="ToTransDate">{{"APP_TODATE" | translate}}</label>
+                    <p-calendar id="ToTransDate" [(ngModel)]="cashjournalform.toDate" dateFormat="dd-mm-yy" [showIcon]="true"
+                        placeholder="{{ 'APP_TODATE' | translate}}"></p-calendar>
+                </div>
+                <p-divider type="dashed" class="w-full"></p-divider>
+                  <div class="p-field p-col-6 p-md-2">
+                      <button pButton pRipple label="{{'APP_SEARCH' | translate}}" icon="pi pi-search" class="p-button-rounded p-button-success p-mr-2"
+                       (click)="adFilter.hide();cashtransactionlist();"></button>
+                  </div>
+                  <div class="p-field p-col-6 p-md-2">
+                      <button pButton pRipple label="{{'APP_CLEAR' | translate}}" icon="pi pi-times-circle"
+                          class="p-button-rounded p-button-warning  p-mr-2"
+                           (click)="clearSearchCriteria()"></button>
+                  </div>
+                </div>
+        </ng-template>
+    </p-overlayPanel>
+</div>

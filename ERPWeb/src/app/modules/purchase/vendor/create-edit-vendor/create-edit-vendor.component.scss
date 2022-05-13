@@ -1,0 +1,15 @@
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0;
+}
+
+::ng-deep .p-picklist-buttons.p-picklist-source-controls.ng-star-inserted {
+    display: none;
+}
+
+::ng-deep .p-picklist-buttons.p-picklist-target-controls.ng-star-inserted {
+    display: none;
+}

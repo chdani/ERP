@@ -1,0 +1,150 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+  <div class="top-margin_app_save">
+    <span class="newbtnpadding">
+      <button pButton type="submit" label="{{'APP_SAVE' | translate}}" icon="pi pi-check" class="p-button-rounded"
+        (click)="warehousesave()"></button>
+    </span>
+    <span class="newbtnpadding pl-2 pr-2">
+      <button pButton type="button" label="{{'APP_CANCEL' | translate}}" icon="pi pi-times"
+        class="p-button-rounded p-button-danger" (click)="WareHouseCancel()"></button>
+    </span>
+  </div>
+  <p-tabView>
+    <p-tabPanel header="{{'BASIC_INFORMATION'| translate}}">
+      <div class="card">
+        <div class="card-body">
+          <div class="p-fluid p-formgrid">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="p-field p-col" style="text-align: start;">
+                  <label for="name">{{"WAREHOUSE_NAME" | translate}}</label>
+                  <input id="name" type="text" [(ngModel)]="warehouse.name"
+                    placeholder="{{ 'WAREHOUSE_NAME' | translate}}" class="p-invalid" pInputText />
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="p-field p-col" style="text-align: start;">
+                  <label for="email">{{"WAREHOUSE_EMAIL" | translate}}</label>
+                  <input id="email" type="email" [(ngModel)]="warehouse.email" ngModel [email]="true"
+                    placeholder="{{ 'WAREHOUSE_EMAIL' | translate}}" class="p-invalid" pInputText />
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="p-field p-col" style="text-align: start;">
+                  <label for="contactNo">{{"WAREHOUSE_CONTACTNO" | translate}}</label>
+                  <input id="contactNo" type="number" [(ngModel)]="warehouse.contactNo"
+                    placeholder="{{ 'WAREHOUSE_CONTACTNO' | translate}}" class="p-invalid" pInputText />
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <div class="p-field p-col" style="text-align: start;">
+                  <label for="address">{{"WAREHOUSE_ADDRESS" | translate}}</label>
+                  <textarea id="address" type="text" [(ngModel)]="warehouse.address"
+                    placeholder="{{ 'WAREHOUSE_ADDRESS' | translate}}" class="p-invalid" pInputText></textarea>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+    <p-tabPanel header="{{'WAREHOUSE_LOCATION'| translate}}">
+      <div class="p-col-12 p-md-12">
+        <p-toolbar styleClass="p-mb-4">
+          <ng-template pTemplate="left">
+            <span class="p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                placeholder="{{'APP_SEARCH' | translate}}" />
+            </span>
+          </ng-template>
+          <ng-template pTemplate="right">
+            <span class="newbtnpadding">
+              <button pButton pRipple label="{{'APP_ADD' | translate}}" icon="pi pi-plus"
+                class="p-button-success p-mr-2" (click)="addNewLocation()"></button>
+            </span>
+          </ng-template>
+        </p-toolbar>
+        <p-table #dt [value]="Location" [scrollable]="true" scrollHeight="flex" scrollHeight="210px"
+          [globalFilterFields]="['name','email','contactNo','address']" dataKey="id" styleClass="p-datatable-gridlines">
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="name">{{"WAREHOUSE_NAME"| translate}}<p-sortIcon field="name"></p-sortIcon>
+              </th>
+              <th pSortableColumn="email">{{"WAREHOUSE_EMAIL"| translate}}<p-sortIcon field="email"> </p-sortIcon>
+              </th>
+              <th pSortableColumn="contactNo">{{"WAREHOUSE_CONTACTNO"| translate}}<p-sortIcon field="contactNo">
+                </p-sortIcon>
+              </th>
+              <th pSortableColumn="address">{{"WAREHOUSE_ADDRESS"| translate}}<p-sortIcon field="address"> </p-sortIcon>
+              </th>
+              <th>{{"APP_ACTION" | translate}}</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-item>
+            <tr>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input pInputText type="text" [(ngModel)]="item.name"
+                      placeholder="{{ 'WAREHOUSE_NAME' | translate}}" aria-readonly="true">
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{item.name}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input pInputText type="email" [(ngModel)]="item.email" ngModel [email]="true"
+                      placeholder="{{ 'WAREHOUSE_EMAIL' | translate}}" aria-readonly="true">
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{item.email}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-inputNumber type="number" placeholder="{{ 'WAREHOUSE_CONTACTNO' | translate}}"
+                      [(ngModel)]="item.contactNo"></p-inputNumber>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{item.contactNo}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input pInputText type="text" [(ngModel)]="item.address"
+                      placeholder="{{ 'WAREHOUSE_ADDRESS' | translate}}" aria-readonly="true">
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{item.address}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td>
+                <span style="padding-left: 5px;padding-right: 5px;">
+                  <button pButton pRipple icon="pi pi-trash" class="p-button-outlined p-button-rounded p-button-danger"
+                    (click)="deleteLocation(item)" pTooltip="{{'APP_DELETE' | translate}}"></button>
+                </span>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </p-tabPanel>
+
+  </p-tabView>
+</div>
+<p-confirmDialog header="{{'APP_CONFIRMATION' | translate}}" acceptLabel="{{'APP_OK' | translate}}"
+  rejectLabel="{{'APP_CANCEL' | translate}}" icon="pi pi-exclamation-triangle"
+  acceptButtonStyleClass="p-button-rounded p-button-danger" rejectButtonStyleClass="p-button-rounded">
+</p-confirmDialog>

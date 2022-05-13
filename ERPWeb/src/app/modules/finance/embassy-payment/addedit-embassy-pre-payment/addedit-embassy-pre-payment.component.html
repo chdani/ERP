@@ -1,0 +1,318 @@
+<div class="flex flex-col flex-auto w-full  min-w-0">
+    <p-toolbar>
+        <ng-template pTemplate="right">
+            <span class="newbtnpadding">
+                <button dir="ltr" pButton type="button" label="{{'APP_SAVE' | translate}}" icon="pi pi-save"
+                    (click)="createOredit()" class="p-button-rounded"></button>
+            </span>
+            <span class="newbtnpadding pl-2  pr-2">
+                <button dir="ltr" pButton type="button" label="{{'APP_CANCEL' | translate}}" icon="pi pi-ban"
+                    class="p-button-rounded p-button-danger" (click)="cancelAddEdit()"></button>
+            </span>
+        </ng-template>
+    </p-toolbar>
+    <p-card>
+        <div class="p-fluid p-formgrid p-grid" [dir]="lang === 'ar' ? 'rtl' : 'ltr'" style="text-align: start;">
+            <div class="p-col-4 p-md-3">
+                <label for="embassy">{{"EMB_PAYMENT_EMB_NAME" | translate}}</label>
+                <p-autoComplete [showEmptyMessage]="true" [suggestions]="filteredEmbassies"
+                    (completeMethod)="filterEmbasy($event)" field="embassyName" [minLength]="0" [forceSelection]="true"
+                    emptyMessage="{{'APP_NODATA'|translate}}" [(ngModel)]="prePayment.selectedEmbassy"
+                    placeholder="{{'EMB_PAYMENT_EMB_NAME' | translate}}" (onSelect)="loadCurrency(prePayment)">
+                </p-autoComplete>
+            </div>
+            <div class="p-col-4 p-md-3">
+                <label for="currency">{{"EMB_PAYMENT_CURRENCY" | translate}}</label>
+                <p-autoComplete [showEmptyMessage]="true" [suggestions]="filteredCurrencies"
+                    (completeMethod)="filterCurrency($event)" field="currencyName" [minLength]="0"
+                    [forceSelection]="true" emptyMessage="{{'APP_NODATA'|translate}}"
+                    [(ngModel)]="prePayment.selectedCurrency" placeholder="{{'EMB_PAYMENT_CURRENCY' | translate}}">
+                </p-autoComplete>
+            </div>
+            <div class="p-col-4 p-md-3">
+                <label for="currencyRate">{{"EMB_PAYMENT_CURCY_RATE" | translate}}</label>
+                <input type="number" pInputText id="currencyRate" [(ngModel)]="prePayment.currencyRate"
+                    placeholder="{{ 'EMB_PAYMENT_CURCY_RATE' | translate}}"
+                    (ngModelChange)="calculateInvCurrAmount(prePayment.currencyRate)">
+            </div>
+            <div class="p-col-4 p-md-3">
+                <label for="bookNo">{{"EMB_PAYMENT_BOOK_NO" | translate}}</label>
+                <input pInputText id="bookNo" [(ngModel)]="prePayment.bookNo"
+                    placeholder="{{ 'EMB_PAYMENT_BOOK_NO' | translate}}">
+            </div>
+            <div class="p-col-4 p-md-3">
+                <label for="bookDate">{{"EMB_PAYMENT_BOOK_DATE" | translate}}</label>
+                <p-calendar id="bookDate" [(ngModel)]="prePayment.bookDate" dateFormat="dd-mm-yy" [showIcon]="true"
+                    inputId="bookDateInp" placeholder="{{ 'EMB_PAYMENT_BOOK_DATE' | translate}}"></p-calendar>
+            </div>
+            <div class="p-col-4 p-md-3">
+                <label for="remarks">{{"EMB_PAYMENT_REMARKS" | translate}}</label>
+                <input pInputText id="remarks" placeholder="{{'EMB_PAYMENT_REMARKS' | translate}}"
+                    [(ngModel)]="prePayment.remarks">
+            </div>
+            <div class="p-col-4 p-md-3">
+                <label for="budgetDate">{{"FILE_ATTACHMENT" | translate}}</label>
+                <br>
+                <button pTooltip="{{'FILE_ATTACHMENT' | translate}}" pButton pRipple type="button"
+                    icon="pi pi-paperclip" (click)="attachmentLink(prePayment ,'EMBPREPAYHDR')" label="File Attachment"
+                    class="p-button-outlined p-button-rounded "></button>
+            </div>
+        </div>
+        <div class="row"></div>
+        <div class="p-col-12 p-md-12">
+            <p-toolbar styleClass="p-mb-4">
+                <ng-template pTemplate="left">
+                    <span class="p-input-icon-left">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" (input)="embDt.filterGlobal($event.target.value, 'contains')"
+                            placeholder="{{'APP_SEARCH' | translate}}" />
+                    </span>
+                    <div style="padding: 10px;width: 400px; font-weight: bolder;">
+                        <span>{{"TOTAL_AMOUNT" | translate}} : {{embPrePayDetTotelAmount| currency:'
+                            ':'symbol':'0.0-0'}}</span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="right">
+                    <span class="newbtnpadding">
+                        <button pButton pRipple label="{{'APP_ADD' | translate}}" icon="pi pi-plus"
+                            pTooltip="{{'EMB_ADD_EMBASSIES' | translate}}" tooltipPosition="bottom"
+                            class="p-button-success p-mr-2" (click)="addNewEmbassy()"></button>
+                    </span>
+                </ng-template>
+            </p-toolbar>
+            <p-table #embDt [value]="embDetails"
+                [globalFilterFields]="['clearanceOrdNo','clearanceOrdDate','currencyRate','amount','currencyAmount','remarks']"
+                dataKey="id" styleClass="p-datatable-gridlines">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="clearanceOrdNo">{{"EMB_PAYMENT_CLEARANCEORDNO" | translate}}
+                            <p-sortIcon field="clearanceOrdNo">
+                            </p-sortIcon>
+                        </th>
+                        <th pSortableColumn="clearanceOrdDate">{{"EMB_PAYMENT_CLEARANCEORDDATE" |
+                            translate}}
+                            <p-sortIcon field="clearanceOrdDate">
+                            </p-sortIcon>
+                        </th>
+                        <th pSortableColumn="amount">{{"EMB_PAYMENT_AMOUNT" | translate}}<p-sortIcon field="amount">
+                            </p-sortIcon>
+                        </th>
+                        <th pSortableColumn="remarks">{{"EMB_PAYMENT_REMARKS" | translate}}<p-sortIcon field="remarks">
+                            </p-sortIcon>
+                        </th>
+                        <th>{{"APP_ACTION" | translate}}</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-emb>
+                    <tr>
+                        <td pEditableColumn>
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <input pInputText type="text" class="changeiputwidth"
+                                        [(ngModel)]="emb.clearanceOrdNo" aria-readonly="true">
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{emb.clearanceOrdNo}}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+                        <td pEditableColumn>
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <p-calendar [appendTo]="embDt" id="bookDate" [(ngModel)]="emb.clearanceOrdDate"
+                                        dateFormat="dd-mm-yy" [showIcon]="true" inputId="bookDateInp"></p-calendar>
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{emb.clearanceOrdDate | date:'dd-MM-yyyy' }}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+                        <td> {{emb.amount| currency:' ':'symbol':'0.0-0'}} </td>
+
+                        <td pEditableColumn>
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <input pInputText type="text" [(ngModel)]="emb.remarks" aria-readonly="true">
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{emb.remarks}}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+                        <td>
+                            <span style="padding-left: 5px;padding-right: 5px;">
+                                <button pButton pRipple icon="pi pi-list"
+                                    class="p-button-outlined p-button-rounded p-button-success"
+                                    (click)="addEditInvoices(emb)" pTooltip="{{'EMB_ADD_EDIT_INV' | translate}}"
+                                    tooltipPosition="bottom"></button>
+                            </span>
+                            <span style="padding-left: 5px;padding-right: 5px;">
+                                <button pButton pRipple icon="pi pi-paperclip"
+                                    class="p-button-outlined p-button-rounded p-button-success"
+                                    (click)="attachmentLink(emb,'EMBPREPAYEMBDET')"
+                                    pTooltip="{{'FILE_ATTACHMENT' | translate}}"></button>
+                            </span>
+                            <span style="padding-left: 5px;padding-right: 5px;">
+                                <button pButton pRipple icon="pi pi-trash"
+                                    class="p-button-outlined p-button-rounded p-button-danger"
+                                    (click)="deleteEmbassy(emb)" pTooltip="{{'APP_DELETE' | translate}}"></button>
+                            </span>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+    </p-card>
+</div>
+<p-confirmDialog header="{{'APP_CONFIRMATION' | translate}}" acceptLabel="{{'APP_OK' | translate}}"
+    rejectLabel="{{'APP_CANCEL' | translate}}" icon="pi pi-exclamation-triangle"
+    acceptButtonStyleClass="p-button-rounded p-button-danger" rejectButtonStyleClass="p-button-rounded">
+</p-confirmDialog>
+<p-dialog [header]="invDetTitle" [(visible)]="showInvoices" [style]="{width: '80vw', height: '90vh'}" appendTo="body">
+    <div class="p-col-12 p-md-12">
+        <p-toolbar styleClass="p-mb-4">
+            <ng-template pTemplate="left">
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="invDt.filterGlobal($event.target.value, 'contains')"
+                        placeholder="{{'APP_SEARCH' | translate}}" />
+                </span>
+                <div style="padding: 10px;width: 200px; font-weight: bolder;">
+                    <span>{{"TOTAL_AMOUNT" | translate}} : {{embPrePayInvDetTotelAmount| currency:'
+                        ':'symbol':'0.0-0'}}</span>
+                </div>
+                <div style="padding: 10px;width: 250px; font-weight: bolder;">
+                    <span>{{"TOTAL_CURRENCY_AMOUNT" | translate}} : {{embPrePayInvDetCurrencyAmount| currency:'
+                        ':'symbol':'0.0-0'}}</span>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="right">
+                <span class="newbtnpadding">
+                    <button pButton pRipple label="{{'APP_ADD' | translate}}" icon="pi pi-plus"
+                        class="p-button-success p-mr-2" (click)="addNewInvoice()"></button>
+                </span>
+            </ng-template>
+        </p-toolbar>
+        <p-table #invDt [value]="invDetails" [scrollable]="true" scrollHeight="flex" scrollHeight="50vh"
+            [globalFilterFields]="['SelectedLedger','invDate','telexRef','amount','remarks','currencyRate','currencyAmount']"
+            dataKey="id" styleClass="p-datatable-responsive-demo p-datatable-gridlines">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="SelectedLedger">{{"EMB_PAYMENT_LEDGER" | translate}}<p-sortIcon
+                            field="SelectedLedger">
+                        </p-sortIcon>
+                    </th>
+                    <th pSortableColumn="invNo">{{"EMB_PAYMENT_INVNO" | translate}}<p-sortIcon field="invNo">
+                        </p-sortIcon>
+                    </th>
+                    <th pSortableColumn="telexRef">{{"EMB_PAYMENT_TELEX_REFNO" | translate}}<p-sortIcon
+                            field="telexRef">
+                        </p-sortIcon>
+                    </th>
+                    <th pSortableColumn="amount">{{"EMB_PAYMENT_AMOUNT" | translate}}<p-sortIcon field="amount">
+                        </p-sortIcon>
+                    </th>
+                    <th pSortableColumn="currencyAmount">{{"EMB_PAYMENT_CURCY_AMOUNT" | translate}}<p-sortIcon
+                            field="currencyAmount">
+                        </p-sortIcon>
+                    </th>
+                    <th pSortableColumn="remarks">{{"EMB_PAYMENT_REMARKS" | translate}}<p-sortIcon field="remarks">
+                        </p-sortIcon>
+                    </th>
+                    <th>{{"APP_ACTION" | translate}}</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-inv>
+                <tr>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <p-autoComplete [(ngModel)]="inv.SelectedLedger" [showEmptyMessage]="true"
+                                    [suggestions]="filteredLedger" (completeMethod)="filterLedeger($event)"
+                                    field="ledgerDescCode" [minLength]="0" [forceSelection]="true"
+                                    emptyMessage="{{'APP_NODATA'|translate}}"
+                                    placeholder="{{'EMB_PAYMENT_LEDGER' | translate}}">
+                                </p-autoComplete>
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{inv.SelectedLedger.ledgerDescCode}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <input pInputText type="text" class="changeiputwidth" [(ngModel)]="inv.invNo"
+                                    aria-readonly="true">
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{inv.invNo}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <input pInputText type="text" class="changeiputwidth" [(ngModel)]="inv.telexRef"
+                                    aria-readonly="true">
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{inv.telexRef}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <p-inputNumber mode="decimal" [maxFractionDigits]="2"
+                                    placeholder="{{ 'EMB_PAYMENT_AMOUNT' | translate}}" [(ngModel)]="inv.amount"
+                                    (onBlur)="calculateCurrAmount($event, inv)">
+                                </p-inputNumber>
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{inv.amount}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td> {{inv.currencyAmount| currency:' ':'symbol':'0.00'}} </td>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <input pInputText type="text" class="changeiputwidth" [(ngModel)]="inv.remarks"
+                                    aria-readonly="true">
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{inv.remarks}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td>
+                        <span style="padding-left: 5px;padding-right: 5px;">
+                            <button pButton pRipple icon="pi pi-paperclip"
+                                class="p-button-outlined p-button-rounded p-button-success"
+                                (click)="attachmentLink(inv,'EMBPREPAYINVDET')"
+                                pTooltip="{{'FILE_ATTACHMENT' | translate}}"></button>
+                        </span>
+                        <span style="padding-left: 5px;padding-right: 5px;">
+                            <button pButton pRipple icon="pi pi-trash"
+                                class="p-button-outlined p-button-rounded p-button-danger"
+                                pTooltip="{{'APP_DELETE' | translate}}" (click)="deleteInvoice(inv)"></button>
+                        </span>
+
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    <ng-template pTemplate="footer">
+        <span style="padding-left: 5px;padding-right: 5px;">
+            <button dir="ltr" type="button" pButton icon="pi pi-check" label="{{'APP_OK' | translate}}"
+                (click)="addInvoicesToEmbassy(emb)"></button>
+        </span>
+        <span>
+            <button dir="ltr" type="button" pButton icon="pi pi-times" label="{{'APP_CANCEL' | translate}}"
+                (click)="showInvoices=false" class="p-button-secondary"></button>
+        </span>
+    </ng-template>
+</p-dialog>

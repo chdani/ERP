@@ -1,0 +1,49 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+  <div class="top-margin_app_save">
+    <span class="newbtnpadding">
+      <button pButton type="submit" label="{{'APP_SAVE' | translate}}" icon="pi pi-check" class="p-button-rounded"
+        (click)="onSubmit()"></button>
+    </span>
+    <span class="newbtnpadding pl-2 pr-2">
+      <button pButton type="button" label="{{'APP_CANCEL' | translate}}" icon="pi pi-times"
+        class="p-button-rounded p-button-danger" (click)="cancelAddEdit()"></button>
+    </span>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <div class="p-fluid p-formgrid">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="code">{{"DEPARTMENT_CODE" | translate}}</label>
+              <input id="code" type="text" [(ngModel)]="department.code" (blur)="codeChange()" placeholder="{{'DEPARTMENT_CODE' | translate}}" class="p-invalid" pInputText />
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="name">{{"DEPARTMENT_NAME" | translate}}</label>
+              <input id="name" type="text" [(ngModel)]="department.name" (blur)="codeChange()" placeholder="{{'DEPARTMENT_NAME' | translate}}" class="p-invalid" pInputText />
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="parentId">{{"DEPARTMENT_PARENTID" | translate}}</label>
+              <p-dropdown [options]="parentId" [(ngModel)]="selectedParent" placeholder="{{'DEPARTMENT_PARENTID' | translate}}"
+                optionLabel="name" optionValue="id">
+              </p-dropdown>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="type">{{"DEPARTMENT_TYPE" | translate}}</label>
+              <p-dropdown [options]="departmenttype" [(ngModel)]="SelectedType" placeholder="{{'DEPARTMENT_TYPE' | translate}}"
+                optionLabel="description" optionValue="code">
+              </p-dropdown>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,158 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+  <p-toolbar styleClass="p-mb-4">
+    <ng-template pTemplate="left">
+      <span class="p-input-icon-right">
+        <i class="pi pi-search"></i>
+        <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+          placeholder="{{'APP_SEARCH' | translate}}" />
+      </span>
+      <button pTooltip="{{'APP_SEARCHFILTER' | translate}}" pButton pRipple label="" icon="pi pi-search-plus"
+        class="p-button-secondary" (click)="adFilter.toggle($event)"></button>
+    </ng-template>
+    <ng-template pTemplate="right">
+      <span class="newbtnpadding"><button pTooltip="{{'APP_ADD' | translate}}"
+          *ngIf="isGranted('SCR_PRODUCT_MASTER',actionType.allowAdd)" pButton pRipple label="{{'APP_ADD' | translate}}"
+          icon="pi pi-plus" class="p-button-rounded p-button-success p-mr-2"
+          (click)="addProductMaster()"></button></span>
+    </ng-template>
+  </p-toolbar>
+  <div style="overflow: auto;">
+    <p-table #dt responsiveLayout="stack" id="productmasterlist" selectionMode="single" [value]="productMasterModel"
+      [paginator]="true" [rows]="10" [scrollable]="true" scrollHeight="flex" [responsive]="true"
+      [globalFilterFields]="['prodCode','prodDescription','productcategoryname','productSubCategoryName','unitmastername']" dataKey="id"
+      styleClass="p-datatable-responsive-demo p-datatable-gridlines text" (onRowExpand)="listExpentation($event)"
+      rowExpandMode="single">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="prodCode">{{"PRODUCT_MASTER_CODE" | translate}}
+            <p-sortIcon field="prodCode"></p-sortIcon>
+          </th>
+          <th pSortableColumn="prodDescription">{{"PRODUCT_MASTER_DESCRIPTION" | translate}}
+            <p-sortIcon field="prodDescription"></p-sortIcon>
+          </th>
+          <th pSortableColumn="productcategoryname">{{"PRODUCT_MASTER_PRODUCTCATEGORY" | translate}}
+            <p-sortIcon field="productcategoryname"></p-sortIcon>
+          </th>
+          <th pSortableColumn="productSubCategoryName">{{"PRODUCT_MASTER_PRODUCTSUBCATEGORY" | translate}}
+            <p-sortIcon field="productSubCategoryName"></p-sortIcon>
+          </th>
+          <th pSortableColumn="unitmastername">{{"PRODUCT_MASTER_UNITMASTER" | translate}}
+            <p-sortIcon field="unitmastername"></p-sortIcon>
+          </th>
+
+          <th>{{"APP_ACTION" | translate}}
+          </th>
+
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item let-expanded="expanded">
+        <tr [pSelectableRow]="item">
+          <td><button type="button" pButton pRipple [pRowToggler]="item"
+              class="p-button-text p-button-rounded p-button-plain"
+              [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>{{item.prodCode}}</td>
+          <td>{{item.prodDescription}}</td>
+          <td>{{item.productcategoryname}}</td>
+          <td>{{item.productSubCategoryName}}</td>
+          <td>{{item.unitmastername}}</td>
+          <td>
+            <span class="pl-2 pr-2">
+              <p-contextMenu triggerEvent="click" appendTo="body" [target]="dt3" [model]="gridDetailsContextMenu">
+              </p-contextMenu>
+              <button pButton pRipple type="button" icon="pi pi-ellipsis-v" #dt3
+                (click)="getGridDetailsContextMenu(item)" class="p-button-rounded p-button-text"></button>
+            </span>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="rowexpansion" let-item>
+        <tr>
+          <td colspan="7">
+            <div class="card">
+              <div class="card-body">
+                <div class="table-responsive">
+                  <p-table [columns]="cols" [value]="ListInfo" [style]="{width: '75vw' , height:'6vw'}" dataKey="id"
+                    expandableRows="true" rowExpandMode="single1" [responsive]="true" [scrollable]="false" dataKey="id"
+                    scrollHeight="flex">
+
+                    <ng-template pTemplate="header">
+        <tr>
+          <th>{{"PRODUCT_MASTER_BARCODE" | translate}}</th>
+          <th>{{"PRODUCT_MASTER_REORDERLEVEL" | translate}}</th>
+          <th>{{"PRODUCT_MASTER_ISEXPIRABLE" | translate}}</th>
+          <th>{{"PRODUCT_MASTER_MANAGE_STACKS" | translate}}</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr>
+          <td>{{item.barcode}}</td>
+          <td>{{item.reOrderLevel}}</td>
+          <td>{{item.isExpirable}}</td>
+          <td>{{item.isStockable}}</td>
+
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+</div>
+</td>
+</tr>
+</ng-template>
+</p-table>
+</div>
+<p-overlayPanel #adFilter [style]="{width: '60%'}">
+  <ng-template pTemplate>
+    <div class="p-fluid p-formgrid p-grid">
+
+      <div class="p-field  p-col-6 p-md-4">
+        <label for="prodCode">{{"PRODUCT_MASTER_CODE" | translate}}</label>
+        <input id="prodCode" type="text" [(ngModel)]="productMasterForm.prodCode" class="p-invalid" pInputText />
+      </div>
+      <div class="p-field  p-col-6 p-md-4">
+        <label for="prodDescription">{{"PRODUCT_MASTER_DESCRIPTION" | translate}}</label>
+        <input id="prodDescription" type="text" [(ngModel)]="productMasterForm.prodDescription" class="p-invalid"
+          pInputText />
+      </div>
+      <div class="p-field p-col-6 p-md-4">
+        <label for="prodCategoryId">{{"PRODUCT_MASTER_PRODUCTCATEGORY" | translate}}</label>
+        <p-dropdown id="prodCategoryId" [options]="productCategory" [(ngModel)]="productMasterForm.prodCategoryId"
+          [filter]="true" filterBy="name" optionLabel="name" optionValue="code">
+        </p-dropdown>
+      </div>
+      <div class="p-field p-col-6 p-md-4">
+        <label for="prodSubCategoryId">{{"PRODUCT_MASTER_PRODUCTSUBCATEGORY" | translate}}</label>
+        <p-dropdown id="prodSubCategoryId" [options]="productSubCategory" [(ngModel)]="productMasterForm.prodSubCategoryId"
+          [filter]="true" filterBy="name" optionLabel="name" optionValue="id">
+        </p-dropdown>
+      </div>
+      <div class="p-field p-col-6 p-md-4">
+        <label for="defaultUnitId">{{"PRODUCT_MASTER_UNITMASTER" | translate}}</label>
+        <p-dropdown id="defaultUnitId" [options]="UnitMaster" [(ngModel)]="productMasterForm.defaultUnitId"
+          [filter]="true" filterBy="unitName" optionLabel="unitName" optionValue="id">
+        </p-dropdown>
+      </div>
+      <div class="p-field  p-col-6 p-md-4">
+        <label for="barcode">{{"PRODUCT_MASTER_BARCODE" | translate}}</label>
+        <input id="barcode" type="text" [(ngModel)]="productMasterForm.barcode" class="p-invalid" pInputText />
+      </div>
+      <div class="p-field p-col-6 p-md-9">
+      </div>
+      <p-divider type="dashed" class="w-full"></p-divider>
+      <div class="p-field p-col-6 p-md-2">
+        <button pButton pRipple label="{{'APP_SEARCH' | translate}}" icon="pi pi-search"
+          class="p-button-rounded p-button-success p-mr-2" (click)="adFilter.hide();getSearch();"></button>
+      </div>
+      <div class="p-field p-col-6 p-md-2">
+        <button pButton pRipple label="{{'APP_CLEAR' | translate}}" icon="pi pi-times-circle"
+          class="p-button-rounded p-button-warning  p-mr-2" (click)="clearSearchCriteria()"></button>
+      </div>
+    </div>
+
+  </ng-template>
+</p-overlayPanel>
+
+<p-confirmDialog header="{{'APP_DELETE_CONFIRM_HDR' | translate}}" acceptLabel="{{'APP_OK' | translate}}"
+  rejectLabel="{{'APP_CANCEL' | translate}}" icon="pi pi-exclamation-triangle"
+  acceptButtonStyleClass="p-button-rounded p-button-danger" rejectButtonStyleClass="p-button-rounded">
+</p-confirmDialog>
+</div>

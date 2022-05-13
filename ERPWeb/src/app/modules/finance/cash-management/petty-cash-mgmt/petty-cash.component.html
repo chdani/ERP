@@ -1,0 +1,100 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+    <p-toolbar styleClass="p-mb-4">
+      <ng-template pTemplate="left">
+        <span class="p-input-icon-right">
+          <i class="pi pi-search"></i>
+          <input *ngIf="activeTabIndex==0" pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+            placeholder="{{'APP_SEARCH' | translate}}" />
+          <input *ngIf="activeTabIndex==1" pInputText type="text" (input)="pettyTeller.filterGlobal($event.target.value, 'contains')"
+            placeholder="{{'APP_SEARCH' | translate}}" />
+        </span>
+      </ng-template>
+      <ng-template pTemplate="right">
+        <span class="newbtnpadding" *ngIf="isGranted('SCR_PETTY_CASH_MGMT',actionType.allowAdd)">
+          <button dir="ltr" pButton pRipple
+            label="{{'APP_ADD' | translate}}" icon="pi pi-plus" class="p-button-rounded p-button-success p-mr-2"
+            (click)="addAccountTeller()"></button></span>
+      </ng-template>
+    </p-toolbar>
+    <p-tabView (onChange)="switchTab($event)" [(activeIndex)]="activeTabIndex">
+      <p-tabPanel leftIcon="pi pi-money-bill" header="{{'PETTY_ACCOUNTS' | translate}}">
+        <div style="overflow: auto;">
+                <p-table #dt responsiveLayout="stack" selectionMode="single" [value]="accountData" [scrollable]="true" scrollHeight="flex"  [paginator]="true" [rows]="10"
+                styleClass="p-datatable-responsive-demo p-datatable-gridlines text" [globalFilterFields]="['accountCode','accountName']" dataKey="id">
+            <ng-template pTemplate="header">
+              <tr>
+                <th pSortableColumn="accountCode">{{"APP_CODE" | translate}}
+                  <p-sortIcon field="accountCode"></p-sortIcon>
+                </th>
+                <th pSortableColumn="accountName">{{"APP_NAME" | translate}}
+                  <p-sortIcon field="accountName"></p-sortIcon>
+                </th>
+                <th pSortableColumn="action">{{"APP_ACTION" | translate}}
+                  <p-sortIcon field="action"></p-sortIcon>
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+              <tr [pSelectableRow]="item">
+                <td>{{item.accountCode}}
+                  <!-- &nbsp;<span *ngIf="item.isHeadAccount" class="badge badge-success">
+                  {{ "PETTY_HEAD_ACCOUNT" | translate}}</span> -->
+                </td>
+                <td>{{item.accountName}}</td>
+                <td>
+
+                  <span class="pl-2 pr-2">
+                    <p-contextMenu triggerEvent="click" appendTo="body" [target]="dt3" [model]="gridDetailsContextMenu"></p-contextMenu>
+                    <button pButton pRipple type="button" icon="pi pi-ellipsis-v" #dt3 (click)="getGridDetailsContextMenu(item)"
+                        class="p-button-rounded p-button-text"></button>
+                </span>            
+                
+                
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </p-tabPanel>
+      <p-tabPanel leftIcon="pi pi-money-bill" header="{{'PETTY_TELLERS' | translate}}">
+        <div style="overflow: auto;">
+                <p-table #pettyTeller responsiveLayout="stack" selectionMode="single" [value]="tellerData" [scrollable]="true" scrollHeight="flex"  [paginator]="true" [rows]="10"  styleClass="p-datatable-responsive-demo p-datatable-gridlines text" [globalFilterFields]="['tellerCode','tellerName']" dataKey="id">
+            <ng-template pTemplate="header">
+              <tr>
+                <th pSortableColumn="tellerCode">{{"APP_CODE" | translate}}
+                  <p-sortIcon field="tellerCode"></p-sortIcon>
+                </th>
+                <th pSortableColumn="tellerName">{{"APP_NAME" | translate}}
+                  <p-sortIcon field="tellerName"></p-sortIcon>
+                </th>
+                <th pSortableColumn="tellerName">{{"PETTY_CASHIER_NAME" | translate}}
+                  <p-sortIcon field="tellerName"></p-sortIcon>
+                </th>
+                <th pSortableColumn="action">{{"APP_ACTION" | translate}}
+                  <p-sortIcon field="action"></p-sortIcon>
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+              <tr [pSelectableRow]="item">
+                <td>{{item.tellerCode}} &nbsp;
+                  <span *ngIf="item.isHeadTeller" class="badge badge-success">{{ "PETTY_HEAD_TELLER" | translate}}</span>
+                </td>
+                <td>{{item.tellerName}}</td>
+                <td>{{item.userName}}</td>
+                <td>
+                  <span class="pl-2 pr-2">
+                    <p-contextMenu triggerEvent="click" appendTo="body" [target]="dt3" [model]="gridTellersDetailsContextMenu"></p-contextMenu>
+                    <button pButton pRipple type="button" icon="pi pi-ellipsis-v" #dt3 (click)="getTellersGridDetailsContextMenu(item)"
+                        class="p-button-rounded p-button-text"></button>
+                </span>            
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+
+  <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>

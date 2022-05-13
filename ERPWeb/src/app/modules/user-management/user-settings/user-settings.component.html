@@ -1,0 +1,19 @@
+<div class="flex flex-col flex-auto w-full  min-w-0">
+    <p-toolbar>
+        <ng-template pTemplate="right">
+            <span class="newbtnpadding">
+                <button pButton type="button" label="{{'APP_SAVE' | translate}}" icon="pi pi-save" (click)="saveSetting()"
+                    class="p-button-rounded"></button>
+            </span>
+        </ng-template>
+    </p-toolbar>
+    <p-card>
+        <div class="p-fluid p-formgrid p-grid"> 
+            <div class="p-field p-col-6 p-md-3">
+                <label for="language">{{"APP_LANGUAGE" | translate}}</label>
+                <p-dropdown id="language" [options]="languages" [(ngModel)]="selectedLang " optionLabel="description"
+                    optionValue="code"></p-dropdown>
+            </div>
+        </div>
+    </p-card>
+</div>

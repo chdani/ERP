@@ -1,0 +1,51 @@
+
+
+.p-upload{
+ background-color: transparent;
+    color: #689F38;
+    border: 1px solid;
+    cursor: pointer;
+    
+}
+.p-upload-round{
+  border-radius: 50%;
+    height: 2.357rem;
+    width: 2.357rem;
+    padding: 10px;
+    
+}
+.p-upload-pad{
+    margin: 0;
+    display: inline-flex;
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+    align-items: center;
+    vertical-align: bottom;
+    text-align: center;
+    overflow: hidden;
+    position: relative;
+}
+ 
+   div.p-fileupload-content > ul{
+    display: none;
+   }
+   
+   .link{
+    width: 70%;
+    color: blue;
+    text-decoration:underline;
+    cursor: pointer;
+   }
+   
+   .dynamsoft-dwt-dlg-title
+   {
+     margin-top: 100px!important;
+   }
+
+   .dynamsoft-dwt-installdlg-iconholder
+   {
+     img {
+       display: none!important;
+     }
+   }

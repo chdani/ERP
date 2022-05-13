@@ -1,0 +1,215 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+    <p-toolbar styleClass="p-mb-4">
+        <ng-template pTemplate="left">
+            <span class="p-input-icon-right">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                    placeholder="{{'APP_SEARCH' | translate}}" />
+            </span>
+            <button pButton pRipple label="" icon="pi pi-search-plus" class="p-button-secondary" (click)="adFilter.toggle($event)"></button>
+            <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success p-mr-2  p-ml-2"
+                pTooltip="XLS" tooltipPosition="bottom"></button>
+        </ng-template>
+
+        <ng-template pTemplate="right">
+            <span class="newbtnpadding"><button *ngIf="isGranted('SCR_CASH_MGMT',actionType.allowAdd)" pButton pRipple
+                    label="{{'APP_ADD' | translate}}" icon="pi pi-plus" class="p-button-rounded p-button-success p-mr-2"
+                    (click)="createCashTransaction()"></button></span>
+        </ng-template>
+    </p-toolbar>
+    <p-tabView (onChange)="getTransactions($event)">
+        <p-tabPanel leftIcon="pi pi-money-bill" header="{{'CASHMGMT_EXPENSES' | translate}}">
+            <div style="height: 70vh;">
+                 <p-table  #dt  responsiveLayout="stack"  selectionMode="single" [(selection)]="selectedCashExpense"
+                    [value]="cashExpenses" [scrollable]="true" scrollHeight="flex" 
+                    [globalFilterFields]="['processTypeDesc','amount','recipient','ledger', 'referenceNo','remarks','costCenterDesc']" 
+                    dataKey="id">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th pSortableColumn="processTypeDesc">{{"CASHMGMT_PROCESS" | translate}}<p-sortIcon field="processTypeDesc"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="transDate">{{"CASHMGMT_TRANSDATE" | translate}}<p-sortIcon field="transDate"></p-sortIcon></th>
+                            <th pSortableColumn="amount">
+                                <div style="text-align: right; width: 100%">{{"CASHMGMT_AMOUNT" | translate}}</div>
+                                <p-sortIcon field="amount"></p-sortIcon></th>
+                            <th pSortableColumn="ledger">{{"CASHMGMT_LEDGER" | translate}}<p-sortIcon field="ledger"></p-sortIcon></th>
+                            <th pSortableColumn="costCenterDesc">{{"CASHMGMT_COSTCENTER" | translate}}<p-sortIcon field="costCenterDesc"></p-sortIcon></th>
+                            <th pSortableColumn="recipient">{{"CASHMGMT_RECIPIENT" | translate}}<p-sortIcon field="recipient"></p-sortIcon></th>
+                            <th pSortableColumn="referenceNo">{{"CASHMGMT_REFERENCE" | translate}}<p-sortIcon field="referenceNo"></p-sortIcon></th>
+                            <th pSortableColumn="remarks">{{"CASHMGMT_REMARKS" | translate}}<p-sortIcon field="remarks"></p-sortIcon></th>
+                            <th>{{"APP_ACTION" | translate}}</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                        <tr [pSelectableRow]="item">
+                            <td>{{item.processTypeDesc}}</td>
+                            <td>{{item.transDate | date:'dd-MM-yyyy' }}</td>
+                            <td><div style="text-align: right; width: 100%">{{item.amount | currency:' ':'symbol':'0.0-0'}}</div></td>
+                            <td>{{item.ledger}}</td>
+                            <td>{{item.costCenterDesc}}</td>
+                            <td>{{item.recipient}}</td>
+                            <td>{{item.referenceNo}}</td>
+                            <td>{{item.remarks}}</td>
+                            <td>
+                                <span>
+                                    <button pButton pRipple type="button" icon="pi pi-print" 
+                                     (click)="printCashTransaction(item)"
+                                    class="p-button-rounded p-button-success p-button-outlined"></button>
+                                </span>
+                                <span *ngIf="isGranted('SCR_CASH_MGMT',actionType.allowEdit)" class="pl-2">
+                                    <button pButton pRipple type="button" icon="pi pi-pencil"  (click)="editCashTransaction(item)" class="p-button-rounded p-button-success p-button-outlined"></button>
+                                </span>
+                                <span *ngIf="isGranted('SCR_CASH_MGMT',actionType.allowDelete)" class="pl-2">
+                                    <button pButton pRipple type="button" icon="pi pi-trash" (click)="deleteCashTransaction(item)"
+                                        class="p-button-rounded p-button-success p-button-outlined"></button>
+                                </span>
+                        </tr>
+                    </ng-template>
+            </p-table>
+            </div>
+        </p-tabPanel>
+        <p-tabPanel leftIcon="pi pi-wallet" header="{{'CASHMGMT_RECEIPTS' | translate}}">
+            <div style="height: 70vh;">
+                <p-table #dt responsiveLayout="stack" selectionMode="single" [(selection)]="selectedReceipt"
+                    [value]="cashReceipts" [scrollable]="true" scrollHeight="flex"
+                    [globalFilterFields]="['processTypeDesc','amount','recipient','ledger', 'referenceNo','remarks','costCenterDesc']"
+                    dataKey="id">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th pSortableColumn="processTypeDesc">{{"CASHMGMT_PROCESS" | translate}}<p-sortIcon
+                                    field="processTypeDesc"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="transDate">{{"CASHMGMT_TRANSDATE" | translate}}<p-sortIcon field="transDate">
+                                </p-sortIcon>
+                            </th>
+                            <th pSortableColumn="amount">
+                                <div style="text-align: right; width: 100%">{{"CASHMGMT_AMOUNT" | translate}}</div>
+                                <p-sortIcon field="amount"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="ledger">{{"CASHMGMT_LEDGER" | translate}}<p-sortIcon field="ledger"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="costCenterDesc">{{"CASHMGMT_COSTCENTER" | translate}}<p-sortIcon field="costCenterDesc">
+                                </p-sortIcon>
+                            </th>
+                            <th pSortableColumn="recipient">{{"CASHMGMT_RECIPIENT" | translate}}<p-sortIcon field="recipient">
+                                </p-sortIcon>
+                            </th>
+                            <th pSortableColumn="referenceNo">{{"CASHMGMT_REFERENCE" | translate}}<p-sortIcon field="referenceNo">
+                                </p-sortIcon>
+                            </th>
+                            <th pSortableColumn="remarks">{{"CASHMGMT_REMARKS" | translate}}<p-sortIcon field="remarks">
+                                </p-sortIcon>
+                            </th>
+                            <th>{{"APP_ACTION" | translate}}</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                        <tr [pSelectableRow]="item">
+                            <td>{{item.processTypeDesc}}</td>
+                            <td>{{item.transDate | date:'dd-MM-yyyy' }}</td>
+                            <td>
+                                <div style="text-align: right; width: 100%">{{item.amount | currency:' ':'symbol':'0.0-0'}}
+                                </div>
+                            </td>
+                            <td>{{item.ledger}}</td>
+                            <td>{{item.costCenterDesc}}</td>
+                            <td>{{item.recipient}}</td>
+                            <td>{{item.referenceNo}}</td>
+                            <td>{{item.remarks}}</td>
+                            <td>
+                                <span>
+                                    <button pButton pRipple type="button" icon="pi pi-print" (click)="printCashTransaction(item)"
+                                        class="p-button-rounded p-button-success p-button-outlined"></button>
+                                </span>
+                                <span *ngIf="isGranted('SCR_CASH_MGMT',actionType.allowEdit)" class="pl-2">
+                                    <button pButton pRipple type="button" icon="pi pi-pencil" (click)="editCashTransaction(item)"
+                                        class="p-button-rounded p-button-success p-button-outlined"></button>
+                                </span>
+                                <span *ngIf="isGranted('SCR_CASH_MGMT',actionType.allowDelete)" class="pl-2">
+                                    <button pButton pRipple type="button" icon="pi pi-trash" (click)="deleteCashTransaction(item)"
+                                        class="p-button-rounded p-button-success p-button-outlined"></button>
+                                </span>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </p-tabPanel>
+    </p-tabView>
+</div>
+
+<p-confirmDialog header="{{'APP_DELETE_CONFIRM_HDR' | translate}}" acceptLabel="{{'APP_OK' | translate}}"
+    rejectLabel="{{'APP_CANCEL' | translate}}" icon="pi pi-exclamation-triangle"
+    acceptButtonStyleClass="p-button-rounded p-button-danger" rejectButtonStyleClass="p-button-rounded">
+</p-confirmDialog>
+
+<p-overlayPanel #adFilter  [style]="{width: '60%'}">
+    <ng-template pTemplate>
+            <div class="p-fluid p-formgrid p-grid">
+                <!-- <div class="p-field p-col-6 p-md-3">
+                    <label for="transType">{{"BUDGT_TYPE" | translate}}</label>
+                    <p-dropdown id="transType" [options]="transTypes" [(ngModel)]="cashForm.transType "
+                        optionLabel="description" optionValue="code"></p-dropdown>
+                </div> -->
+                <div class="p-field  p-col-6 p-md-3">
+                    <label for="transFromDate">{{"APP_FROMDATE" | translate}}</label>
+                    <p-calendar id="transFromDate" [(ngModel)]="cashForm.fromTransDate" dateFormat="dd-mm-yy" [showIcon]="true"
+                        inputId="transFromDateInp" placeholder="{{ 'APP_FROMDATE' | translate}}"></p-calendar>
+                </div>
+                <div class="p-field  p-col-6 p-md-3">
+                    <label for="transToDate">{{"APP_TODATE" | translate}}</label>
+                    <p-calendar id="transToDate" [(ngModel)]="cashForm.toTransDate" dateFormat="dd-mm-yy" [showIcon]="true"
+                        inputId="transToDateInp" placeholder="{{ 'APP_TODATE' | translate}}"></p-calendar>
+                </div>
+                <div class="p-field p-col-6 p-md-3">
+                    <label for="processType">{{"CASHMGMT_PROCESS" | translate}}</label>
+                    <p-dropdown id="processType" [options]="processTypes" [(ngModel)]="cashForm.processType "
+                        optionLabel="description" optionValue="code"></p-dropdown>
+                </div>
+        
+                <div class="p-field  p-col-6 p-md-3">
+                    <label for="ledgerCode">{{"CASHMGMT_LEDGER" | translate}}</label>
+                    <p-autoComplete [(ngModel)]="selectedLedger" [showEmptyMessage]="true" [suggestions]="filteredLedgers"
+                        (completeMethod)="filterLedgerAccounts($event)" field="ledgerDescCode" [minLength]="0"
+                        [forceSelection]="true" emptyMessage="{{'APP_NODATA'|translate}}"
+                        placeholder="{{'CASHMGMT_LEDGER' | translate}}">
+                    </p-autoComplete>
+                </div>
+                <div class="p-field  p-col-6 p-md-3">
+                    <label for="costCenter">{{"CASHMGMT_COSTCENTER" | translate}}</label>
+                    <p-dropdown id="costCenter" [options]="costCenters" [(ngModel)]="cashForm.costCenter "
+                        optionLabel="codeDescription" optionValue="code"></p-dropdown>
+                </div>
+                <div class="p-field  p-col-6 p-md-3">
+                    <label for="amount">{{"CASHMGMT_AMOUNT" | translate}}</label>
+                    <p-inputNumber mode="decimal" [maxFractionDigits]="2" prefix="QAR " id="amount"
+                        placeholder="{{ 'CASHMGMT_AMOUNT' | translate}}" [(ngModel)]="cashForm.amount"></p-inputNumber>
+                </div>
+                <div class="p-field  p-col-6 p-md-3">
+                    <label for="recipient">{{"CASHMGMT_RECIPIENT" | translate}}</label>
+                    <input pInputText id="recipient" [(ngModel)]="cashForm.recipient"
+                        placeholder="{{ 'CASHMGMT_RECIPIENT' | translate}}">
+                </div>
+                <div class="p-field p-col-6 p-md-3">
+                    <label for="referenceNo">{{"CASHMGMT_REFERENCE" | translate}}</label>
+                    <input pInputText id="referenceNo" [(ngModel)]="cashForm.referenceNo"
+                        placeholder="{{ 'CASHMGMT_REFERENCE' | translate}}">
+                </div>
+                <div class="p-field p-col-6 p-md-9">
+                </div>
+                <p-divider type="dashed" class="w-full"></p-divider>
+                <div class="p-field p-col-6 p-md-2">
+                    <button pButton pRipple label="{{'APP_SEARCH' | translate}}" icon="pi pi-search" class="p-button-rounded p-button-success p-mr-2" (click)="adFilter.hide();searchCashTransactions();"></button>
+                </div>
+                <div class="p-field p-col-6 p-md-2">
+                    <button pButton pRipple label="{{'APP_CLEAR' | translate}}" icon="pi pi-times-circle"
+                        class="p-button-rounded p-button-warning  p-mr-2" (click)="clearSearchCriteria()"></button>
+                </div>  
+            </div>
+
+    </ng-template>
+</p-overlayPanel>
+
+<p-dialog [(visible)]="displayPreview" [style]="{width: '20vw', height: '80vh'}" position="top" [resizable]="false">
+    <cash-invoice-print [transactionId]="selectedTransId"></cash-invoice-print>
+</p-dialog>
+

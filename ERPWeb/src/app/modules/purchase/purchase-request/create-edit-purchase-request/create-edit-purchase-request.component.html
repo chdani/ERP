@@ -1,0 +1,172 @@
+<div class="flex flex-col flex-auto w-full  min-w-0">
+    <p-toolbar>
+        <ng-template pTemplate="right">
+            <span class="newbtnpadding">
+                <button dir="ltr" pButton type="button" label="{{'APP_SAVE' | translate}}" icon="pi pi-save"
+                    (click)="createOredit()" class="p-button-rounded"></button>
+            </span>
+            <span class="newbtnpadding pl-2  pr-2">
+                <button dir="ltr" pButton type="button" label="{{'APP_CANCEL' | translate}}" icon="pi pi-ban"
+                    class="p-button-rounded p-button-danger" (click)="cancelAddEdit()"></button>
+            </span>
+        </ng-template>
+    </p-toolbar>
+    <p-card>
+        <div class="p-fluid " [dir]="lang === 'ar' ? 'rtl' : 'ltr'" style="text-align: start;">
+            <div class="row">
+                <div class="col-md-4 ">
+                    <label for="ddlvendorQuotation">{{"PR_VENDORQUOTATION" | translate}}</label>
+                     <input pInputText id="txtVendorQuo" placeholder="{{'PR_VENDORQUOTATION' | translate}}" (blur)="loadVendorQuotation($event)" [(ngModel)]="selectedVendorQuotation">
+                </div>
+               
+                <div class="col-md-4">
+                    <label for="remarks">{{"APP_REMARKS" | translate}}</label>
+                    <input pInputText id="remarks" placeholder="{{'APP_REMARKS' | translate}}"
+                        [(ngModel)]="puchaseReq.remarks">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12  pt-4">
+                    <p-toolbar>
+                        <ng-template pTemplate="left">
+                            <span class="p-input-icon-left" style="padding: 10px;width: 200px;">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text"
+                                    (input)="purDt.filterGlobal($event.target.value, 'contains')"
+                                    placeholder="{{'APP_SEARCH' | translate}}" />
+                            </span>
+                            <div style="padding: 10px;width: 200px; font-weight: bolder;"> 
+                                <span>{{"GRN_VENDOR_NAME" | translate}} : {{selectedVendor.name}}</span>
+                            </div>
+                            <div style="padding: 5px;width: 200px; font-weight: bolder;"> 
+                                <span>{{"TOTAL_QUANTITY" | translate}} : {{ purchaseReqTotelQuantity| currency:' ':'symbol':'0.0-0'}}</span>
+                            </div>
+                            <div style="padding: 5px;width: 200px; font-weight: bolder;"> 
+                                <span>{{"TOTAL_AMOUNT" | translate}} : {{ purchaseReqTotelAmount| currency:' ':'symbol':'0.0-0'}}</span>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="right">
+                            <span class="newbtnpadding">
+                                <button pButton pRipple label="{{'APP_ADD' | translate}}" icon="pi pi-plus"
+                                    pTooltip="{{'SR_ADD_PRODUCTS' | translate}}" tooltipPosition="bottom"
+                                    class="p-button-success p-mr-2" (click)="addNewPurchaseReqDet()"></button>
+                            </span>
+                        </ng-template>
+                    </p-toolbar>
+                    <p-table #purDt [value]="puchaseReq.purchaseRequestDetList"
+                        [globalFilterFields]="['selectedProduct.name','selectedUnit.unitName','amount','price','quantity','remarks']"
+                        dataKey="id" styleClass="p-datatable-gridlines">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th pSortableColumn="selectedProduct.name">{{"PR_PROD_NAME" | translate}}
+                                    <p-sortIcon field="selectedProduct.name">
+                                    </p-sortIcon>
+                                </th>
+                                <th pSortableColumn="selectedUnit.unitName">{{"PR_UNIT_NAME" | translate}}
+                                    <p-sortIcon field="selectedUnit.unitName">
+                                    </p-sortIcon>
+                                </th>
+
+                                <th pSortableColumn="quantity">{{"PR_QUANTITY" | translate}}<p-sortIcon
+                                        field="quantity">
+                                    </p-sortIcon>
+                                </th>
+                                <th pSortableColumn="price">{{"PR_PRICE" | translate}}<p-sortIcon field="price">
+                                    </p-sortIcon>
+                                </th>
+                                <th pSortableColumn="amount">{{"PR_AMOUNT" | translate}}<p-sortIcon field="amount">
+                                    </p-sortIcon>
+                                </th>
+
+                                <th pSortableColumn="remarks">{{"APP_REMARKS" | translate}}<p-sortIcon field="remarks">
+                                    </p-sortIcon>
+                                </th>
+                                <th>{{"APP_ACTION" | translate}}</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-det>
+                            <tr>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <p-dropdown [options]="products" [filter]="true" filterBy="name"
+                                                id="ddlProduct" [(ngModel)]="det.selectedProduct" optionLabel="name"
+                                                (onChange)="onChangeProduct(det)">
+                                            </p-dropdown>
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{det.selectedProduct.name}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <p-dropdown [options]="units" [filter]="true" filterBy="unitName"
+                                                id="ddlUnits" [(ngModel)]="det.selectedUnit" optionLabel="unitName">
+                                            </p-dropdown>
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{det.selectedUnit.unitName}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <p-inputNumber mode="decimal" [maxFractionDigits]="3"
+                                                placeholder="{{ 'PR_QUANTITY' | translate}}" [(ngModel)]="det.quantity"
+                                                (onBlur)="calculateAmount($event, det)">
+                                            </p-inputNumber>
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{det.quantity }}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <p-inputNumber mode="decimal" [maxFractionDigits]="8"
+                                                placeholder="{{ 'PR_PRICE' | translate}}" [(ngModel)]="det.price"
+                                                (onBlur)="calculateAmount($event, det)">
+                                            </p-inputNumber>
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{det.price }}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+
+                                <td>{{det.amount }}</td>
+                                <td pEditableColumn>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <input pInputText type="text" [(ngModel)]="det.remarks"
+                                                placeholder="{{ 'APP_REMARKS' | translate}}" aria-readonly="true">
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{det.remarks}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td>
+                                    <span style="padding-left: 5px;padding-right: 5px;">
+                                        <button pButton pRipple icon="pi pi-trash"
+                                            class="p-button-outlined p-button-rounded p-button-danger"
+                                            (click)="deleteReqDet(det)"
+                                            pTooltip="{{'APP_DELETE' | translate}}"></button>
+                                    </span>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+    </p-card>
+</div>
+<p-confirmDialog header="{{'APP_CONFIRMATION' | translate}}" acceptLabel="{{'APP_OK' | translate}}"
+    rejectLabel="{{'APP_CANCEL' | translate}}" icon="pi pi-exclamation-triangle"
+    acceptButtonStyleClass="p-button-rounded p-button-danger" rejectButtonStyleClass="p-button-rounded">
+</p-confirmDialog>

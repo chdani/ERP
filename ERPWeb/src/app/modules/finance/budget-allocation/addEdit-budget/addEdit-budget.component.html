@@ -1,0 +1,218 @@
+<div class="flex flex-col flex-auto w-full min-w-0  p-2">
+    <p-toolbar styleClass="p-mb-4">
+        <ng-template pTemplate="right">
+            <span class="newbtnpadding">
+                <button dir="ltr" pButton type="button" label="{{'APP_SAVE' | translate}}" icon="pi pi-save"
+                    (click)="createOredit()" class="p-button-rounded"></button>
+            </span>
+            <span class="newbtnpadding pl-2 pr-2">
+                <button dir="ltr" pButton  type="button" label="{{'APP_CANCEL' | translate}}" icon="pi pi-ban"
+                    class="p-button-rounded p-button-danger" (click)="cancelAddEdit()"></button>
+            </span>
+        </ng-template>
+    </p-toolbar>
+
+<div class="bg-card shadow rounded-2xl p-2">
+<div class="container ">
+    <div class="row">
+      <div class="col-sm-4 p-fluid p-formgrid">
+        <div class="p-field p-col" style="text-align: start;">
+            <label for="budgetType">{{"BUDGT_TYPE" | translate}}</label>
+            
+            <p-dropdown id="budgetType" [options]="budgetTypes" [(ngModel)]="selectedBudgetType " optionLabel="description"
+                optionValue="code" (onChange)="onBudgetTypeChange()"></p-dropdown>
+        </div>
+      </div>
+      <div class="col-sm-4 p-fluid p-formgrid">
+        <div class="p-field p-col" style="text-align: start;">
+            <label for="budgetDate">{{"FIN_BOOK_DATE" | translate}}</label>
+            
+            <p-calendar #calendar id="budgetDate" [(ngModel)]="budgetForm.budgetDate" [maxDate]="todayDateTime" dateFormat="dd-mm-yy" [showIcon]="true" inputId="budgetDateInp"
+            placeholder="{{ 'FIN_BOOK_DATE' | translate}}"></p-calendar>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="p-field p-col" style="text-align: start;">
+           
+            <label for="budgetDate">{{"FILE_ATTACHMENT" | translate}}</label> 
+            <br>
+        <button  pTooltip="{{'FILE_ATTACHMENT' | translate}}" pButton pRipple type="button" icon="pi pi-paperclip" (click)="attachmentLink(budgetForm,'BUDGETALLOCATION')"
+           label="File Attachment" class="p-button-outlined p-button-rounded "></button>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="flex flex-col bg-card shadow rounded-2xl mt-3">
+   <div class="flex flex-col bg-card shadow rounded-2xl mt-3">    
+<p-panel header="{{'BUDGT_SPLITS' | translate}}" *ngIf="!showReturn">    
+<div class="bg-card shadow rounded-2xl p-2" >
+    <div class="container ">
+        <div class="row">
+            <div class="col-sm-3 p-fluid p-formgrid">
+                <div class="p-field p-col" style="text-align: start;">
+                    <label for="ledgerCode">{{"BUDGT_LEDGER_GROUP" | translate}}</label>
+                    <p-autoComplete [(ngModel)]="selectedLedgerGroup" [showEmptyMessage]="true" [suggestions]="filteredLedgerGroup"
+                        (completeMethod)="filterledgerGroups($event,'')" field="accountDescCode" [minLength]="0"  [forceSelection]="true"
+                        (onSelect)="onLedgerGroupsChange('')" emptyMessage="{{'APP_NODATA'|translate}}" placeholder="{{'BUDGT_LEDG_ACC_PLACEHOLDER' | translate}}">
+                    </p-autoComplete>
+                </div>
+              </div>
+            <div class="col-sm-3 p-fluid p-formgrid">
+            <div class="p-field p-col" style="text-align: start;">
+                <label for="ledgerCode">{{"BUDGT_LEDGER_CODE" | translate}}</label>
+                <p-autoComplete [(ngModel)]="selectedLedger" [showEmptyMessage]="true" [suggestions]="filteredLedgers"
+                    (completeMethod)="filterLedgerAccounts($event)" field="ledgerDescCode" [minLength]="0"  [forceSelection]="true"
+                    (onSelect)="onLedgerChange()" emptyMessage="{{'APP_NODATA'|translate}}" placeholder="{{'BUDGT_LEDG_ACC_PLACEHOLDER' | translate}}">
+                </p-autoComplete>
+            </div>
+          </div>
+          <div class="col-sm-3 p-fluid p-formgrid">
+          <div class="p-field p-col" style="text-align: start;">
+            <div  *ngIf="showTransfer && selectedLedger" 
+            style="position: absolute; width: 90%;  padding-top: 31px; font-weight: 700; color: blue;">
+            Available Balance : {{ balanceAmount }}
+        </div>
+        </div>
+</div>
+          
+      </div>
+      <div  class="row">
+          <div class="col-sm-3 p-fluid p-formgrid" *ngIf="showTransfer">
+            <div class="p-field p-col" style="text-align: start;">
+                <label for="ledgerCode">{{"BUDGT_LEDGER_GROUP_TO" | translate}}</label>
+                <p-autoComplete [(ngModel)]="selectedLedgerGroupTo" [showEmptyMessage]="true" [suggestions]="filteredLedgerGroupTo"
+                    (completeMethod)="filterledgerGroups($event,'To')" field="accountDescCode" [minLength]="0"  [forceSelection]="true"
+                    (onSelect)="onLedgerGroupsChange('To')" emptyMessage="{{'APP_NODATA'|translate}}" placeholder="{{'BUDGT_LEDG_ACC_PLACEHOLDER' | translate}}">
+                </p-autoComplete>
+            </div>
+          </div>
+          <div class="col-sm-3 p-fluid p-formgrid" *ngIf="showTransfer">
+            <div class="p-field p-col" style="text-align: start;">
+                <label for="ledgerCode">{{"BUDGT_LEDGER_CODE_TO" | translate}}</label>
+                        <p-autoComplete [(ngModel)]="selectedLedgerTo" [showEmptyMessage]="true" [suggestions]="filteredLedgersTo"
+                            (completeMethod)="filterLedgerAccountsTo($event)" field="ledgerDescCode" [minLength]="0"
+                            [forceSelection]="true" emptyMessage="{{'APP_NODATA'|translate}}"  (onSelect)="onLedgerToChange()"
+                            placeholder="{{'BUDGT_LEDG_ACC_PLACEHOLDER' | translate}}"></p-autoComplete>
+            </div>
+          </div>
+          <div class="col-sm-3 p-fluid p-formgrid">
+            <div class="p-field p-col" style="text-align: start;">
+              <div  *ngIf="showTransfer && selectedLedger" 
+              style="position: absolute; width: 90%;  padding-top: 31px; font-weight: 700; color: blue;">
+              Available Balance : {{ balanceAmountTo }}
+          </div>
+          </div>
+  </div>
+         
+        </div>
+        <div  class="row">
+           
+                <div class="col-sm-2 p-fluid p-formgrid">
+                    <div class="p-field p-col" style="text-align: start;">
+                        <label for="budgetAmount">{{"BUDGT_BUDGT_AMT" | translate}}</label>
+                                <p-inputNumber mode="decimal"  [maxFractionDigits]="2" prefix="QAR " id="budgetAmount" placeholder="{{ 'BUDGT_BUDGT_AMT' | translate}}"
+                                [(ngModel)]="budgetAmount"></p-inputNumber>
+                    </div>
+                  </div>
+                  <div class="col-sm-2 p-fluid p-formgrid">
+                    <div class="p-field p-col" style="text-align: start;">
+                        <label for="remarks">{{"BUDGT_REMARKS" | translate}}</label>
+                        <input pInputText id="remarks" placeholder="{{'BUDGT_REMARKS' | translate}}" [(ngModel)]="remarks">
+                    </div>
+                  </div>
+                  <div class="p-fluid p-formgrid p-grid flex-auto mr-5" style="padding-top: 20px; margin-left: 5px;">
+                    <span class="newbtnpadding  colbtn">
+                        <button dir="ltr" pButton type="button" class= "p-button-secondary p-button-sm" (click)="addBudgetDetail()" label="{{'APP_ADD' | translate}}"  icon="pi pi-plus" ></button>
+                    </span>
+                </div> 
+           
+        </div>
+      </div>
+    </div>
+    <div style="height: 25vh;">
+        <p-table #dt  responsiveLayout="stack" selectionMode="single" [(selection)]="selectedBudget" [value]="budgetDetails"
+            [scrollable]="true" scrollHeight="flex" dataKey="id" >
+            <ng-template pTemplate="header"  let-columns>
+                <tr>
+                    <th  style="flex-basis:25%" pSortableColumn="ledgerDesc">{{"BUDGT_LEDGER_CODE" | translate}}<p-sortIcon field="ledgerDesc"></p-sortIcon>
+                    </th>
+                    <th *ngIf="showTransfer" style="flex-basis:25%" pSortableColumn="toLedgerDesc">{{"BUDGT_LEDGER_CODE_TO" | translate}}<p-sortIcon field="toLedgerDesc">
+                        </p-sortIcon>
+                    </th>
+                    <th style="flex-basis:15%" pSortableColumn="budgetAmount">
+                        <div style="text-align: right; width: 100%">{{"BUDGT_BUDGT_AMT" | translate}}</div>
+                        <p-sortIcon field="budgetAmount"></p-sortIcon>
+                    </th>
+                    <th style="flex-basis:25%">{{"BUDGT_REMARKS" | translate}}</th>
+                    <th style="flex-basis:5%" >{{"APP_ACTION" | translate}}</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item  let-columns="columns">
+                <tr [pSelectableRow]="item">
+                    <td style="flex-basis:25%"><span class="p-column-title">{{"BUDGT_LEDGER_CODE" | translate}}</span>{{item.ledgerDesc}}</td>
+                    <td  *ngIf="showTransfer" style="flex-basis:25%"><span class="p-column-title">{{"BUDGT_LEDGER_CODE_TO" | translate}}</span>{{item.toLedgerDesc}}</td>
+                    <td style="flex-basis:15%"><span class="p-column-title">{{"BUDGT_BUDGT_AMT" | translate}}</span>
+                        <div style="text-align: right; width: 100%">{{item.budgetAmount | currency:' ':'symbol':'0.0-0'}}</div>
+                    </td>
+                    <td style="flex-basis:25%"><span class="p-column-title">{{"BUDGT_REMARKS" | translate}}</span>{{item.remarks}}</td>
+                    <td style="flex-basis:5%">
+                        <span class="p-column-title">{{"APP_ACTION" | translate}}</span>
+                        <span style="padding-left: 5px;padding-right: 5px;">
+                        <button   pButton pRipple type="button" icon="pi pi-paperclip" (click)="attachmentLink(item,'BUDGTALLOCDETATT')"
+                            class="p-button-outlined p-button-rounded "></button></span>
+                        <span style="padding-left: 5px;padding-right: 5px;">
+                        <button pButton pRipple type="button" icon="pi pi-trash"
+                            class="p-button-rounded p-button-success p-button-outlined" (click)="deleteBudgetDet(item)"></button>
+                        </span>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+        </div>
+     </p-panel>
+     <p-panel header="{{'BUDGT_SPLITS' | translate}}" *ngIf="showReturn">  
+        <div style="height: 35vh;">
+            <p-table #dt  responsiveLayout="stack" selectionMode="single" [value]="filteredLedgersForReturn"
+                [scrollable]="true" scrollHeight="flex" dataKey="id" >
+                <ng-template pTemplate="header"  let-columns>
+                    <tr>
+                        <th  style="flex-basis:25%" pSortableColumn="ledgerDesc">{{"BUDGT_LEDGER_CODE" | translate}}<p-sortIcon field="ledgerDesc"></p-sortIcon>
+                        </th>                       
+                        <th style="flex-basis:15%" pSortableColumn="budgetAmount">
+                            <div style="text-align: right; width: 100%">{{"BUDGT_BUDGT_AMT" | translate}}</div>
+                            <p-sortIcon field="budgetAmount"></p-sortIcon>
+                        </th>
+                        <th style="flex-basis:25%">{{"BUDGT_REMARKS" | translate}}</th>
+                        <th style="flex-basis:5%" >{{"APP_ACTION" | translate}}</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item  let-columns="columns">
+                    <tr [pSelectableRow]="item" *ngIf="item.balance>0">
+                        <td style="flex-basis:25%"><span class="p-column-title">{{"BUDGT_LEDGER_CODE" | translate}}</span>{{item.ledgerCode}} - {{item.ledgerDesc}}</td>
+                       <td style="flex-basis:15%"><span class="p-column-title">{{"BUDGT_BUDGT_AMT" | translate}}</span>
+                            <div style="text-align: right; width: 100%">{{item.balance | currency:' ':'symbol':'0.0-0'}}</div>
+                        </td>
+                        <td style="flex-basis:25%"><span class="p-column-title">{{"BUDGT_REMARKS" | translate}}</span>{{item.remarks}}</td>
+                        <td style="flex-basis:5%">
+                            <span class="p-column-title">{{"APP_ACTION" | translate}}</span>
+                           
+                            <span style="padding-left: 5px;padding-right: 5px;">
+                            <button pButton pRipple type="button" icon="pi pi-trash"
+                                class="p-button-rounded p-button-success p-button-outlined" (click)="deletefilteredLedgersForReturn(item)"></button>
+                            </span>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            </div>
+        </p-panel>
+</div>
+</div>
+<p-confirmDialog header="{{'APP_DELETE_CONFIRM_HDR' | translate}}" acceptLabel="{{'APP_OK' | translate}}"
+    rejectLabel="{{'APP_CANCEL' | translate}}" icon="pi pi-exclamation-triangle"
+     acceptButtonStyleClass="p-button-rounded p-button-danger"
+     rejectButtonStyleClass="p-button-rounded"></p-confirmDialog>
+

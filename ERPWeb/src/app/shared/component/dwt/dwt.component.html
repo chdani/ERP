@@ -1,0 +1,30 @@
+<div id="container">
+  <!-- <select  id="sources"></select><br />
+  <p-dropdown [options]="sourceList" placeholder="Select Document Type" optionLabel="sourceName"
+  optionValue="sourceName"  [(ngModel)]="selectedSource" autoWidth="false" [style]="{'width':'50%'}"
+  >
+</p-dropdown>
+  <br>
+  <button  (click)="acquireImage()">Acquire Images</button>
+  <div style="width:90%" id="dwtcontrolContainer"></div> -->
+  <form>
+    <div class="form-row">
+      <div class="col-md-2">
+          <label class="sr-only">{{'APP_SELECT_SCANNER' | translate}}</label>
+          <p-dropdown [options]="sourceList" placeholder="{{'APP_SELECT_SCANNER' | translate}}" optionLabel="sourceName"
+          optionValue="sourceName"  [(ngModel)]="selectedSource" name="sources" >
+        </p-dropdown>
+      </div>
+      <div class="col-md-9 mb-2">
+        <button type="button" (click)="cancelDWT()" class="btn btn-secondary mr-2 ml-2 float-right">{{'APP_CANCEL' | translate}}</button>
+        <button type="button" (click)="UploadAsPDF()" class="btn btn-primary  mr-2 ml-2 float-right">{{'APP_SCANNER_ADD_TO_FILES' | translate}}</button>
+        <button type="submit" (click)="acquireImage()" class="btn btn-primary  mr-2 ml-2 float-right">{{'APP_SCANNER_SCAN' | translate}}</button>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col">
+        <div style="width:90%; height: 400px!important;" id="dwtcontrolContainer"></div>
+      </div>
+    </div> 
+  </form>
+</div>

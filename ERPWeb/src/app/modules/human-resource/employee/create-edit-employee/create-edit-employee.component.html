@@ -1,0 +1,452 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+
+  <mat-stepper labelPosition="bottom" [linear]="isLinear" #stepper>
+    <mat-step [stepControl]="employee">
+
+      <ng-template matStepLabel>{{"Basic_Information" | translate}}</ng-template>
+      <div class="row">
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label> {{"EMPLOYEE_FULLNAMEARB" | translate}}</mat-label>
+            <input matInput placeholder="Full Name Arb" [(ngModel)]="employee.fullNameArb" required>
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"EMPLOYEE_FULLNAMEENG" | translate}}</mat-label>
+            <input matInput placeholder="Full Name Eng" [(ngModel)]="employee.fullNameEng" required>
+          </mat-form-field>
+        </div>
+
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"EMPLOYEE_QATARIID" | translate}} </mat-label>
+            <input matInput type="number" min="11111111111" max="99999999999"
+              onKeyPress="if(this.value.length ==11) return false;" placeholder="Qatari ID"
+              [(ngModel)]="employee.qatariID" required>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"EMPLOYEE_EMPLOYEENUMBER" | translate}}</mat-label>
+            <input matInput placeholder="Employee Number" [(ngModel)]="employee.empNumber" required>
+          </mat-form-field>
+        </div>
+
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"CURRENT_DEPARTMENT" | translate}}</mat-label>
+            <mat-select [(ngModel)]="employee.currDepartmentId" required>
+              <mat-option *ngFor="let item of department" [value]="item.id">{{item.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"CURRENT_POSITION" | translate}}</mat-label>
+            <mat-select [(ngModel)]="employee.currPositionId" required>
+              <mat-option *ngFor="let item of jobPosition" [value]="item.id">{{item.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"CURRENT_GRADE" | translate}}</mat-label>
+            <input matInput type="number" min="1" max="14" onKeyPress="if(this.value.length==2) return false;"
+              placeholder="Grade ex:(1- 14)" [(ngModel)]="employee.currentGrade" required>
+          </mat-form-field>
+        </div>
+
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"EMPLOYEE_DOB" | translate}}</mat-label>
+            <input matInput [matDatepicker]="seClDt" [(ngModel)]="employee.dob" required>
+            <mat-datepicker-toggle matSuffix [for]="seClDt"></mat-datepicker-toggle>
+            <mat-datepicker #seClDt></mat-datepicker>
+
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"EMPLOYEE_PHONENO" | translate}} </mat-label>
+            <input matInput type="number" placeholder="Phone No" [(ngModel)]="employee.phoneNumber" required>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"EMPLOYEE_EMAILID" | translate}}</mat-label>
+            <input type="email" matInput [(ngModel)]="employee.email" ngModel [email]="true" placeholder="{{'EMPLOYEE_EMAILID' | translate}}"
+              required>
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"EMPLOYEE_MANAGER_NAME" | translate}}</mat-label>
+            <mat-select [(ngModel)]="employee.managerId">
+              <mat-option *ngFor="let item of defaultEmployeeList" [value]="item.id">{{item.fullNameEng}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-md-2">
+          <div class="p-field p-col" style="text-align: start;">
+            <mat-label for="createUser">{{"CREATE_USER" | translate}}</mat-label>
+            <br>
+            <p-checkbox name="createUser" binary="true" [(ngModel)]="employee.createUser"></p-checkbox>
+
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="p-field p-col" style="text-align: start;">
+            <mat-label for="isDepratmentHead">{{"EMPLOYEE_ISDEPARTMENT" | translate}}</mat-label>
+            <br>
+            <p-checkbox name="isDepratmentHead" binary="true" [(ngModel)]="employee.isDepratmentHead"></p-checkbox>
+
+          </div>
+        </div>
+      </div>
+      <div>
+        <button pTooltip="{{'APP_SAVE' | translate}}" mat-button color="primary" [style]="{'float':'right'}"
+          (click)="employeesave()">{{'APP_SAVE' | translate}}</button>
+        <button pTooltip="{{'APP_NEXT' | translate}}" color="primary" [style]="{'float':'right'}" mat-button
+          matStepperNext>{{'APP_NEXT' | translate}}</button>
+        <button pTooltip="{{'APP_CANCEL' | translate}}" mat-button color="primary" [style]="{'float':'right'}"
+          (click)="EmpCancel()">{{'APP_CANCEL' | translate}}</button>
+      </div>
+    </mat-step>
+    <mat-step [stepControl]="employee">
+
+      <ng-template matStepLabel>{{"PERSONAL_Information" | translate}}</ng-template>
+      <div class="row">
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"EMPLOYEE_PASSPORT" | translate}}</mat-label>
+            <input matInput placeholder="Passport" [(ngModel)]="employee.passport">
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"EMPLOYEE_NATIONALITY" | translate}}</mat-label>
+            <mat-select [(ngModel)]="employee.nationality">
+              <mat-option *ngFor="let item of NATIONALITY" placeholder="Select Nationality" [value]="item.code">
+                {{item.description}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"EMPLOYEE_MARITIALSTATUS" | translate}}</mat-label>
+            <mat-select [(ngModel)]="employee.maritalStatusCode">
+              <mat-option *ngFor="let item of MaritialStatus" placeholder="Select Marital Status" [value]="item.code">
+                {{item.description}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"EMPLOYEE_PLACEOFBIRTH" | translate}} </mat-label>
+            <input matInput placeholder="Place Of Birth" [(ngModel)]="employee.placeOfBirth">
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"EMPLOYEE_ADDRESS" | translate}}</mat-label>
+            <textarea matInput placeholder="Address" [(ngModel)]="employee.address"></textarea>
+          </mat-form-field>
+        </div>
+
+        <div class="col-md-4">
+          
+            <label for="budgetDate">{{"EMP_SIGNATURE" | translate}}</label>
+            <br>
+            <button pTooltip="{{'FILE_ATTACHMENT' | translate}}" pButton pRipple type="button"
+                icon="pi pi-paperclip" (click)="attachmentLink()" label="File Attachment"
+                class="p-button-outlined p-button-rounded "></button>
+       
+              
+        </div>
+      </div>
+      <div>
+        <button pTooltip="{{'APP_SAVE' | translate}}" mat-button color="primary" [style]="{'float':'right'}"
+          (click)="employeesave()">{{'APP_SAVE' | translate}}</button>
+        <button pTooltip="{{'APP_NEXT' | translate}}" color="primary" [style]="{'float':'right'}" mat-button
+          matStepperNext>{{'APP_NEXT' | translate}}</button>
+        <button pTooltip="{{'APP_BACK' | translate}}" color="primary" [style]="{'float':'right'}" mat-button
+          matStepperPrevious>{{'APP_BACK' | translate}}</button>
+      </div>
+    </mat-step>
+    <mat-step [stepControl]=" employee.empEducation">
+
+      <ng-template matStepLabel>{{"EMPLOYEE_EDUCATION" | translate}}</ng-template>
+      <div class="p-col-12 p-md-12">
+        <p-toolbar styleClass="p-mb-4">
+          <ng-template pTemplate="left">
+            <span class="p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" (input)="invDt1.filterGlobal($event.target.value, 'contains')"
+                placeholder="{{'APP_SEARCH' | translate}}" />
+            </span>
+          </ng-template>
+          <ng-template pTemplate="right">
+            <span class="newbtnpadding">
+              <button pButton pRipple label="{{'APP_ADD' | translate}}" icon="pi pi-plus"
+                class="p-button-success p-mr-2" (click)="addNewEducation()"></button>
+            </span>
+          </ng-template>
+        </p-toolbar>
+        <p-table #invDt1 [value]="EmpEducationList" [scrollable]="true" scrollHeight="flex" scrollHeight="300px"
+          [globalFilterFields]="['eduLevelCode','establishmentCode','specialization','completedYear','gradePercentage','remarks']"
+          dataKey="id" styleClass="p-datatable-responsive-demo">
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="eduLevelCode">{{"EMPLOYEE_EDUCATIONLEVEL" | translate}}<p-sortIcon
+                  field="eduLevelCode">
+                </p-sortIcon>
+              </th>
+              <th pSortableColumn="establishmentCode">{{"EMPLOYEE_Establishment" | translate}}<p-sortIcon
+                  field="establishmentCode">
+                </p-sortIcon>
+              </th>
+              <th pSortableColumn="completedYear">{{"EMPLOYEE_COMPLETEDYEAR" | translate}}<p-sortIcon
+                  field="completedYear">
+                </p-sortIcon>
+              </th>
+              <th pSortableColumn="specialization">{{"EMPLOYEE_Specialization" | translate}}<p-sortIcon
+                  field="specialization">
+                </p-sortIcon>
+              </th>
+              <th pSortableColumn="gradePercentage">{{"EMPLOYEE_GRADE" | translate}}<p-sortIcon field="gradePercentage">
+                </p-sortIcon>
+              </th>
+              <th pSortableColumn="remarks">{{"EMPLOYEE_REMARK" | translate}}<p-sortIcon field="remarks">
+                </p-sortIcon>
+              </th>
+              <th>{{"APP_ACTION" | translate}}</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-inv>
+            <tr>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-dropdown [options]="EduLevel" [(ngModel)]="inv.eduLevelCode" placeholder="Select Education"
+                      optionLabel="description">
+                    </p-dropdown>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{inv.eduLevelCode.description}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-dropdown [options]="Establishment" [(ngModel)]="inv.establishmentCode"
+                      placeholder="Select University" optionLabel="description">
+                    </p-dropdown>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{inv.establishmentCode.description}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-inputNumber [(ngModel)]="inv.completedYear" [maxlength]="5" class="changeiputwidth">
+                    </p-inputNumber>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{inv.completedYear}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input pInputText type="text" class="changeiputwidth" [(ngModel)]="inv.specialization"
+                      aria-readonly="true">
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{inv.specialization}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input pInputText type="text" class="changeiputwidth" [(ngModel)]="inv.gradePercentage"
+                      [maxlength]="5" aria-readonly="true">
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{inv.gradePercentage}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input pInputText type="text" class="changeiputwidth" [(ngModel)]="inv.remarks"
+                      aria-readonly="true">
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{inv.remarks}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td>
+                <button pButton pRipple icon="pi pi-trash" class="p-button-outlined p-button-rounded p-button-danger"
+                  (click)="removeEducation(inv)"></button>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+      <div class="">
+        <button pTooltip="{{'APP_SAVE' | translate}}" mat-button color="primary" [style]="{'float':'right'}"
+          (click)="employeesave()">{{'APP_SAVE' | translate}}</button>
+        <button pTooltip="{{'APP_NEXT' | translate}}" color="primary" [style]="{'float':'right'}" mat-button
+          matStepperNext>{{'APP_NEXT' | translate}}</button>
+        <button pTooltip="{{'APP_BACK' | translate}}" color="primary" [style]="{'float':'right'}" mat-button
+          matStepperPrevious>{{'APP_BACK' | translate}}</button>
+      </div>
+
+    </mat-step>
+    <mat-step [stepControl]=" employee.empDependent">
+
+      <ng-template matStepLabel>{{"EMPLOYEE_DEPENDENT" | translate}}</ng-template>
+      <div class="p-col-12 p-md-12">
+        <p-toolbar styleClass="p-mb-4">
+          <ng-template pTemplate="left">
+            <span class="p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" (input)="invDt2.filterGlobal($event.target.value, 'contains')"
+                placeholder="{{'APP_SEARCH' | translate}}" />
+            </span>
+          </ng-template>
+          <ng-template pTemplate="right">
+            <span class="newbtnpadding">
+              <button pButton pRipple label="{{'APP_ADD' | translate}}" icon="pi pi-plus"
+                class="p-button-success p-mr-2" (click)="addNewDependent()"></button>
+            </span>
+          </ng-template>
+        </p-toolbar>
+        <p-table #invDt2 [value]="EmpDepentedList" [scrollable]="true" scrollHeight="flex" scrollHeight="300px"
+          [globalFilterFields]="['fullName','qatariID','passport','dob','relationCode','placeOfBirth']" dataKey="id"
+          styleClass="p-datatable-responsive-demo">
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="fullName">{{"EMPLOYEE_FULLNAME" | translate}}<p-sortIcon field="fullName">
+                </p-sortIcon>
+              </th>
+              <th pSortableColumn="qatariID">{{"EMPLOYEE_QATARIID" | translate}}<p-sortIcon field="qatariID">
+                </p-sortIcon>
+              </th>
+              <th pSortableColumn="dob">{{"EMPLOYEE_DOB" | translate}}<p-sortIcon field="dob">
+                </p-sortIcon>
+              </th>
+              <th pSortableColumn="relationCode">{{"EMPLOYEE_RELATION" | translate}}<p-sortIcon field="relationCode">
+                </p-sortIcon>
+              </th>
+              <th pSortableColumn="passport">{{"EMPLOYEE_PASSPORT" | translate}}<p-sortIcon field="passport">
+                </p-sortIcon>
+              </th>
+              <th pSortableColumn="placeOfBirth">{{"EMPLOYEE_PLACEOFBIRTH" | translate}}<p-sortIcon
+                  field="placeOfBirth">
+                </p-sortIcon>
+              </th>
+              <th>{{"APP_ACTION" | translate}}</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-inv>
+            <tr>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input pInputText type="text" class="changeiputwidth" [(ngModel)]="inv.fullName"
+                      aria-readonly="true">
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{inv.fullName}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input pInputText class="changeiputwidth " type="number" min="11111111111" max="99999999999"
+                      onKeyPress="if(this.value.length ==11) return false;" [(ngModel)]="inv.qatariID"
+                      aria-readonly="true">
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{inv.qatariID}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-calendar [appendTo]="invDt2" dateFormat="dd-mm-yy" (onSelect)="valuechangedependentdob(inv.dob)"
+                      [(ngModel)]="inv.dob" [showIcon]="true" inputId="input"></p-calendar>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{inv.dob | date:'dd-MM-yyyy' }}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-dropdown [options]="Relation" [(ngModel)]="inv.relationCode" optionLabel="description">
+                    </p-dropdown>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{inv.relationCode.description}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input pInputText type="text" class="changeiputwidth" [(ngModel)]="inv.passport"
+                      aria-readonly="true">
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{inv.passport}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input pInputText type="text" class="changeiputwidth" [(ngModel)]="inv.placeOfBirth"
+                      aria-readonly="true">
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{inv.placeOfBirth}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td>
+                <button pButton pRipple icon="pi pi-trash" class="p-button-outlined p-button-rounded p-button-danger"
+                  (click)="removeDependent(inv)"></button>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+      <div class="">
+        <button pTooltip="{{'APP_SAVE' | translate}}" mat-button color="primary" [style]="{'float':'right'}"
+          (click)="employeesave()">{{'APP_SAVE' | translate}}</button>
+        <button pTooltip="{{'APP_BACK' | translate}}" color="primary" [style]="{'float':'right'}" mat-button
+          matStepperPrevious>{{'APP_BACK' | translate}}</button>
+      </div>
+
+    </mat-step>
+  </mat-stepper>
+</div>

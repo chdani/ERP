@@ -1,0 +1,91 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+  <div class="top-margin_app_save">
+    <span class="newbtnpadding">
+      <button pButton type="submit" label="{{'APP_SAVE' | translate}}" icon="pi pi-check" class="p-button-rounded"
+        (click)="onSubmit()"></button>
+    </span>
+    <span class="newbtnpadding pl-2 pr-2">
+      <button pButton type="button" label="{{'APP_CANCEL' | translate}}" icon="pi pi-times"
+        class="p-button-rounded p-button-danger" (click)="cancelAddEdit()"></button>
+    </span>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="p-fluid p-formgrid">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="p-field p-col" style="text-align: start;">
+              <label for="ProdName">{{"PRODUCT_MASTER_CODE" | translate}}</label>
+              <input id="ProdName" type="text" [(ngModel)]="productMaster.prodCode"  [disabled]="productMaster.id !== ''" class="p-invalid" pInputText />
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="p-field p-col" style="text-align: start;">
+              <label for="ProdDescription">{{"PRODUCT_MASTER_DESCRIPTION" | translate}}</label>
+              <input id="ProdDescription" type="text" [(ngModel)]="productMaster.ProdDescription" class="p-invalid"
+                pInputText />
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="p-field p-col" style="text-align: start;">
+              <label for="ProdCategoryId">{{"PRODUCT_MASTER_PRODUCTCATEGORY" | translate}}</label>
+              <p-dropdown [options]="productCategory" [(ngModel)]="selectedProduct" [filter]="true" filterBy="name"
+                placeholder="{{'PRODUCT_MASTER_PRODUCTCATEGORY' | translate}}" optionLabel="name" optionValue="code" (onChange)="selectProductSubCategory(selectedProduct)">
+              </p-dropdown>
+            </div>
+          </div>
+
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="p-field p-col" style="text-align: start;">
+              <label for="ProdCategoryId">{{"PRODUCT_MASTER_PRODUCTSUBCATEGORY" | translate}}</label>
+              <p-dropdown [options]="productSubCategory" [(ngModel)]="selectedProductSubCategory" [filter]="true" filterBy="name"
+                placeholder="{{'PRODUCT_MASTER_PRODUCTSUBCATEGORY' | translate}}" optionLabel="name" optionValue="id" [disabled]="this.disabledProductSubCategory">
+              </p-dropdown>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="p-field p-col" style="text-align: start;">
+              <label for="DefaultUnitId">{{"PRODUCT_MASTER_UNITMASTER" | translate}}</label>
+              <p-dropdown [options]="UnitMaster" [(ngModel)]="selectedUnit" [filter]="true" filterBy="unitName"
+                placeholder="{{'PRODUCT_MASTER_UNITMASTER' | translate}}" optionLabel="unitName" optionValue="id">
+              </p-dropdown>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="p-field p-col" style="text-align: start;">
+              <label for="Barcode">{{"PRODUCT_MASTER_BARCODE" | translate}}</label>
+              <input id="Barcode" type="text" [(ngModel)]="productMaster.Barcode" class="p-invalid" pInputText />
+            </div>
+          </div>
+        </div>
+        <div class="row">         
+        <div class="col-md-4">
+          <div class="p-field p-col" style="text-align: start;">
+            <label for="ReOrderLevel">{{"PRODUCT_MASTER_REORDERLEVEL" | translate}}</label>
+            <input id="ReOrderLevel" type="number" [(ngModel)]="productMaster.ReOrderLevel" class="p-invalid"
+              pInputText />
+          </div>
+        </div>
+       
+          <div class="col-md-2">
+            <div class="p-field p-col" style="text-align: start;">
+              <label for="Expirable">{{"PRODUCT_MASTER_ISEXPIRABLE" | translate}}</label>
+              <br>
+              <p-checkbox name="Expirable" binary="true" [(ngModel)]="selectedExpirable" inputId="sf"></p-checkbox>
+            </div>
+            </div>
+            <div class="col-md-4">
+              <div class="p-field p-col" style="text-align: start;">
+                <label for="ManageStacks">{{"PRODUCT_MASTER_MANAGE_STACKS" | translate}}</label>
+                <br>
+                <p-checkbox name="ManageStacks" binary="true" [(ngModel)]="selectedManageStacks" inputId="sf"></p-checkbox>
+  
+              </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>

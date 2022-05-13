@@ -1,0 +1,71 @@
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
+  <div class="p-fluid  p-formgrid" [dir]="lang === 'ar' ? 'rtl' : 'ltr'" style="text-align: start;">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="accountCode">{{'ACCOUNT_CODE' | translate}}</label>
+          <input id="accountCode" type="text" formControlName="accountCode" class="p-invalid" pInputText />
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="accountName">{{'ACCOUNT_NAME' | translate}}</label>
+          <input id="accountName" type="text" formControlName="accountName" class="p-invalid" pInputText />
+        </div>
+      </div>
+      <!-- <div class="col-md-6">
+        <div class="p-field-checkbox">
+          <p-checkbox formControlName="isHeadAccount" binary="true" inputId="isHeadAccount"></p-checkbox>
+          <label for="isHeadAccount">Is Head Account</label>
+      </div>
+    </div> -->
+    <div class="col-md-6"></div>
+    </div>
+    <div>
+      <button pButton type="submit" label="{{'ADD_PETTY_ACCOUNT' | translate}}" [disabled]="!registerForm.valid"></button>
+      <input id="id" type="hidden" formControlName="id" pInputText />
+    </div>
+  </div>
+</form>
+
+
+
+
+
+<!-- <h2 mat-dialog-title *ngIf="!this.id?.data">Create Petty Cash Account</h2>
+<h2 mat-dialog-title *ngIf="this.id?.data">Edit Petty Cash Account</h2>
+<mat-dialog-content class="mat-typography">
+
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
+    <div class="flex gt-xs:flex-row">
+      <mat-form-field [ngClass]="formFieldHelpers" class="flex-auto gt-xs:pr-3 mr-5">
+        <mat-label>Account Code</mat-label>
+        <input matInput id="accountCode" placeholder="Account Code" formControlName="accountCode">
+        <mat-error *ngIf="errorHandling('accountCode', 'required')">
+          You Must Provide Account Code
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field [ngClass]="formFieldHelpers" class="flex-auto gt-xs:pl-3">
+        <mat-label>Account Name</mat-label>
+        <input matInput id="accountName" placeholder="Account Name" formControlName="accountName">
+        <mat-error *ngIf="errorHandling('accountName', 'required')">
+          You must provide Account Name
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div class="flex gt-xs:flex-row">
+          <section class="example-section">
+            <mat-checkbox id="isHeadAccount" formControlName="isHeadAccount" class="example-margin">IsHeadAccount</mat-checkbox>
+          </section>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button class="" mat-flat-button [disabled]="registerForm.disabled || !registerForm.valid" (click)="onSubmit()">
+    <span *ngIf="!registerForm.disabled">
+      Save
+    </span>
+    <mat-progress-spinner *ngIf="registerForm.disabled" [diameter]="24" [mode]="'indeterminate'"></mat-progress-spinner>
+  </button>
+</mat-dialog-actions> -->

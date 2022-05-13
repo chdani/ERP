@@ -1,0 +1,10 @@
+truncate table ProdUnitMaster 
+truncate table ProdCatWorkFlow;
+truncate table ProdCategory;
+truncate table ProductMaster;
+truncate table VendorProduct;
+truncate table VendorContact;
+truncate table VendorContract;
+truncate table WareHouse;
+truncate table WareHouseLocation;
+truncate table VendorMaster;

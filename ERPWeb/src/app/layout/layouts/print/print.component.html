@@ -1,0 +1,31 @@
+<!-- Wrapper -->
+<div class="flex flex-col flex-auto w-full" style="display: hidden;">
+
+    <!-- Content -->
+    <div class="flex flex-col flex-auto">
+        <!-- *ngIf="true" hack is required here for router-outlet to work correctly.
+             Otherwise, layout changes won't be registered and the view won't be updated! -->
+
+        <div style="overflow-y: scroll;height: 95vh;" class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 bg-card dark:bg-transparent">
+            <!-- <div style="width: 100px;padding: 10px;;">
+                <button pButton label="{{'APP_PRINT' | translate}}" icon="pi pi-print" class="p-button-rounded p-button-success p-mr-2" (click)="printToPdf();"></button>
+            </div> -->
+            <router-outlet *ngIf="true"></router-outlet>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- Loader1 -->
+
+
+<div class="loader">
+    <div class="loader_center">
+        <div class="loader-18"></div>
+        <small class="d-block loader_font_size">
+            Loading ...
+        </small>
+    </div>
+</div>

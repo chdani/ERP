@@ -1,0 +1,214 @@
+<div class="flex flex-col flex-auto w-full min-w-0  p-2">
+    <p-toolbar styleClass="p-mb-2">
+        <ng-template pTemplate="right">
+            <span class="newbtnpadding">
+                <button dir="ltr" pButton type="button" label="{{'APP_SAVE' | translate}}" icon="pi pi-save"
+                    (click)="onSubmit()" class="p-button-rounded"></button>
+            </span>
+            <span class="newbtnpadding pl-2 pr-2">
+                <button dir="ltr" pButton type="button" label="{{'APP_CANCEL' | translate}}" icon="pi pi-ban"
+                    class="p-button-rounded p-button-danger" (click)="cancelAddEdit()"></button>
+            </span>
+        </ng-template>
+    </p-toolbar>
+
+    <p-tabView>
+        <p-tabPanel header="{{'QUOTATION_REQUEST'| translate}}">
+
+            <div class="p-fluid " style="text-align: start;">
+                <div class="row">
+                    <div class="col-md-2">
+                        <label for="remarks">{{"SELECTED_SER_DEP" | translate}}</label>
+                        <br>
+                        <button pTooltip="{{'SELECTED_SER_DEP' | translate}}" tooltipPosition="bottom" pButton
+                            type="button" label="..." class="p-button-rounded p-button-info"
+                            (click)="showServicePen = true" style="font-weight: 900;"></button>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="remarks">{{"QUOTATION_REQUEST_REMARKS" | translate}}</label>
+                        <br>
+                        <input pInputText id="remarks" placeholder="{{'QUOTATION_REQUEST_REMARKS' | translate}}"
+                            [(ngModel)]="quotationRequest.remarks">
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="p-col-12 p-md-12">
+                <p-toolbar styleClass="p-mb-4">
+                    <ng-template pTemplate="left">
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="quotDt.filterGlobal($event.target.value, 'contains')"
+                                placeholder="{{'APP_SEARCH' | translate}}" />
+                        </span>
+                        
+                        <div style="padding: 5px;width: 200px; font-weight: bolder;"> 
+                            <span>{{"TOTAL_QUANTITY" | translate}} : {{ quotationReqTotelQuantity| currency:' ':'symbol':'0.0-0'}}</span>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="right">
+                        <span class="newbtnpadding">
+                            <button dir="ltr" pButton pRipple label="{{'APP_ADD' | translate}}" icon="pi pi-plus"
+                                pTooltip="{{'QUOTATION_DET_ADD' | translate}}" tooltipPosition="bottom"
+                                class="p-button-success p-mr-2" (click)="addNewQuotationDetReq()"></button>
+                        </span>
+                    </ng-template>
+                </p-toolbar>
+                <p-table #quotDt [value]="quotationDetReq"
+                    [globalFilterFields]="['productMasterId','UnitMaster.unitName','productMaster.name','quantity','unitMasterId','remarks']"
+                    dataKey="id" styleClass="p-datatable-gridlines">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th pSortableColumn="productMasterId">{{"QUOTATION_REQUEST_PRODUCTMASTER"| translate}}
+                                <p-sortIcon field="productMasterId">
+                                </p-sortIcon>
+                            </th>
+                            <th pSortableColumn="unitMasterId">{{"QUOTATION_REQUEST_UNITMASTER"| translate}}<p-sortIcon
+                                    field="unitMasterId">
+                                </p-sortIcon>
+                            </th>
+                            <th pSortableColumn="quantity">{{"QUOTATION_REQUEST_QUANTITY"| translate}}<p-sortIcon
+                                    field="quantity">
+                                </p-sortIcon>
+                            </th>
+                            <th pSortableColumn="remarks">{{"QUOTATION_REQUEST_REMARKS"| translate}}<p-sortIcon
+                                    field="remarks">
+                                </p-sortIcon>
+                            </th>
+                            <th>{{"APP_ACTION" | translate}}</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                        <tr>
+                            <td pEditableColumn>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <p-dropdown [options]="productMaster" [(ngModel)]="item.productMaster"
+                                            [filter]="true" (onChange)="onChangeProduct(item)" filterBy="name"
+                                            placeholder="{{'QUOTATION_REQUEST_PRODUCTMASTER'| translate}}"
+                                            optionLabel="name" [style]="{'width':'100%','min-width':'100%'}">
+                                        </p-dropdown>
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{item.productMaster.name}}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td pEditableColumn>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <p-dropdown [options]="UnitMaster" [(ngModel)]="item.UnitMaster" [filter]="true"
+                                            filterBy="unitName"
+                                            placeholder="{{'QUOTATION_REQUEST_UNITMASTER'| translate}}"
+                                            optionLabel="unitName" [style]="{'width':'100%','min-width':'100%'}">
+                                        </p-dropdown>
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{item.UnitMaster.unitName}}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td pEditableColumn>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <p-inputNumber mode="decimal" [maxFractionDigits]="2"
+                                            placeholder="{{ 'QUOTATION_REQUEST_QUANTITY' | translate}}"
+                                            [(ngModel)]="item.quantity" (onBlur)="totelQuantityQuotationRequest()"></p-inputNumber>
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{item.quantity| currency:' ':'symbol':'0.0-0'}}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td pEditableColumn>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <input pInputText type="text" [(ngModel)]="item.remarks" aria-readonly="true">
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{item.remarks}}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td>
+                                <span style="padding-left: 5px;padding-right: 5px;">
+                                    <button pButton pRipple icon="pi pi-trash"
+                                        class="p-button-outlined p-button-rounded p-button-danger"
+                                        (click)="deleteQuotationDet(item)"
+                                        pTooltip="{{'APP_DELETE' | translate}}"></button>
+                                </span>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </p-tabPanel>
+        <p-tabPanel header="{{'VENDOR_DETAILS'| translate}}">
+            <p-pickList [source]="vendorList" [target]="vendorMasterSelectedData" sourceHeader="Available "
+                targetHeader="Selected " [dragdrop]="true" [responsive]="true" [sourceStyle]="{'height':'15rem'}"
+                [targetStyle]="{'height':'15rem'}" filterBy="vendorName" sourceFilterPlaceholder="Search by vendorName"
+                targetFilterPlaceholder="Search by vendorName">
+                <ng-template pTemplate="item" let-item>
+                    <div>
+                        <div>
+                            <h6 class="mb-2">{{item.vendorName}}</h6>
+                        </div>
+                    </div>
+                </ng-template>
+            </p-pickList>
+        </p-tabPanel>
+    </p-tabView>
+</div>
+<p-confirmDialog header="{{'APP_CONFIRMATION' | translate}}" acceptLabel="{{'APP_OK' | translate}}"
+    rejectLabel="{{'APP_CANCEL' | translate}}" icon="pi pi-exclamation-triangle"
+    acceptButtonStyleClass="p-button-rounded p-button-danger" rejectButtonStyleClass="p-button-rounded">
+</p-confirmDialog>
+
+<p-sidebar [(visible)]="showServicePen" position="right">
+    <div class="" *ngIf="approvedServReqsDet">
+        <div class="row">
+            <div class="col-md-9">
+                <h5> {{"SELECTED_SERVICE_DEPARTMENT_PENDING" | translate }}</h5>
+            </div>
+            <div class="col-md-3" style="font-weight: 700; color: blue;">
+                {{"SR_QUANTITY" | translate}} : {{ quotationRequest.quantity }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <p-table #dt responsiveLayout="stack" styleClass="p-datatable-responsive-demo"
+                    [value]="approvedServReqsDet" [(selection)]="selectedServiceDept" dataKey="detailId">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 2rem">
+                                <p-checkbox [binary]="true" [(ngModel)]="checkAllService"
+                                    (onChange)="onServiceDeptSelecDeselect($event, 'ALL')"></p-checkbox>
+                            </th>
+                            <th>{{"SR_PROD_NAME" | translate}}
+                            </th>
+                            <th>{{"SR_UNIT_NAME" | translate}}
+                            </th>
+                            <th>{{"SR_QUANTITY" | translate}}
+                            </th>
+                            <th>{{"QUOTATION_REQUEST_REMARKS" | translate}}
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                        <tr>
+                            <td style="padding-left: 1rem !important;">
+                                <p-checkbox [(ngModel)]="item.selected" binary="true"
+                                    (onChange)="onServiceDeptSelecDeselect($event, 'SINGLE')"></p-checkbox>
+                            </td>
+                            <th>{{item.productName}} </th>
+                            <th>{{item.unitName }}</th>
+                            <th>{{item.quantity | number: '1.0-3' }}</th>
+                            <th>{{item.remarks }}</th>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+</p-sidebar>

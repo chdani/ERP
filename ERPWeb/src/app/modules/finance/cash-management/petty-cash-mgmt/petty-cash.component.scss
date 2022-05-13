@@ -1,0 +1,9 @@
+:host ::ng-deep .p-chip.custom-chip {
+    background: var(--primary-color);
+    color: var(--primary-color-text);
+}
+
+.p-tabview .p-tabview-left-icon{
+    padding-right: 5%;
+    padding-left: 5%;
+}

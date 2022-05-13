@@ -1,0 +1,94 @@
+
+<div class="flex flex-col flex-auto w-full min-w-0  p-2">
+  <div class="top-margin_app_save">
+    <span class="newbtnpadding">
+      <button pButton type="submit" label="{{'APP_SAVE' | translate}}" icon="pi pi-check" 
+        class="p-button-rounded" form="ngForm" ></button>
+    </span>
+    <span class="newbtnpadding pl-2 pr-2">
+      <button pButton type="button" label="{{'APP_CANCEL' | translate}}" icon="pi pi-times"
+        class="p-button-rounded p-button-danger" (click)="cancelAddEdit()"></button>
+    </span>
+  </div> 
+  <p-tabView>
+   <p-tabPanel header="{{'USER_ROLE_INFO'| translate}}"  > 
+   <form [formGroup]="createOrEditFrom" (ngSubmit)="onSubmit()" id="ngForm">  
+    <div class="card">
+    <div class="card-body">
+      <div class="p-fluid p-formgrid">
+        <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="roleCode">{{"USER_ROLE_CODE" | translate}}</label>
+                <input id="roleCode" type="text" formControlName="roleCode" class="p-invalid" pInputText formnovalidate/>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="roleName">{{"USER_ROLE_NAME" | translate}}</label>
+                <input id="roleName" type="text" formControlName="roleName" class="p-invalid" pInputText  formnovalidate/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form> 
+</p-tabPanel> 
+    <p-tabPanel header="{{'ACCESS_INFO'| translate}}" >
+  <div class="card">
+    <div class="card-body">      
+    <div class="table-responsive">
+    <p-table #dt [value]="screensList"  [scrollable]="true" scrollHeight="flex"  scrollHeight="310px"
+    dataKey="catId" styleClass="p-datatable-responsive-demo"[globalFilterFields]="['name']">    
+    <ng-template pTemplate="caption">
+      <div class="p-d-flex">
+          <span class="p-input-icon-right">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Search keyword" />
+          </span>
+      </div>
+  </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="name">{{"SCREEN_ACCESS_NAME" | translate}}<p-sortIcon field="Access Name"></p-sortIcon></th>
+          <th pSortableColumn="add">{{"SCREEN_ADD_CHK" | translate}}<p-sortIcon field="Add"></p-sortIcon></th>
+          <th pSortableColumn="edit">{{"SCREEN_EDIT_CHK" | translate}}<p-sortIcon field="edit"></p-sortIcon></th>
+          <th pSortableColumn="delete">{{"SCREEN_DELETE_CHK" | translate}}<p-sortIcon field="delete"></p-sortIcon></th>
+          <th pSortableColumn="approve">{{"SCREEN_APPROVE_CHK" | translate}}<p-sortIcon field="approve"></p-sortIcon></th>
+          <th pSortableColumn="view">{{"SCREEN_VIEW_CHK" | translate}}<p-sortIcon field="view"></p-sortIcon></th>
+         
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr >
+          <td>
+            {{item.name}}
+          </td>
+          <td>  
+            <p-checkbox  [(ngModel)]="item.add" binary="true" (click)="Add(item)" ></p-checkbox>           
+          </td>
+          <td>
+            <p-checkbox  [(ngModel)]="item.edit" binary="true" (click)="Add(item)" ></p-checkbox> 
+          </td>
+          <td>
+            <p-checkbox  [(ngModel)]="item.delete" binary="true" (click)="Add(item)" ></p-checkbox> 
+          </td>
+          <td>
+            <p-checkbox  [(ngModel)]="item.approve" binary="true" (click)="Add(item)" ></p-checkbox> 
+          </td>
+          <td>
+            <p-checkbox  [(ngModel)]="item.view" binary="true" (click)="views(item)"></p-checkbox>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+    
+      </div>
+     
+    </div>
+  </div>
+    </p-tabPanel>
+  </p-tabView>
+
+</div>

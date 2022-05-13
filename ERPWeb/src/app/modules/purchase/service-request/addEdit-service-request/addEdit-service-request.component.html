@@ -1,0 +1,109 @@
+<div class="flex flex-col flex-auto w-full  min-w-0">
+  <p-toolbar>
+    <ng-template pTemplate="right">
+      <span class="newbtnpadding">
+        <button dir="ltr" pButton type="button" label="{{'APP_SAVE' | translate}}" icon="pi pi-save"
+          (click)="createOredit()" class="p-button-rounded"></button>
+      </span>
+      <span class="newbtnpadding pl-2  pr-2">
+        <button dir="ltr" pButton type="button" label="{{'APP_CANCEL' | translate}}" icon="pi pi-ban"
+          class="p-button-rounded p-button-danger" (click)="cancelAddEdit()"></button>
+      </span>
+    </ng-template>
+  </p-toolbar>
+
+  <div class="card">
+    <div class="p-fluid " [dir]="lang === 'ar' ? 'rtl' : 'ltr'" style="text-align: start;">
+      <div class="card-body">
+        <div class="p-fluid p-formgrid">
+          <div class="row">
+            <div class="col-md-4">
+              <div class="p-field p-col" style="text-align: start;">
+                <label for="ddlCategory">{{"SR_CATEGORY_NAME" | translate}}</label>
+                <p-dropdown [options]="categories" [filter]="true" filterBy="name" id="ddlCategory"
+                  [(ngModel)]="selectedCatgory" optionLabel="name" (onChange)="selectProductSubCategory(selectedCatgory)" [disabled]="this.disabledCategory"> </p-dropdown>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="p-field p-col" style="text-align: start;">
+                <label for="ddlCategory">{{"SUBCATEGORY" | translate}}</label>
+                <p-dropdown [options]="productSubCategory" [filter]="true" filterBy="name" id="ddlCategory"
+                placeholder="{{'SUBCATEGORY' | translate}}"  [(ngModel)]="selectedProductSubCatgory" optionLabel="name" (onChange)="selectProduct(selectedProductSubCatgory)" [disabled]="this.disabledProductSubCategory"> </p-dropdown >
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="p-field p-col" style="text-align: start;">
+                <label for="ddlCategory">{{"SR_UNIT_NAME" | translate}}</label>
+                <p-dropdown [options]="units" [filter]="true" filterBy="unitName" id="ddlUnits"
+                  [(ngModel)]="selectedUnit" optionLabel="unitName" [disabled]="this.disabledUnit"> </p-dropdown>
+              </div>
+            </div>
+
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="p-field p-col" style="text-align: start;">
+                <label for="requiredQuantity">{{"SR_REQUIREDQUANTITY" | translate}}</label>
+                <input pInputText type="number" id="requiredQuantity" placeholder="{{'SR_REQUIREDQUANTITY' | translate}}"
+                  [(ngModel)]="serviceReq.requiredQty" [disabled]="this.disabledRequiredQty">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="p-field p-col" style="text-align: start;">
+                <label for="remarks">{{"APP_REMARKS" | translate}}</label>
+                <textarea pInputText id="remarks" placeholder="{{'APP_REMARKS' | translate}}"
+                  [(ngModel)]="serviceReq.remarks" [disabled]="this.disabledRemarks"></textarea >
+              </div>
+            </div>
+            
+
+          </div>
+          <p-panel header="{{'APPROVER_SECTION' | translate}}" [hidden]="this.hideProductQuantityByUnHideForApprove">   
+          <div class="row" >
+            <div class="col-md-4"  >
+              <div class="p-field p-col" style="text-align: start;">
+                <label for="ddlCategory">{{"SR_PROD_NAME" | translate}}</label>
+                <p-dropdown [options]="products" [filter]="true" filterBy="name" id="ddlProduct"
+                  [(ngModel)]="selectedProduct" placeholder="{{'SR_PROD_NAME' | translate}}" optionLabel="name" >
+                </p-dropdown>
+              </div>
+            </div> 
+            <div class="col-md-4">
+              <div class="p-field p-col" style="text-align: start;">
+                <label for="quantity">{{"PR_QUANTITY" | translate}}</label>
+                <input pInputText type="number" id="quantity" placeholder="{{'SR_QUANTITY' | translate}}"
+                  [(ngModel)]="serviceReq.quantity">
+              </div>
+          </div>
+          <div class="col-md-4">
+            <div class="p-field p-col" style="text-align: start;">
+              <label for="remarks">{{"APP_REMARKS" | translate}}</label>
+              <textarea pInputText id="approverRemarks" placeholder="{{'APP_REMARKS' | translate}}"
+                [(ngModel)]="serviceReq.approverRemarks"></textarea>
+            </div>
+          </div>
+        </div>
+          <div *ngIf="this.prodConfie">
+            <div class="row">
+                <div class="col-md-12">
+                    <label for="appRemarks">{{"PROD_CONFIGURATION" | translate}}</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <textarea id="appRemarks" style="width: 100%;" [(ngModel)]="approvalProConfi" type="text" rows="3"
+                        pInputTextarea></textarea>
+                </div>
+            </div>
+        </div>
+        </p-panel>
+      </div>
+    </div>
+  </div>
+
+
+
+  <p-confirmDialog header="{{'APP_CONFIRMATION' | translate}}" acceptLabel="{{'APP_OK' | translate}}"
+    rejectLabel="{{'APP_CANCEL' | translate}}" icon="pi pi-exclamation-triangle"
+    acceptButtonStyleClass="p-button-rounded p-button-danger" rejectButtonStyleClass="p-button-rounded">
+  </p-confirmDialog>

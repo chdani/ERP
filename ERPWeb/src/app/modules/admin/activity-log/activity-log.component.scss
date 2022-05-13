@@ -1,0 +1,14 @@
+.sub-header {
+    padding: 16px 0;
+}
+
+.table_row_breake{
+    width: 250px;
+    max-width: 250px;
+    word-break: break-all;
+    text-overflow: ellipsis;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden !important;
+    text-overflow: ellipsis;
+}

@@ -1,0 +1,53 @@
+<div class="flex flex-col flex-auto w-full min-w-0  p-2">
+    <div class="top-margin_app_save">
+        <span class="newbtnpadding">
+            <button dir="ltr" pButton type="button" (click)="saveLedgerAccount()" label="{{'APP_SAVE' | translate}}"
+                icon="pi pi-check" class="p-button-rounded"></button>
+        </span>
+        <span class="newbtnpadding pl-2 pr-2">
+            <button dir="ltr" pButton type="button" label="{{'APP_CANCEL' | translate}}" icon="pi pi-times"
+                class="p-button-rounded p-button-danger" (click)="goToPreviousScreen()"></button>
+        </span>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="p-fluid p-formgrid" [dir]="lang === 'ar' ? 'rtl' : 'ltr'" style="text-align: start;">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="LedgerCode">{{"APP_CODE" | translate}}</label>
+                            <input type="number" class="p-invalid" [(ngModel)]="addEditLedgerAccount.ledgerCode"
+                                id="LedgerCode" pInputText />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="LedgerDesc">{{"APP_NAME" | translate}}</label>
+                            <input type="text" class="p-invalid" [(ngModel)]="addEditLedgerAccount.ledgerDesc"
+                                id="LedgerDesc" pInputText />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="Remarks">{{"LEDGER_USED_FOR" | translate}}</label>
+                            <p-dropdown id="costCenter" [options]="transactionTypes" [(ngModel)]="selectedDescription"
+                                optionLabel="description" optionValue="code"></p-dropdown>
+                            <!-- <p-autoComplete [showEmptyMessage]="true" [suggestions]="filteredUsedFor" (completeMethod)="filterUsedFor($event)" field="description" [minLength]="0" [forceSelection]="true" emptyMessage="{{'APP_NODATA'|translate}}" [(ngModel)]="selectedDescription"
+                                placeholder="{{'LEDGER_USED_FOR' | translate}}">
+                            </p-autoComplete> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="Remarks">{{"LEDGER_REMARKS" | translate}}</label>
+                            <textarea type="text" rows="2" [(ngModel)]="addEditLedgerAccount.remarks" id="Remarks"
+                                pInputTextarea></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- </form> -->

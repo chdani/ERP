@@ -1,0 +1,556 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+  <mat-stepper labelPosition="bottom" [linear]="isLinear" #stepper>
+    <mat-step [stepControl]="vendor">
+      <ng-template matStepLabel>{{"BASIC_INFORMATION" | translate}}</ng-template>
+      <div class="row">
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"VENDOR_TITLE" | translate}}</mat-label>
+            <input matInput placeholder="{{'VENDOR_TITLE' | translate}}" [(ngModel)]="vendor.title">
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"VENDOR_NAME" | translate}}</mat-label>
+            <input matInput placeholder="{{'VENDOR_NAME' | translate}}" [(ngModel)]="vendor.name">
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"VENDOR_COUNTRYNAME" | translate}}</mat-label>
+            <input matInput placeholder="{{'VENDOR_COUNTRYNAME' | translate}}" [(ngModel)]="vendor.countryName">
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"VENDOR_EMAIL" | translate}}</mat-label>
+            <input type="email" matInput [(ngModel)]="vendor.email" ngModel [email]="true" placeholder="{{'VENDOR_EMAIL' | translate}}">
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"VENDOR_MOBILE" | translate}} </mat-label>
+            <input matInput type="number" placeholder="{{'VENDOR_MOBILE' | translate}}" [(ngModel)]="vendor.mobile">
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"VENDOR_TELEPHONE" | translate}} </mat-label>
+            <input matInput type="number" placeholder="{{'VENDOR_TELEPHONE'| translate}}"
+              [(ngModel)]="vendor.telephone">
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"VENDOR_POSTBOX" | translate}}</mat-label>
+            <input matInput placeholder="{{'VENDOR_POSTBOX' | translate}}" [(ngModel)]="vendor.poBox">
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"VENDOR_ADDRESS1" | translate}}</mat-label>
+            <textarea matInput placeholder="{{'VENDOR_ADDRESS1' | translate}}" [(ngModel)]="vendor.address1"></textarea>
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"VENDOR_ADDRESS2" | translate}}</mat-label>
+            <textarea matInput placeholder="{{'VENDOR_ADDRESS2' | translate}}" [(ngModel)]="vendor.address2"></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+      <div>
+        <button pTooltip="{{'APP_NEXT' | translate}}" color="primary" [style]="{'float':'right'}" mat-button
+          matStepperNext>{{'APP_NEXT' | translate}}</button>
+        <button pTooltip="{{'APP_BACK' | translate}}" mat-button color="primary" [style]="{'float':'right'}"
+          (click)="VendorCancel()">{{'APP_CANCEL' | translate}}</button>
+      </div>
+    </mat-step>
+    <mat-step [stepControl]="vendor">
+      <ng-template matStepLabel>{{"BANK_INFORMATION" | translate}}</ng-template>
+      <div class="row">
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"VENDOR_BANKCOUNTRYCODE" | translate}}</mat-label>
+            <input matInput placeholder="{{'VENDOR_BANKCOUNTRYCODE' | translate}}" [(ngModel)]="vendor.bankCountryCode">
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"VENDOR_BANKCODE" | translate}}</mat-label>
+            <input matInput placeholder="{{'VENDOR_BANKCODE' | translate}}" [(ngModel)]="vendor.bankCode">
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"VENDOR_IBANSWIFT" | translate}}</mat-label>
+            <input type="number" matInput placeholder="{{'VENDOR_IBANSWIFT' | translate}}"
+              [(ngModel)]="vendor.ibanSwifT">
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"VENDOR_BANKACCOUNDNAME" | translate}}</mat-label>
+            <input matInput placeholder="{{'VENDOR_BANKACCOUNDNAME' | translate}}" [(ngModel)]="vendor.bankAccName">
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"VENDOR_BANKACCOUNDNUMBER" | translate}}</mat-label>
+            <input type="number" matInput placeholder="{{'VENDOR_BANKACCOUNDNUMBER' | translate}}"
+              [(ngModel)]="vendor.bankAccNo">
+          </mat-form-field>
+        </div>
+        <!-- <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"VENDOR_LEDGER"| translate}}</mat-label>
+            <mat-select [(ngModel)]="vendor.ledgerCode">
+              <mat-option *ngFor="let item of dataaccount" placeholder="{{'VENDOR_LEDGER'| translate}}"
+                [value]="item.code">{{item.code}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div> -->
+      </div>
+      <div>
+        <button pTooltip="{{'APP_SAVE' | translate}}" mat-button color="primary" [style]="{'float':'right'}"
+          (click)="Vendorsave()">{{'APP_SAVE' | translate}}</button>
+        <button pTooltip="{{'APP_NEXT' | translate}}" color="primary" [style]="{'float':'right'}" mat-button
+          matStepperNext>{{'APP_NEXT' | translate}}</button>
+        <button pTooltip="{{'APP_BACK' | translate}}" color="primary" [style]="{'float':'right'}" mat-button
+          matStepperPrevious>{{'APP_BACK' | translate}}</button>
+      </div>
+    </mat-step>
+    <mat-step [stepControl]="vendor.vendorContacts">
+      <ng-template matStepLabel>{{"VENDOR_CONTACT" | translate}}</ng-template>
+      <div class="p-col-12 p-md-12">
+        <!-- <div class="row">
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"VENDOR_CONTACT_CONTACTNAME" | translate}}</mat-label>
+            <input matInput placeholder="{{'VENDOR_CONTACT_CONTACTNAME' | translate}}"
+              [(ngModel)]="vendor.vendorContacts.contactName">
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"VENDOR_CONTACT_EMAIL" | translate}}</mat-label>
+            <input matInput placeholder="{{'VENDOR_CONTACT_EMAIL' | translate}}"
+              [(ngModel)]="vendor.vendorContacts.emailId">
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"VENDOR_CONTACT_MOBILE" | translate}}</mat-label>
+            <input type="number" matInput placeholder="{{'VENDOR_CONTACT_MOBILE' | translate}}"
+              [(ngModel)]="vendor.vendorContacts.mobileNo">
+          </mat-form-field>
+        </div>
+      </div>  -->
+        <p-toolbar styleClass="p-mb-4">
+          <ng-template pTemplate="left">
+            <span class="p-input-icon-right">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" (input)="vendorContactsDt.filterGlobal($event.target.value, 'contains')"
+                placeholder="{{'APP_SEARCH' | translate}}" />
+            </span>
+            
+          </ng-template>
+          <ng-template pTemplate="right">
+            <span class="newbtnpadding">
+              <button dir="ltr" pButton pRipple label="{{'APP_ADD' | translate}}" icon="pi pi-plus"
+                pTooltip="{{'VENDOR_CONTACT_ADD' | translate}}" tooltipPosition="bottom" class="p-button-success p-mr-2"
+                (click)="addNewContactDetReq()"></button>
+            </span>
+          </ng-template>
+        </p-toolbar>
+        <p-table #vendorContactsDt [value]="vendorContactsData" dataKey="id" styleClass="p-datatable-gridlines"
+        [globalFilterFields]="['contactName','emailId','mobileNo']">
+
+          <ng-template pTemplate="header">
+            <tr>
+              <th>{{"VENDOR_CONTACT_CONTACTNAME"| translate}}
+              </th>
+              <th>{{"VENDOR_CONTACT_EMAIL"| translate}}
+              </th>
+              <th>{{"VENDOR_CONTACT_MOBILE"| translate}}
+              </th>
+              <th>{{"APP_ACTION" | translate}}</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-item>
+            <tr>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input pInputText type="text" [(ngModel)]="item.contactName" aria-readonly="true">
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{item.contactName}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input pInputText type="text" [(ngModel)]="item.emailId" aria-readonly="true" ngModel [email]="true">
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{item.emailId}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input pInputText type="text" [(ngModel)]="item.mobileNo" aria-readonly="true">
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{item.mobileNo}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td>
+                <span style="padding-left: 5px;padding-right: 5px;">
+                  <button pButton pRipple icon="pi pi-trash" class="p-button-outlined p-button-rounded p-button-danger"
+                    (click)="deleteContactDetReq(item)" pTooltip="{{'APP_DELETE' | translate}}"></button>
+                </span>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+      <div>
+        <button pTooltip="{{'APP_SAVE' | translate}}" mat-button color="primary" [style]="{'float':'right'}"
+          (click)="Vendorsave()">{{'APP_SAVE' | translate}}</button>
+        <button pTooltip="{{'APP_NEXT' | translate}}" color="primary" [style]="{'float':'right'}" mat-button
+          matStepperNext>{{'APP_NEXT' | translate}}</button>
+        <button pTooltip="{{'APP_BACK' | translate}}" color="primary" [style]="{'float':'right'}" mat-button
+          matStepperPrevious>{{'APP_BACK' | translate}}</button>
+      </div>
+    </mat-step>
+    <mat-step [stepControl]="vendor.vendorContracts">
+      <ng-template matStepLabel>{{"VENDOR_CONTRACT" | translate}}</ng-template>
+      <!-- <div class="row">
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"VENDOR_CONTRACT_STARTDATE" | translate}}</mat-label>
+            <input matInput [matDatepicker]="seClDt" [(ngModel)]="vendor.vendorContracts.startDate"
+              placeholder="{{'VENDOR_CONTRACT_STARTDATE' | translate}}">
+            <mat-datepicker-toggle matSuffix [for]="seClDt"></mat-datepicker-toggle>
+            <mat-datepicker #seClDt></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"VENDOR_CONTRACT_ENDDATE" | translate}}</mat-label>
+            <input matInput [matDatepicker]="seClDt1" [(ngModel)]="vendor.vendorContracts.endDate"
+              placeholder="{{'VENDOR_CONTRACT_ENDDATE' | translate}}">
+            <mat-datepicker-toggle matSuffix [for]="seClDt1"></mat-datepicker-toggle>
+            <mat-datepicker #seClDt1></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"VENDOR_CONTRACT_PAYMENTTERM"| translate}}</mat-label>
+            <mat-select [(ngModel)]="vendor.vendorContracts.paymentTerm">
+              <mat-option *ngFor="let item of PaymentTerm" placeholder="{{'VENDOR_CONTRACT_PAYMENTTERM'| translate}}"
+                [value]="item.code">{{item.description}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"VENDOR_CONTRACT_LEDGERCODE"| translate}}</mat-label>
+            <mat-select [(ngModel)]="vendor.vendorContracts.ledgerCode">
+              <mat-option *ngFor="let item of dataaccount" placeholder="{{'VENDOR_CONTRACT_LEDGERCODE'| translate}}"
+                [value]="item.code">{{item.code}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"VENDOR_CONTRACT_DURATION" | translate}}</mat-label>
+            <input matInput type="number" placeholder="{{'VENDOR_CONTRACT_DURATION' | translate}}"
+              [(ngModel)]="vendor.vendorContracts.duration">
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"VENDOR_CONTRACT_AMOUNDTOHOLD" | translate}}</mat-label>
+            <input type="number" mode="decimal" matInput placeholder="{{'VENDOR_CONTRACT_AMOUNDTOHOLD' | translate}}"
+              [(ngModel)]="vendor.vendorContracts.amountToHold">
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>{{"VENDOR_CONTRACT_DESCRIPTION" | translate}}</mat-label>
+            <textarea matInput placeholder="{{'VENDOR_CONTRACT_DESCRIPTION' | translate}}"
+              [(ngModel)]="vendor.vendorContracts.description"></textarea>
+          </mat-form-field>
+        </div>
+        <section>
+          <br>
+          <div class="w-full" appearance="fill">
+            <button pTooltip="{{'FILE_ATTACHMENT' | translate}}" mat-flat-button color="primary"
+              (click)="attachmentLink(vendor.vendorContracts,'VENDORCONTRACT')">
+              <mat-icon> attach_file</mat-icon>{{"FILE_ATTACHMENT" |
+              translate}}
+            </button>
+          </div>
+        </section>
+      </div> -->
+      <div class="p-col-12 p-md-12">
+        <p-toolbar styleClass="p-mb-4">
+          <ng-template pTemplate="left">
+            <span class="p-input-icon-right">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" (input)="vendorContractsDt.filterGlobal($event.target.value, 'contains')"
+                placeholder="{{'APP_SEARCH' | translate}}" />
+            </span>
+          </ng-template>
+          <ng-template pTemplate="right">
+            <span class="newbtnpadding">
+              <button dir="ltr" pButton pRipple label="{{'APP_ADD' | translate}}" icon="pi pi-plus"
+                pTooltip="{{'VENDOR_CONTRACT_ADD' | translate}}" tooltipPosition="bottom" class="p-button-success p-mr-2"
+                (click)="addNewContractDetReq()"></button>
+            </span>
+          </ng-template>
+        </p-toolbar>
+        <p-table #vendorContractsDt [value]="vendorContractsData" dataKey="id" styleClass="p-datatable-gridlines"
+          [globalFilterFields]="['startDate','endDate','paymentTerm','ledgerCode','duration','amountToHold','description']">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>{{"VENDOR_CONTRACT_STARTDATE"| translate}}
+              </th>
+              <th>{{"VENDOR_CONTRACT_ENDDATE"| translate}}
+              </th>
+              <th>{{"VENDOR_CONTRACT_PAYMENTTERM"| translate}}
+              </th>
+              <th>{{"VENDOR_CONTRACT_LEDGERCODE"| translate}}
+              </th>
+              <th>{{"VENDOR_CONTRACT_DURATION"| translate}}
+              </th>
+              <th>{{"VENDOR_CONTRACT_AMOUNDTOHOLD"| translate}}
+              </th>
+              <th>{{"VENDOR_CONTRACT_DESCRIPTION"| translate}}
+              </th>
+              <!-- <th>{{"FILE_ATTACHMENT"| translate}}
+              </th> -->
+              <th>{{"APP_ACTION" | translate}}</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-item>
+            <tr>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-calendar appendTo="body" dateFormat="{{dateFormat}}" [disabledDates]="invalidDates"
+                      [locale]="calendarLocale" [(ngModel)]="item.startDate" readonlyInput="true" showButtonBar="true"
+                      (onFocus)="loadInvalidDates(refTo.getFullYear())" (onSelect)="handleReportsEdited()"
+                      (onMonthChange)="loadInvalidDates($event.year)">
+                    </p-calendar>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{item.startDate | date:'dd-MM-yyyy'}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-calendar appendTo="body" dateFormat="{{dateFormat}}" [disabledDates]="invalidDates"
+                      [locale]="calendarLocale" [(ngModel)]="item.endDate" readonlyInput="true" showButtonBar="true"
+                      (onFocus)="loadInvalidDates(refTo.getFullYear())" (onSelect)="handleReportsEdited()"
+                      (onMonthChange)="loadInvalidDates($event.year)">
+                    </p-calendar>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{item.endDate | date:'dd-MM-yyyy'}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-dropdown [options]="PaymentTermOptions" [(ngModel)]="item.paymentTerm" [filter]="false"
+                      placeholder="{{'VENDOR_CONTRACT_PAYMENTTERM'| translate}}"
+                      [style]="{'width':'100%','min-width':'100%'}">
+                    </p-dropdown>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{item.paymentTerm}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-dropdown [options]="dataaccountOptions" [(ngModel)]="item.ledgerCode" [filter]="false"
+                      placeholder="{{'VENDOR_CONTRACT_LEDGERCODE'| translate}}"
+                      [style]="{'width':'100%','min-width':'100%'}">
+                    </p-dropdown>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{item.ledgerCode}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input pInputText type="number" placeholder="{{'VENDOR_CONTRACT_DURATION' | translate}}"
+                      [(ngModel)]="item.duration" aria-readonly="true">
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{item.duration}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input pInputText type="number" mode="decimal"
+                      placeholder="{{'VENDOR_CONTRACT_AMOUNDTOHOLD' | translate}}" [(ngModel)]="item.amountToHold"
+                      aria-readonly="true">
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{item.amountToHold}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <textarea pInputText placeholder="{{'VENDOR_CONTRACT_DESCRIPTION' | translate}}"
+                      [(ngModel)]="item.description"></textarea>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{item.description}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <!-- <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <button pTooltip="{{'FILE_ATTACHMENT' | translate}}" mat-flat-button color="primary"
+                      (click)="attachmentLink(item,'VENDORCONTRACT')">
+                      <mat-icon> attach_file</mat-icon>{{"FILE_ATTACHMENT" | translate}}
+                    </button>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{item.description}}
+                  </ng-template>
+                </p-cellEditor>
+              </td> -->
+              <td>
+                <span style="padding-left: 5px;padding-right: 5px;">
+                  <button pButton pRipple icon="pi pi-paperclip"
+                      class="p-button-outlined p-button-rounded p-button-success"
+                      (click)="attachmentLink(item,'VENDORCONTRACT')"
+                      pTooltip="{{'FILE_ATTACHMENT' | translate}}"></button>
+              </span>
+                <span style="padding-left: 5px;padding-right: 5px;">
+                  <button pButton pRipple icon="pi pi-trash" class="p-button-outlined p-button-rounded p-button-danger"
+                    (click)="deleteContractDetReq(item)" pTooltip="{{'APP_DELETE' | translate}}"></button>
+                </span>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+
+
+
+
+
+
+
+
+
+
+
+      <div>
+        <button pTooltip="{{'APP_SAVE' | translate}}" mat-button color="primary" [style]="{'float':'right'}"
+          (click)="Vendorsave()">{{'APP_SAVE' | translate}}</button>
+        <button pTooltip="{{'APP_NEXT' | translate}}" color="primary" [style]="{'float':'right'}" mat-button
+          matStepperNext>{{'APP_NEXT' | translate}}</button>
+        <button pTooltip="{{'APP_BACK' | translate}}" color="primary" [style]="{'float':'right'}" mat-button
+          matStepperPrevious>{{'APP_BACK' | translate}}</button>
+      </div>
+    </mat-step>
+    <mat-step [stepControl]="vendor.vendorProducts">
+      <ng-template matStepLabel>{{"VENDOR_PRODUCT" | translate}}</ng-template>
+      <p-pickList [source]="productMaster" [target]="productMasterSelectedData" sourceHeader="Available Product master"
+        targetHeader="Selected Product master" [dragdrop]="true" [responsive]="true" [sourceStyle]="{'height':'15rem'}"
+        [targetStyle]="{'height':'15rem'}" filterBy="name" sourceFilterPlaceholder="Search by name"
+        targetFilterPlaceholder="Search by name">
+        <ng-template pTemplate="item" let-item>
+          <div>
+            <div>
+              <h6 class="mb-2">{{item.name}}</h6>
+            </div>
+          </div>
+        </ng-template>
+      </p-pickList>
+      <div>
+        <button pTooltip="{{'APP_SAVE' | translate}}" mat-button color="primary" [style]="{'float':'right'}"
+          (click)="Vendorsave()">{{'APP_SAVE' | translate}}</button>
+        <button pTooltip="{{'APP_BACK' | translate}}" color="primary" [style]="{'float':'right'}" mat-button
+          matStepperPrevious>{{'APP_BACK' | translate}}</button>
+      </div>
+    </mat-step>
+  </mat-stepper>
+  <p-overlayPanel #adFilter [style]="{width: '60%'}">
+    <ng-template pTemplate>
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field  p-col-6 p-md-4">
+          <label for="title">{{"VENDOR_TITLE" | translate}}</label>
+          <input id="title" type="text" [(ngModel)]="vendorForm.title" class="p-invalid" pInputText />
+        </div>
+        <div class="p-field  p-col-6 p-md-4">
+          <label for="name">{{"VENDOR_NAME" | translate}}</label>
+          <input id="name" type="text" [(ngModel)]="vendorForm.name" class="p-invalid" pInputText />
+        </div>
+        <div class="p-field  p-col-6 p-md-4">
+          <label for="country">{{"VENDOR_COUNTRYNAME" | translate}}</label>
+          <input id="country" type="text" [(ngModel)]="vendorForm.countryName" class="p-invalid" pInputText />
+        </div>
+        <div class="p-field  p-col-6 p-md-4">
+          <label for="email">{{"VENDOR_BANKCODE" | translate}}</label>
+          <input id="email" type="text" [(ngModel)]="vendorForm.bankCode" class="p-invalid" pInputText />
+        </div>
+  
+        <div class="p-field p-col-6 p-md-4">
+          <label for="ledgerCode">{{"VENDOR_LEDGER" | translate}}</label>
+          <p-dropdown id="ledgerCode" [filter]="true" filterBy="code" [options]="dataaccount"
+            [(ngModel)]="vendorForm.ledgerCode" optionLabel="code" optionValue="ledgercode">
+          </p-dropdown>
+        </div>
+        <div class="p-field p-col-6 p-md-4">
+          <label for="others">{{"VENDOR_OTHERS" | translate}}</label>
+          <input id="others" type="text" [(ngModel)]="vendorForm.others" class="p-invalid" pInputText />
+        </div>
+        <div class="p-field p-col-6 p-md-9">
+        </div>
+        <p-divider type="dashed" class="w-full"></p-divider>
+        <div class="p-field p-col-6 p-md-2">
+          <button pButton pRipple label="{{'APP_SEARCH' | translate}}" icon="pi pi-search"
+            class="p-button-rounded p-button-success p-mr-2" (click)="adFilter.hide();getSearch();"></button>
+        </div>
+        <div class="p-field p-col-6 p-md-2">
+          <button pButton pRipple label="{{'APP_CLEAR' | translate}}" icon="pi pi-times-circle"
+            class="p-button-rounded p-button-warning  p-mr-2" (click)="clearSearchCriteria()"></button>
+        </div>
+      </div>
+    </ng-template>
+  </p-overlayPanel>
+  
+</div>

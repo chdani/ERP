@@ -1,0 +1,103 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+  <p-toolbar styleClass="p-mb-4">
+    <ng-template pTemplate="left">
+      <div class="row">
+        <span class="toolbarSpan">
+          <label for="TranslationType">{{"TRANSLATION_TYPE" | translate}}</label>
+        </span>
+        <span class="toolbarSpan">
+          <p-dropdown [options]="translation" [(ngModel)]="selectedTranslation" [filter]="true" filterBy="description"
+            placeholder="{{'SELECT_TRANSLATION' | translate}}" (onChange)="onSelectTranslation()"
+            optionLabel="description">
+          </p-dropdown>
+        </span>
+
+        <span class="newbtnpadding toolbarSpan">
+          <button pButton type="submit" label="{{'APP_SAVE' | translate}}" icon="pi pi-check" class="p-button-rounded"
+            (click)="codesMastersave()" [hidden]="hideSaveButton"  *ngIf="isGranted('SCR_TRANSLATION',actionType.allowEdit)"></button>
+        </span>
+
+      </div>
+    </ng-template>
+    <ng-template pTemplate="right">
+      <span class="p-input-icon-right">
+        <i class="pi pi-search"></i>
+        <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+          placeholder="{{'APP_SEARCH' | translate}}" />
+      </span>
+    </ng-template>
+  </p-toolbar>
+  <div style="overflow: auto;">
+    <p-table #dt responsiveLayout="stack" [value]="codeBasedEnglishAndArabic.translationData" [paginator]="true"
+      [rows]="12" [scrollable]="true" scrollHeight="flex" [responsive]="true"
+      [globalFilterFields]="['code','englishDescription','arabicDescription']" dataKey="id"
+      styleClass="p-datatable-responsive-demo p-datatable-gridlines text" selectionMode="single">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>{{"TRANSLATION_CODE_DESCRIPTION" | translate}}</th>
+          <th>{{"TRANSLATION_DESCRIPTION_ENGLISH" | translate}}</th>
+          <th [hidden]="this.hideEngAndArbDisplayOrder">{{"TRANSLATION_ENGLISH_DISPLAYORDER" | translate}}</th>
+          <th>{{"TRANSLATION_DESCRIPTION_ARABIC" | translate}}</th>
+          <th [hidden]="this.hideEngAndArbDisplayOrder">{{"TRANSLATION_ARABIC_DISPLAYORDER" | translate}}</th>
+      </ng-template>
+      //[hidden]="this.arbAndEngDisOrderAndArbDecDisable"
+      <ng-template pTemplate="body" let-item let-editing="editing" let-i="rowIndex">
+        <tr>
+          <td pEditableColumn [disabled]="true">
+            {{item.code}}
+          </td>
+          <td pEditableColumn>
+            <p-cellEditor>
+              <ng-template pTemplate="input">
+                <input pInputText type="text" class="changeiputwidth" [(ngModel)]="item.englishDescription"
+                  (ngModelChange)="saveFuctionAllow()" aria-readonly="true">
+              </ng-template>
+              <ng-template pTemplate="output">
+                {{item.englishDescription}}
+              </ng-template>
+            </p-cellEditor>
+          </td>
+          <td pEditableColumn [hidden]="this.hideEngAndArbDisplayOrder">
+            <p-cellEditor>
+              <ng-template pTemplate="input">
+                <input pInputText type="text" class="changeiputwidth" [(ngModel)]="item.englishDisplayOrder"
+                  (ngModelChange)="saveFuctionAllow()" aria-readonly="true">
+              </ng-template>
+              <ng-template pTemplate="output">
+                {{item.englishDisplayOrder}}
+              </ng-template>
+            </p-cellEditor>
+          </td>
+          <td pEditableColumn>
+            <p-cellEditor>
+              <ng-template pTemplate="input">
+                <input pInputText type="text" class="changeiputwidth" [(ngModel)]="item.arabicDescription"
+                  (ngModelChange)="saveFuctionAllow()" aria-readonly="true">
+              </ng-template>
+              <ng-template pTemplate="output">
+                {{item.arabicDescription}}
+              </ng-template>
+            </p-cellEditor>
+          </td>
+          <td pEditableColumn [hidden]="this.hideEngAndArbDisplayOrder">
+            <p-cellEditor>
+              <ng-template pTemplate="input">
+                <input pInputText type="text" class="changeiputwidth" [(ngModel)]="item.arabicDisplayOrder"
+                  (ngModelChange)="saveFuctionAllow()" aria-readonly="true">
+              </ng-template>
+              <ng-template pTemplate="output">
+                {{item.arabicDisplayOrder}}
+              </ng-template>
+            </p-cellEditor>
+          </td>
+
+
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+<p-confirmDialog header="{{'SAVE_CONFORMATION' | translate}}" acceptLabel="{{'APP_OK' | translate}}"
+  rejectLabel="{{'APP_CANCEL' | translate}}" icon="pi pi-exclamation-triangle"
+  acceptButtonStyleClass="p-button-rounded p-button-danger" rejectButtonStyleClass="p-button-rounded">
+</p-confirmDialog>

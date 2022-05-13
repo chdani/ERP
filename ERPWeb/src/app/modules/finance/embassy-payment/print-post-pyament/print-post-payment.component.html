@@ -1,0 +1,67 @@
+<div *ngIf="loaded" style="width: 100%; align-items: center;">
+    <table class="download_To_Pdf" id="printDocument" style="width:750px; height: 100%; font-weight:500; color: black; margin:10px; font-size: 12px;">
+        <tr rowspan="3" style="height: 30px;">
+            <td colspan="3"></td>
+        </tr>
+        <tr style="text-align: center;">
+            <td colspan="3">
+                <span style="display: inline-block;">
+                    <img src="./assets/icons/logo.png" style="width: 100px!important; height: 100px!important;">
+                </span>
+            </td>
+        </tr>
+        <tr style="text-align:center;">
+            <td colspan="3">
+                <span id="pdf_title" style="width: 80%; font-size: larger; font-weight: 800;">{{"EMB_PAYMENT_POST_PAYMENT" | translate}}</span>
+            </td>
+        </tr>
+        <tr rowspan="3" style="height: 30px;">
+            <td colspan="3"></td>
+        </tr>
+        <tr>
+            <td style="width:10%"></td>
+            <td>{{"EMB_PAYMENT_EMB_NAME" | translate}}</td>
+            <td>{{postPayment.embassyName }}</td>
+        </tr>
+        <tr>
+            <td style="width:10%"></td>
+            <td>{{"CASHMGMT_LEDGER" | translate}}</td>
+            <td>{{postPayment.ledger}}</td>
+        </tr>
+        <tr>
+            <td style="width:10%"></td>
+            <td>{{"BUDGT_FIN_YEAR" | translate}}</td>
+            <td>{{postPayment.finYear}}</td>
+        </tr>
+        <tr style="height: 20px;">
+            <td style="width:10%"></td>
+            <td>{{"EMB_PAYMENT_PAYDATE" | translate}}</td>
+            <td>{{postPayment.paymentDate | date:'dd-MM-yyyy'}}</td>
+        </tr>
+        <tr style="height: 20px;">
+            <td style="width:10%"></td>
+            <td>{{"EMB_POST_PAYMENT_MONTH_NO" | translate}}</td>
+            <td>{{postPayment.paymentDate | date:'MM'}}</td>
+        </tr>
+        <tr>
+            <td style="width:10%"></td>
+            <td>{{"EMB_PAYMENT_BOOK_NO" | translate}}</td>
+            <td>{{postPayment.bookNo}}</td>
+        </tr>
+        <tr>
+            <td style="width:10%"></td>
+            <td>{{"EMB_PAYMENT_AMOUNT" | translate}}</td>
+            <td>{{postPayment.amount | currency:' QAR ':'symbol':'0.0-0'}}</td>
+        </tr>
+        <tr>
+            <td style="width:10%"></td>
+            <td>{{"EMB_PAYMENT_CURRENCY" | translate}}</td>
+            <td>{{postPayment.currencyCode}}</td>
+        </tr>
+        <tr>
+            <td style="width:10%"></td>
+            <td>{{"EMB_PAYMENT_CURCY_AMOUNT" | translate}}</td>
+            <td>{{postPayment.currencyAmount | currency:' ':'symbol':'0.0-0'}}</td>
+        </tr>
+    </table>
+</div>

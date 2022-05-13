@@ -1,0 +1,46 @@
+<div class="flex flex-col flex-auto w-full min-w-0  p-2">
+    <div class="top-margin_app_save">
+        <span class="newbtnpadding">
+            <button dir="ltr" pButton type="button" (click)="saveLedgerGroupAccount()" label="{{'APP_SAVE' | translate}}"
+                icon="pi pi-check" class="p-button-rounded"></button>
+        </span>
+        <span class="newbtnpadding pl-2 pr-2">
+            <button dir="ltr" pButton type="button" label="{{'APP_CANCEL' | translate}}" icon="pi pi-times"
+                class="p-button-rounded p-button-danger" (click)="goToPreviousScreen()"></button>
+        </span>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="p-fluid p-formgrid" [dir]="lang === 'ar' ? 'rtl' : 'ltr'" style="text-align: start;">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="AccountCode">{{"APP_CODE" | translate}}</label>
+                            <input type="number" class="p-invalid" [(ngModel)]="addEditLedgerGroupAccount.AccountCode" id="LedgerCode" pInputText />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="AccountDesc">{{"APP_NAME" | translate}}</label>
+                            <input type="text" class="p-invalid" [(ngModel)]="addEditLedgerGroupAccount.AccountDesc" id="LedgerDesc" pInputText />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="LedgerCodeFrom">{{"LEDGER_CODE_FROM" | translate}}</label>
+                            <input type="number" class="p-invalid" [(ngModel)]="addEditLedgerGroupAccount.LedgerCodeFrom" id="LedgerCode" pInputText />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="LedgerCodeTo">{{"LEDGER_CODE_To" | translate}}</label>
+                            <input type="number" class="p-invalid" [(ngModel)]="addEditLedgerGroupAccount.LedgerCodeTo" id="LedgerDesc" pInputText />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- </form> -->

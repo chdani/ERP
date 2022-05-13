@@ -1,0 +1,35 @@
+<div class="flex flex-col flex-auto w-full min-w-0  p-2">
+  <div class="top-margin_app_save">
+    <span class="newbtnpadding">
+      <button  pButton type="submit" label="{{'APP_SAVE' | translate}}" icon="pi pi-check"
+        class="p-button-rounded" form="ngForm"></button>
+    </span>
+    <span class="newbtnpadding pl-2 pr-2">
+      <button pButton type="button" label="{{'APP_CANCEL' | translate}}" icon="pi pi-times"
+        class="p-button-rounded p-button-danger" (click)="cancelAddEdit()"></button>
+    </span>
+  </div>
+  <p-tabView>
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate id="ngForm">
+  <div class="card">
+    <div class="card-body">
+      <div class="p-fluid p-formgrid">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="code">{{'Job_Code' | translate}}</label>
+              <input id="code" type="text" formControlName="code" class="p-invalid" pInputText />
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="name">{{'Job_Name' | translate}}</label>
+              <input id="name" type="text" formControlName="name" class="p-invalid" pInputText />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </form>
+
