@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ERPService.WebApi</name>
+    </assembly>
+    <members>
+        <member name="T:ERPService.WebApi.AutofacConfig">
+            <summary>
+            Represent Autofac configuration.
+            </summary>
+        </member>
+        <member name="T:ERPService.WebApi.CorsConfig">
+            <summary>
+            Represents CORS configuration.
+            </summary>
+            <remarks>For more information see https://github.com/drwatson1/AspNet-WebApi/wiki#cross-origin-resource-sharing-cors</remarks>
+        </member>
+        <member name="M:ERPService.WebApi.CorsConfig.ConfigureCors(System.String)">
+            <summary>
+            Initializes and configures <see cref="T:Microsoft.Owin.Cors.CorsOptions"/> instance.
+            </summary>
+            <param name="origins">String of allowed origins delimited by: ';'</param>
+        </member>
+        <member name="T:ERPService.WebApi.FormatterConfig">
+            <summary>
+            Represents formatter configuration.
+            </summary>
+        </member>
+        <member name="M:ERPService.WebApi.FormatterConfig.Configure(System.Web.Http.HttpConfiguration)">
+            <summary>
+            Configures formatter to use JSON and removes XML formatter.
+            </summary>
+            <param name="config"></param>
+        </member>
+        <member name="M:ERPService.WebApi.CashTransactionController.ProcessDayClosure(ERPService.DataModel.CTO.DayClosureRequest)">
+            <summary>
+            
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ERPService.WebApi.CashTransactionController.CheckDayClosureStatus(ERPService.DataModel.CTO.DayClosureRequest)">
+            <summary>
+            Check whether day is closed for the logged in Teller
+            </summary>
+            <param name="request"></param>
+            <returns>returns True if closed and False it is not</returns>
+        </member>
+        <member name="M:ERPService.WebApi.EmbPrePayHistroyCommentsController.SaveEmbPreInvPaymentDetHistComment(ERPService.DataModel.DTO.EmbPrePaymentInvDetComment)">
+            
+        </member>
+        <member name="T:ERPService.WebApi.UserController">
+            <summary>
+            An example of controller
+            </summary>
+        </member>
+        <member name="T:ERPService.WebApi.OptionsHttpMessageHandler">
+            <summary>
+            OPTIONS HTTP query handler
+            </summary>
+            <remarks>The code based on this answer https://stackoverflow.com/a/36454275/8127016</remarks>
+        </member>
+        <member name="T:ERPService.WebApi.Settings">
+            <summary>
+            Represents all application settings
+            </summary>
+        </member>
+        <member name="M:ERPService.WebApi.Settings.Get(System.String)">
+            <summary>
+            Get value from appSettings section of web.config and expand environmemt variables
+            </summary>
+            <param name="name">Key name</param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

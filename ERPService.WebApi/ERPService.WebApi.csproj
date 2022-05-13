@@ -1,0 +1,320 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F2CD6758-62D9-4A37-BB2A-CD7A3218E1BC}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ERPService.WebApi</RootNamespace>
+    <AssemblyName>ERPService.WebApi</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <Use64BitIISExpress>true</Use64BitIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <!--<PropertyGroup>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+  </PropertyGroup>-->
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>CS1591</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DocumentationFile>bin\ERPService.WebApi.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\ERPService.WebApi.xml</DocumentationFile>
+    <NoWarn>CS1591</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Autofac.Owin">
+      <Version>5.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="Autofac.WebApi2">
+      <Version>5.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="Autofac.WebApi2.Owin">
+      <Version>5.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="AutofacSerilogIntegration">
+      <Version>2.1.0</Version>
+    </PackageReference>
+    <PackageReference Include="AutoMapper">
+      <Version>9.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="DotNetEnv">
+      <Version>1.4.0</Version>
+    </PackageReference>
+    <PackageReference Include="EntityFramework">
+      <Version>6.4.4</Version>
+    </PackageReference>
+    <PackageReference Include="IdentityModel">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AspNet.WebApi" Version="5.2.7" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.7" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Owin">
+      <Version>5.2.7</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AspNet.WebApi.WebHost" Version="5.2.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions">
+      <Version>2.2.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform">
+      <Version>2.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
+      <Version>5.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens">
+      <Version>6.12.2</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.IdentityModel.Tokens">
+      <Version>6.12.2</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Owin">
+      <Version>4.2.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Owin.Cors">
+      <Version>4.1.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Owin.Host.SystemWeb">
+      <Version>4.1.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Owin.Security">
+      <Version>4.1.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Owin.Security.Jwt">
+      <Version>4.1.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Owin.Security.OAuth">
+      <Version>4.1.0</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Owin">
+      <Version>1.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="Serilog">
+      <Version>2.9.0</Version>
+    </PackageReference>
+    <PackageReference Include="Serilog.Exceptions">
+      <Version>5.4.0</Version>
+    </PackageReference>
+    <PackageReference Include="Serilog.Settings.AppSettings">
+      <Version>2.2.2</Version>
+    </PackageReference>
+    <PackageReference Include="Serilog.Sinks.File">
+      <Version>4.1.0</Version>
+    </PackageReference>
+    <PackageReference Include="SerilogWeb.Classic">
+      <Version>5.0.61</Version>
+    </PackageReference>
+    <PackageReference Include="Swashbuckle.Core">
+      <Version>5.6.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt">
+      <Version>6.12.2</Version>
+    </PackageReference>
+    <PackageReference Include="Thinktecture.IdentityModel.Owin">
+      <Version>2.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Thinktecture.IdentityModel.WebApi">
+      <Version>2.0.1</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="E-MailTemplate\GoodsReceiptNotes.html" />
+    <Content Include="E-MailTemplate\PasswordGenerationTem.html" />
+    <Content Include="E-MailTemplate\PurchaseOrder.html" />
+    <Content Include="E-MailTemplate\QuotationRequest.html" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\AuthConfig.cs" />
+    <Compile Include="App_Start\AutofacConfig.cs" />
+    <Compile Include="App_Start\AutoMapperConfig.cs" />
+    <Compile Include="App_Start\CorsConfig.cs" />
+    <Compile Include="App_Start\FormatterConfig.cs" />
+    <Compile Include="App_Start\LoggerConfig.cs" />
+    <Compile Include="App_Start\OptionsMessageHandlerConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\SwaggerConfig.cs" />
+    <Compile Include="Controllers\ActivityLogController.cs" />
+    <Compile Include="Controllers\AppMenuMasterController.cs" />
+    <Compile Include="Controllers\AppAccessRoleMapController.cs" />
+    <Compile Include="Controllers\AppAccessController.cs" />
+    <Compile Include="Controllers\CurrencyMasterController.cs" />
+    <Compile Include="Controllers\AppDocumentController.cs" />
+    <Compile Include="Controllers\Finance\BudgetDetHistoryCommentsController.cs" />
+    <Compile Include="Controllers\Finance\BudgetHistoryCommentsController.cs" />
+    <Compile Include="Controllers\Finance\CashTransactionController.cs" />
+    <Compile Include="Controllers\Finance\CashTransactionHistoryCommentsController.cs" />
+    <Compile Include="Controllers\Finance\CostCenterController.cs" />
+    <Compile Include="Controllers\EmbassyMasterController.cs" />
+    <Compile Include="Controllers\Finance\DirectInvPrePaymentController.cs" />
+    <Compile Include="Controllers\Finance\DirInvPrePayHistoryCommentsController.cs" />
+    <Compile Include="Controllers\Finance\DirInvPostPayHistCommentsController.cs" />
+    <Compile Include="Controllers\Finance\EmbPostPaymentController.cs" />
+    <Compile Include="Controllers\Finance\EmbPrePayHistroyCommentsController.cs" />
+    <Compile Include="Controllers\Finance\EmbPrePaymentController.cs" />
+    <Compile Include="Controllers\Finance\DirectInvPostPaymentController.cs" />
+    <Compile Include="Controllers\Finance\CashJournalController.cs" />
+    <Compile Include="Controllers\Finance\PettyCashTransferHistCommentsController.cs" />
+    <Compile Include="Controllers\HR\DepartmentController.cs" />
+    <Compile Include="Controllers\HR\EmpDependentController.cs" />
+    <Compile Include="Controllers\HR\EmpEducationController.cs" />
+    <Compile Include="Controllers\HR\EmployeeController.cs" />
+    <Compile Include="Controllers\HR\JobPositionController.cs" />
+    <Compile Include="Controllers\AppApiBaseController.cs" />
+    <Compile Include="Controllers\Purchase\InventoryTransferController.cs" />
+    <Compile Include="Controllers\Purchase\ProdInvIssueController.cs" />
+    <Compile Include="Controllers\Purchase\ProductInventoryController.cs" />
+    <Compile Include="Controllers\Purchase\PurchaseOrderController.cs" />
+    <Compile Include="Controllers\Purchase\WareHouseController.cs" />
+    <Compile Include="Controllers\Purchase\ProductCategoryController.cs" />
+    <Compile Include="Controllers\Purchase\PurchaseRequestController.cs" />
+    <Compile Include="Controllers\Purchase\QuotationRequestController.cs" />
+    <Compile Include="Controllers\Purchase\GoodsReceiptNotesController.cs" />
+    <Compile Include="Controllers\Purchase\ServiceRequestController.cs" />
+    <Compile Include="Controllers\Purchase\ProductMasterController.cs" />
+    <Compile Include="Controllers\Purchase\ProdUnitMasterController.cs" />
+    <Compile Include="Controllers\Purchase\VendorMasterController.cs" />
+    <Compile Include="Controllers\Finance\PettyCashTransController.cs" />
+    <Compile Include="Controllers\Finance\PettyCashTellerController.cs" />
+    <Compile Include="Controllers\Finance\PettyCashAccountController.cs" />
+    <Compile Include="Controllers\Finance\LedgerBalanceController.cs" />
+    <Compile Include="Controllers\Finance\BudgetAllocationController.cs" />
+    <Compile Include="Controllers\Finance\LedgerAccountController.cs" />
+    <Compile Include="Controllers\LangMasterController.cs" />
+    <Compile Include="Controllers\OrganizationController.cs" />
+    <Compile Include="Controllers\Purchase\VendorQuotationController.cs" />
+    <Compile Include="Controllers\SystemSettingsController.cs" />
+    <Compile Include="Controllers\TestController.cs" />
+    <Compile Include="Controllers\UserSettingsController.cs" />
+    <Compile Include="Controllers\CodesMasterController.cs" />
+    <Compile Include="Controllers\UseRoleMapController.cs" />
+    <Compile Include="Controllers\UseRoleController.cs" />
+    <Compile Include="Controllers\UserMasterController.cs" />
+    <Compile Include="Handlers\ActivityLogActionFilter.cs" />
+    <Compile Include="Handlers\ExceptionFilter.cs" />
+    <Compile Include="Handlers\ExceptionLogger.cs" />
+    <Compile Include="Handlers\OptionsHttpMessageHandler.cs" />
+    <Compile Include="Handlers\CacheControlMiddleware.cs" />
+    <Compile Include="Handlers\RequestResponseHandler.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="Startup.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ERPService.BC\ERPService.BC.csproj">
+      <Project>{5E90B55C-247A-46D1-A31C-628BFAF66B35}</Project>
+      <Name>ERPService.BC</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ERPService.Common\ERPService.Common.csproj">
+      <Project>{F6EA3E83-2122-4539-9CDC-2F9DE352ED9B}</Project>
+      <Name>ERPService.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ERPService.DataModel\ERPService.DataModel.csproj">
+      <Project>{206DC552-6141-4021-A4FC-0AECA95A3853}</Project>
+      <Name>ERPService.DataModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ERPService.Data\ERPService.Data.csproj">
+      <Project>{83BE452B-6848-4296-9BF2-4AF812F31E7E}</Project>
+      <Name>ERPService.Data</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>63621</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:63621/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
